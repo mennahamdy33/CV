@@ -447,7 +447,7 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="1" column="0">
+       <item row="0" column="0">
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="0">
           <layout class="QGridLayout" name="gridLayout_2">
@@ -652,7 +652,7 @@
           </layout>
          </item>
          <item row="1" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_2">
              <item>
@@ -696,15 +696,12 @@
               </widget>
              </item>
              <item>
-              <widget class="pyqtgraph" name="graph">
+              <widget class="QGraphicsView" name="graphicsView">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Sunken</enum>
                </property>
               </widget>
              </item>
@@ -750,13 +747,6 @@
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>pyqtgraph</class>
-   <extends>QGraphicsView</extends>
-   <header>PlotWidget</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
