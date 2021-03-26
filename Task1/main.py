@@ -15,10 +15,30 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.R=0;
         self.C=0;
         self.n=3
+        self.precent=0.1
         self.ui.actionExit.triggered.connect(exit)
         self.ui.actionInput.triggered.connect(self.getPicrures)
+        self.ui.noise.clicked.connect(lambda: self.salt_pepper_noise(self.image,self.precent))
         self.ui.filter.clicked.connect(lambda:self.AvgFilter(self.padded,self.R,self.C,self.n))
         self.ui.edge.activated.connect(self.chooseEdge)
+
+    def rgb2gray(rgb_image):
+        return np.dot(rgb_image[..., :3], [0.299, 0.587, 0.114])
+
+    def salt_pepper_noise(self,img, percent):
+        print(percent)
+        img_noisy = np.zeros(img.shape)
+        print(self.R,self.C)
+        salt_pepper = np.random.random(img.shape)  # Uniform distribution
+        cleanPixels_ind = salt_pepper > percent
+        NoisePixels_ind = salt_pepper <= percent
+        pepper = (salt_pepper <= (0.5 * percent));  # pepper < half percent
+        salt = ((salt_pepper <= percent) & (salt_pepper > 0.5 * percent));
+        img_noisy[cleanPixels_ind] = img[cleanPixels_ind]
+        img_noisy[pepper] = 0
+        img_noisy[salt] = 1
+        cv2.imwrite(r"./images/noise.png", img_noisy)
+        self.ui.output1.setPixmap(QPixmap(r"./images/noise.png"))
 
     def chooseEdge(self):
         if str(self.ui.edge.currentText())=="Edge In X":
@@ -52,12 +72,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         return(imgAfterPadding)       
         
     def getPicrures (self):
-        path,extention = QtWidgets.QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "") 
+        path,extention = QtWidgets.QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "")
         if path == "":
             pass
         else:
-            image = cv2.imread(path,0)
-            self.padded = self.padding(image,self.n)
+            self.image = cv2.imread(path,0)
+            self.padded = self.padding(self.image,self.n)
             self.ui.Input1.setPixmap(QPixmap(path))
 
 def main():
