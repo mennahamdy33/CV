@@ -2,18 +2,21 @@ import cv2
 import numpy as np
 
 def padding(img,n):
+    print(img)
     R,C = img.shape
+    print(R)
+    print(C)
     imgAfterPadding = np.zeros((R+n-1,C+n-1))
     imgAfterPadding[1:1+R,1:1+C] = img.copy()
     return(imgAfterPadding)
 
 def imgWithNoise():
-        image = cv2.imread(r"D:\CV\Task1\p2\imgWithNoise7.png",0)
+        image = cv2.imread(r"G:\SBME\CV\Tasks\CV\Task1\p2\imgWithNoise7.png",0)
         return(padding(image,3))
 
 def AvgFilter():
     img = imgWithNoise()
-    R,C = img.shape
+    R,C = img.shape()
     n = 3 # size of the mask
     mask = np.ones((3,3),np.float32)/9
     newImage = np.zeros((R+n-1,C+n-1))
