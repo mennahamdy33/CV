@@ -12,8 +12,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.padded =[]
-        self.R=0;
-        self.C=0;
+        self.R=0
+        self.C=0
         self.n=3
         self.precent=0.1
         self.ui.actionExit.triggered.connect(exit)
@@ -22,7 +22,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.filter.clicked.connect(lambda:self.AvgFilter(self.img_noisy,self.R,self.C,self.n))
         self.ui.edge.activated.connect(self.chooseEdge)
 
-    def rgb2gray(rgb_image):
+    def rgb2gray(self, rgb_image):
         return np.dot(rgb_image[..., :3], [0.299, 0.587, 0.114])
 
     def salt_pepper_noise(self,img, percent):
@@ -32,7 +32,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         salt_pepper = np.random.random(img.shape)  # Uniform distribution
         cleanPixels_ind = salt_pepper > percent
         NoisePixels_ind = salt_pepper <= percent
-        pepper = (salt_pepper <= (0.5 * percent));  # pepper < half percent
+        pepper = (salt_pepper <= (0.5 * percent))  # pepper < half percent
         salt = ((salt_pepper <= percent) & (salt_pepper > 0.5 * percent));
         self.img_noisy[cleanPixels_ind] = img[cleanPixels_ind]
         self.img_noisy[pepper] = 0
