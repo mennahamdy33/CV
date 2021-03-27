@@ -19,7 +19,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.actionExit.triggered.connect(exit)
         self.ui.actionInput.triggered.connect(self.getPicrures)
         self.ui.noise.clicked.connect(lambda: self.salt_pepper_noise(self.image,self.precent))
-        self.ui.filter.clicked.connect(lambda:self.AvgFilter(self.padded,self.R,self.C,self.n))
+        self.ui.filter.clicked.connect(lambda:self.AvgFilter(self.img_noisy,self.R,self.C,self.n))
         self.ui.edge.activated.connect(self.chooseEdge)
 
     def rgb2gray(rgb_image):
@@ -27,34 +27,34 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def salt_pepper_noise(self,img, percent):
         print(percent)
-        img_noisy = np.zeros(img.shape)
+        self.img_noisy = np.zeros(img.shape)
         print(self.R,self.C)
         salt_pepper = np.random.random(img.shape)  # Uniform distribution
         cleanPixels_ind = salt_pepper > percent
         NoisePixels_ind = salt_pepper <= percent
         pepper = (salt_pepper <= (0.5 * percent));  # pepper < half percent
         salt = ((salt_pepper <= percent) & (salt_pepper > 0.5 * percent));
-        img_noisy[cleanPixels_ind] = img[cleanPixels_ind]
-        img_noisy[pepper] = 0
-        img_noisy[salt] = 1
-        cv2.imwrite(r"./images/noise.png", img_noisy)
+        self.img_noisy[cleanPixels_ind] = img[cleanPixels_ind]
+        self.img_noisy[pepper] = 0
+        self.img_noisy[salt] = 1
+        cv2.imwrite(r"./images/noise.png", self.img_noisy)
         self.ui.output1.setPixmap(QPixmap(r"./images/noise.png"))
 
     def chooseEdge(self):
         if str(self.ui.edge.currentText())=="Edge In X":
             maskX = [[-1,0,1],[-2,0,2],[-1,0,1]]
-            self.SobelFilter(self.padded,self.R,self.C,self.n,maskX)
+            self.SobelFilter(self.newImage,self.R,self.C,self.n,maskX)
         if str(self.ui.edge.currentText())=="Edge In Y":
             maskY = [[1,2,1],[0,0,0],[-1,-2,-1]]    
-            self.SobelFilter(self.padded,self.R,self.C,self.n,maskY)
+            self.SobelFilter(self.newImage,self.R,self.C,self.n,maskY)
 
     def AvgFilter(self,img,R,C,n):
         mask = np.ones((3,3),np.float32)/9
-        newImage = np.zeros((R+n-1,C+n-1))
+        self.newImage = np.zeros((R+n-1,C+n-1))
         for i in range(1,R-2):
             for j in range(1,C-2):
-                    newImage[i-1,j-1] = np.sum(np.multiply(mask,img[i:i+n,j:j+n]))
-        cv2.imwrite("Filtered.png",newImage)
+                    self.newImage[i-1,j-1] = np.sum(np.multiply(mask,img[i:i+n,j:j+n]))
+        cv2.imwrite("Filtered.png",self.newImage)
         self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Filtered.png"))
 
     def SobelFilter(self,img,R,C,n,mask):
