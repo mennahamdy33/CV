@@ -66,9 +66,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             for j in range(1,C-2):
                 S1 = np.sum(np.sum(np.multiply(maskX,img[i:i+n,j:j+n])))
                 S2 = np.sum(np.sum(np.multiply(maskY,img[i:i+n,j:j+n])))
-                newImage[i+1,j+1]= np.sqrt(np.sqrt(np.power(S1,2)+np.power(S2,2)))
-                if newImage[i+1,j+1] > 12:
-                    newImage[i+1,j+1] = 200
+                newImage[i+1,j+1]= np.sqrt(np.power(S1,2)+np.power(S2,2))
+                
+        newImage *= 255.0 / newImage.max()
         cv2.imwrite("Edge.png",newImage)
         self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Edge.png")) 
     def PrewittFilter(self,img,R,C,n):
@@ -79,9 +79,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             for j in range(1,C-2):
                     S1 = np.sum(np.multiply(maskX,img[i:i+n,j:j+n]))
                     S2 = np.sum(np.multiply(maskY,img[i:i+n,j:j+n]))
-                    newImage[i+1,j+1] = np.sqrt(np.sqrt(np.power(S1,2)+np.power(S2,2)))
-                    if newImage[i+1,j+1] > 12:
-                        newImage[i+1,j+1] = 200
+                    newImage[i+1,j+1] = np.sqrt(np.power(S1,2)+np.power(S2,2))
+        newImage *= 255.0 / newImage.max()                
         cv2.imwrite("Edge.png",newImage)
         self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Edge.png"))
     def RobertsFilter(self,img,R,C,n):
@@ -92,9 +91,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             for j in range(1,C-2):
                     S1 = np.sum(np.multiply(maskX,img[i:i+n,j:j+n]))
                     S2 = np.sum(np.multiply(maskY,img[i:i+n,j:j+n]))
-                    newImage[i+1,j+1] = np.sqrt(np.sqrt(np.power(S1,2)+np.power(S2,2)))
-                    # if newImage[i+1,j+1] > 10:
-                    #     newImage[i+1,j+1] = 200
+                    newImage[i+1,j+1] = np.sqrt(np.power(S1,2)+np.power(S2,2))
+        newImage *= 255.0 / newImage.max()            
         cv2.imwrite("Edge.png",newImage)
         self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Edge.png"))   
          
