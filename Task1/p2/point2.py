@@ -11,7 +11,8 @@ def padding(img,n):
     return(imgAfterPadding)
 
 def imgWithNoise():
-        image = cv2.imread(r"G:\SBME\CV\Tasks\CV\Task1\p2\imgWithNoise7.png",0)
+        image = cv2.imread(r"D:\CV\Task1\p2\imgWithNoise7.png",0)
+        print(image)
         return(padding(image,3))
 
 def AvgFilter():
@@ -33,25 +34,28 @@ def medianFilter(img,R,C,n):
             newImage[i-1,j-1] = np.median(mask[:])
     return(newImage)
 
- 
+def normalization(img):
+    maxIntensity = np.max(img)
+    minIntensity=np.min(img)
+    img = (img-minIntensity)/(maxIntensity-minIntensity)
+    return(img)
 
 def main():
     img = imgWithNoise()
     R,C = img.shape
     n = 3
-    newImage = medianFilter(img,R,C,n)
+    newImage = gaussianFilter(img)
+    # newImage = medianFilter(img,R,C,n)
     cv2.imwrite(r"white.png",newImage)
     readWhiteImage=cv2.imread(r"white.png")
     cv2.imshow("After padding", readWhiteImage)
     cv2.waitKey(0)
-    
-    
-    
-    
-    
 
+def gaussianFilter(img):
+    mean = np.mean(img)
+    std = np.std(img)
+    img = (img-mean)/std
+    return(img) 
     
-
-    
-    
+      
 result = main()
