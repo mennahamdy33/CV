@@ -599,12 +599,22 @@
                </item>
                <item>
                 <property name="text">
-                 <string>Edge In X</string>
+                 <string>Sobel</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Edge In Y</string>
+                 <string>Prewitt </string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Roberts</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Canny edge detectors</string>
                 </property>
                </item>
               </widget>
