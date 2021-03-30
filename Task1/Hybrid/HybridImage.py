@@ -17,6 +17,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.C=0
         self.n=3
         self.flag =0 
+        self.alpha = 0.9
         self.precent=0.1
         self.ui.actionExit.triggered.connect(exit)
         self.ui.actionInput.triggered.connect(self.getPicrures)
@@ -31,28 +32,26 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         return newImage            
         # self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Filtered.png"))
 
-    def SobelFilter(self,img,R,C,n):
-        maskX = [[-1,0,1],[-2,0,2],[-1,0,1]]
-        maskY = [[1,2,1],[0,0,0],[-1,-2,-1]]  
+    def LaplacianFilter(self,img,R,C,n):
+        maskX = [[0,-1,0],[-1,4,-1],[0,-1,0]]
+          
         newImage = np.zeros((R+n-1,C+n-1))
         for i in range(1,R-2):
             for j in range(1,C-2):
-                S1 = np.sum(np.sum(np.multiply(maskX,img[i:i+n,j:j+n])))
-                S2 = np.sum(np.sum(np.multiply(maskY,img[i:i+n,j:j+n])))
-                newImage[i+1,j+1]= np.sqrt(np.power(S1,2)+np.power(S2,2))
+                newImage[i+1,j+1] = np.sum(np.sum(np.multiply(maskX,img[i:i+n,j:j+n])))
                 
-        newImage *= 255.0 / newImage.max()
+        # newImage *= 255.0 / newImage.max()
         cv2.imwrite("Edge.png",newImage)
         return newImage
         
         # self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Edge.png"))     
     def Hybrid(self):
         imageSmoothed = self.AvgFilter(self.image,self.R,self.C,self.n)
-        imageSharped = self.SobelFilter(self.image2,self.R,self.C,self.n)
-        outputImage = imageSmoothed * (1.0 - 0.2) + imageSharped * 0.2
+        imageSharped = self.LaplacianFilter(self.image2,self.R,self.C,self.n)
+        outputImage = (imageSmoothed * (1-self.alpha)) + (imageSharped*self.alpha)
         # outputImage = imageSmoothed + imageSharped
         cv2.imwrite("Hybride.png",outputImage)
-        self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Edge.png"))
+        self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Hybrid/Hybride.png"))
 
     def padding(self,img,n):
         self.R,self.C= img.shape
