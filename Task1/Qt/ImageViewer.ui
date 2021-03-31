@@ -706,12 +706,12 @@
               </widget>
              </item>
              <item>
-              <widget class="QGraphicsView" name="graphicsView">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
+              <widget class="PlotWidget" name="graphicsView" native="true">
+               <property name="maximumSize">
+                <size>
+                 <width>450</width>
+                 <height>450</height>
+                </size>
                </property>
               </widget>
              </item>
@@ -732,7 +732,7 @@
      <x>0</x>
      <y>0</y>
      <width>918</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuInput">
@@ -757,6 +757,14 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PlotWidget</class>
+   <extends>QWidget</extends>
+   <header>pyqtgraph</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets,QtGui
-from ImageViewer import Ui_MainWindow
+from imageViewer import Ui_MainWindow
 import sys
 import numpy as np
 import pandas as pd
@@ -24,7 +24,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.noise.clicked.connect(lambda: self.salt_pepper_noise(self.image,self.precent))
         self.ui.filter.clicked.connect(lambda:self.AvgFilter(self.img_noisy,self.R,self.C,self.n))
         self.ui.edge.activated.connect(self.chooseEdge)
-        self.ui.histogram.clicked.connect(lambda: self.getHistogram(self.image))
+        self.ui.histogram.clicked.connect(lambda: self.getHistogram(self.image, 'c'))
 
     def rgb2gray(self, rgb_image):
         return np.dot(rgb_image[..., :3], [0.299, 0.587, 0.114])
@@ -100,7 +100,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Edge.png"))   
          
     def padding(self,img,n):
-        self.R,self.C= img.shape
+        self.R,self.C = img.shape
         imgAfterPadding = np.zeros((self.R+self.n-1,self.C+self.n-1))
         imgAfterPadding[1:1+self.R,1:1+self.C] = img.copy()
         return(imgAfterPadding)       
@@ -110,21 +110,25 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         if path == "":
             pass
         else:
-            self.image = cv2.imread(path,0)
-            self.padded = self.padding(self.image,self.n)
+            self.image = cv2.imread(path)
+            self.grayImg = self.rgb2gray(self.image)
+            self.padded = self.padding(self.grayImg,self.n)
             self.ui.Input1.setPixmap(QPixmap(path))
-    def getHistogram(self, img):
-        intenisties = np.arange(256)
-        # bins = np.unique(img)
-        hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
+    def getHistogram(self, img, type):
 
-        # self.ui.graphicsView.plot(hour, temperature)
-        histo = np.bincount(img[2], minlength=256)
-        cumFreq = np.cumsum(histo)
-        print(histo)
-        print(cumFreq)
+        # intenisties = np.arange(256)
+        # histo = np.bincount(img[2], minlength=256)
+        colors = ('r', 'g', 'b')
+        for idx, color in enumerate(colors):
+            histo, bins_edges = np.histogram(img[:, :, idx], bins=256, range=(0, 256))
+            self.ui.graphicsView.setBackground('w')
+
+            if type == 'c':
+                histo = np.cumsum(histo)
+            self.ui.graphicsView.plot(bins_edges[0:-1], histo, pen=color)
+
     def freqFilter(self, img):
+
         print("fft then send it to filter func")
 
 
