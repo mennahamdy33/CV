@@ -25,6 +25,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.filter.clicked.connect(lambda:self.AvgFilter(self.img_noisy,self.R,self.C,self.n))
         self.ui.edge.activated.connect(self.chooseEdge)
         self.ui.histogram.clicked.connect(lambda: self.getHistogram(self.image, 'c'))
+        self.ui.freqDominFilter.clicked.connect(lambda: self.freqFilter(self.grayImg))
 
     def rgb2gray(self, rgb_image):
         return np.dot(rgb_image[..., :3], [0.299, 0.587, 0.114])
@@ -103,16 +104,31 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.R,self.C = img.shape
         imgAfterPadding = np.zeros((self.R+self.n-1,self.C+self.n-1))
         imgAfterPadding[1:1+self.R,1:1+self.C] = img.copy()
-        return(imgAfterPadding)       
-        
-    def getPicrures (self):
-        path,extention = QtWidgets.QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "")
+        return(imgAfterPadding)
+
+    def paddingGeneral(self, desiredSize,img, n, backColor):
+        # desired size img
+        row, col = desiredSize.shape
+        if backColor == 'w':
+            imgAfterPadding = np.ones((row, col))
+        elif backColor == 'b':
+            imgAfterPadding = np.zeros((row, col))
+        #center offset
+        xx = (row-n) //2
+        yy = (col-n) //2
+        imgAfterPadding[xx:xx+n, yy:yy+n] = img.copy()
+        return (imgAfterPadding)
+
+    def getPicrures(self):
+        path, extention = QtWidgets.QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "")
         if path == "":
             pass
         else:
             self.image = cv2.imread(path)
             self.grayImg = self.rgb2gray(self.image)
             self.padded = self.padding(self.grayImg,self.n)
+            self.paddingGeneral(self.grayImg,[[1,1,1],[0,0,0],[-1,-1,-1]] , 3,'w')
+
             self.ui.Input1.setPixmap(QPixmap(path))
     def getHistogram(self, img, type):
 
@@ -128,7 +144,13 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.ui.graphicsView.plot(bins_edges[0:-1], histo, pen=color)
 
     def freqFilter(self, img):
+        fourrier = np.fft.fft2(img)
+        fshift = np.fft.fftshift(fourrier)
+        magnitude_spectrum = 20 * np.log(np.abs(fshift))
+        cv2.imwrite("fourrierTest.png", magnitude_spectrum)
+        self.ui.output1.setPixmap(QPixmap("./fourrierTest.png"))
 
+        # self.ui.graphicsView.image(magnitude_spectrum)
         print("fft then send it to filter func")
 
 
