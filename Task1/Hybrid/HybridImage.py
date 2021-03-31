@@ -12,7 +12,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         super(ApplicationWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.padded =[]
         self.R=0
         self.C=0
         self.n=3
@@ -22,6 +21,15 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.actionExit.triggered.connect(exit)
         self.ui.actionInput.triggered.connect(self.getPicrures)
         self.ui.hybrid.clicked.connect(self.Hybrid)
+
+    def gaussianFilter(self,img):
+        self.R , self.C = img.shape
+        print(img.shape)
+        mean = np.mean(img)
+        std = np.std(img)
+        img = (img-mean)/std
+        cv2.imwrite("Filtered.png",img)
+        return(img)    
     def AvgFilter(self,img,R,C,n):
         mask = np.ones((3,3),np.float32)/9
         newImage = np.zeros((R+n-1,C+n-1))
@@ -33,12 +41,13 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         # self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Filtered.png"))
 
     def LaplacianFilter(self,img,R,C,n):
-        maskX = [[0,-1,0],[-1,4,-1],[0,-1,0]]
+
+        mask = [[0,-1,0],[-1,4,-1],[0,-1,0]]
           
-        newImage = np.zeros((R+n-1,C+n-1))
+        newImage = np.zeros((R,C))
         for i in range(1,R-2):
             for j in range(1,C-2):
-                newImage[i+1,j+1] = np.sum(np.sum(np.multiply(maskX,img[i:i+n,j:j+n])))
+                newImage[i+1,j+1] = np.sum(np.sum(np.multiply(mask,img[i:i+n,j:j+n])))
                 
         # newImage *= 255.0 / newImage.max()
         cv2.imwrite("Edge.png",newImage)
@@ -46,17 +55,20 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         
         # self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Edge.png"))     
     def Hybrid(self):
-        imageSmoothed = self.AvgFilter(self.image,self.R,self.C,self.n)
+        # imageSmoothed = self.AvgFilter(self.image,self.R,self.C,self.n)
+        imageSmoothed = self.gaussianFilter(self.image)
         imageSharped = self.LaplacianFilter(self.image2,self.R,self.C,self.n)
+        print(imageSmoothed.shape)
+        print(imageSharped.shape)
         outputImage = (imageSmoothed * (1-self.alpha)) + (imageSharped*self.alpha)
         # outputImage = imageSmoothed + imageSharped
         cv2.imwrite("Hybride.png",outputImage)
         self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Hybrid/Hybride.png"))
 
     def padding(self,img,n):
-        self.R,self.C= img.shape
-        imgAfterPadding = np.zeros((self.R+self.n-1,self.C+self.n-1))
-        imgAfterPadding[1:1+self.R,1:1+self.C] = img.copy()
+        R,C= img.shape
+        imgAfterPadding = np.zeros((R+n-1,C+n-1))
+        imgAfterPadding[1:1+R,1:1+C] = img.copy()
         return(imgAfterPadding)     
     
     def getPicrures (self):
@@ -68,15 +80,19 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.flag += 1
             if self.flag == 1 :
                 self.image = cv2.imread(path,0)
-                self.padded = self.padding(self.image,self.n)
+                print(self.image.shape)
+                self.padded1 = self.padding(self.image,5)
+                print(self.padded1.shape)
                 self.ui.Input1.setPixmap(QPixmap(path))
             elif self.flag ==2 :
                 self.image2 = cv2.imread(path,0)
-                self.padded = self.padding(self.image2,self.n)
+                print(self.image2.shape)
+                self.padded2 = self.padding(self.image2,self.n)
+                print(self.padded2.shape)
                 self.ui.input2.setPixmap(QPixmap(path))
+                self.flag =0 
             else :
-                pass    
-
+                pass
 
 def main():
     app = QtWidgets.QApplication(sys.argv)

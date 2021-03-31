@@ -14,7 +14,7 @@ def padding(img,n):
     return(imgAfterPadding)
 
 def imgWithNoise():
-        image = cv2.imread(r"D:\CV\Task1\p2\imgWithNoise7.png",0)
+        image = cv2.imread(r"imgWithNoise7.png",0)
         print(image)
         return(padding(image,3))
 
