@@ -5,7 +5,8 @@ import numpy as np
 import pandas as pd
 import cv2
 QPixmap = QtGui.QPixmap
-
+from pyqtgraph import PlotWidget, plot
+import pyqtgraph as pg
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(ApplicationWindow, self).__init__()
@@ -21,6 +22,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.noise.clicked.connect(lambda: self.salt_pepper_noise(self.image,self.precent))
         self.ui.filter.clicked.connect(lambda:self.AvgFilter(self.img_noisy,self.R,self.C,self.n))
         self.ui.edge.activated.connect(self.chooseEdge)
+        self.ui.histogram.clicked.connect(lambda: self.getHistogram(self.image))
 
     def rgb2gray(self, rgb_image):
         return np.dot(rgb_image[..., :3], [0.299, 0.587, 0.114])
@@ -33,7 +35,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         cleanPixels_ind = salt_pepper > percent
         NoisePixels_ind = salt_pepper <= percent
         pepper = (salt_pepper <= (0.5 * percent))  # pepper < half percent
-        salt = ((salt_pepper <= percent) & (salt_pepper > 0.5 * percent));
+        salt = ((salt_pepper <= percent) & (salt_pepper > 0.5 * percent))
         self.img_noisy[cleanPixels_ind] = img[cleanPixels_ind]
         self.img_noisy[pepper] = 0
         self.img_noisy[salt] = 1
@@ -79,6 +81,22 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.image = cv2.imread(path,0)
             self.padded = self.padding(self.image,self.n)
             self.ui.Input1.setPixmap(QPixmap(path))
+    def getHistogram(self, img):
+        intenisties = np.arange(256)
+        # bins = np.unique(img)
+        hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
+
+        # self.ui.graphicsView.plot(hour, temperature)
+        histo = np.bincount(img[2], minlength=256)
+        cumFreq = np.cumsum(histo)
+        print(histo)
+        print(cumFreq)
+    def freqFilter(self, img):
+        print("fft then send it to filter func")
+
+
+
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
