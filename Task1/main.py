@@ -7,6 +7,8 @@ import cv2
 QPixmap = QtGui.QPixmap
 from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
+
+
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(ApplicationWindow, self).__init__()
@@ -43,30 +45,60 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.output1.setPixmap(QPixmap(r"./images/noise.png"))
 
     def chooseEdge(self):
-        if str(self.ui.edge.currentText())=="Edge In X":
-            maskX = [[-1,0,1],[-2,0,2],[-1,0,1]]
-            self.SobelFilter(self.newImage,self.R,self.C,self.n,maskX)
-        if str(self.ui.edge.currentText())=="Edge In Y":
-            maskY = [[1,2,1],[0,0,0],[-1,-2,-1]]    
-            self.SobelFilter(self.newImage,self.R,self.C,self.n,maskY)
+        if str(self.ui.edge.currentText())=="Sobel":
+            self.SobelFilter(self.newImage,self.R,self.C,self.n)
+        if str(self.ui.edge.currentText())=="Prewitt ":
+            self.PrewittFilter(self.newImage,self.R,self.C,self.n)
+        if str(self.ui.edge.currentText())=="Roberts" :   
+            self.RobertsFilter(self.newImage,self.R,self.C,2)
 
     def AvgFilter(self,img,R,C,n):
         mask = np.ones((3,3),np.float32)/9
         self.newImage = np.zeros((R+n-1,C+n-1))
         for i in range(1,R-2):
             for j in range(1,C-2):
-                    self.newImage[i-1,j-1] = np.sum(np.multiply(mask,img[i:i+n,j:j+n]))
+                    self.newImage[i+1,j+1] = np.sum(np.multiply(mask,img[i:i+n,j:j+n]))
         cv2.imwrite("Filtered.png",self.newImage)
         self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Filtered.png"))
 
-    def SobelFilter(self,img,R,C,n,mask):
+    def SobelFilter(self,img,R,C,n):
+        maskX = [[-1,0,1],[-2,0,2],[-1,0,1]]
+        maskY = [[1,2,1],[0,0,0],[-1,-2,-1]]  
         newImage = np.zeros((R+n-1,C+n-1))
         for i in range(1,R-2):
             for j in range(1,C-2):
-                    newImage[i-1,j-1] = np.sum(np.multiply(mask,img[i:i+n,j:j+n]))
+                S1 = np.sum(np.sum(np.multiply(maskX,img[i:i+n,j:j+n])))
+                S2 = np.sum(np.sum(np.multiply(maskY,img[i:i+n,j:j+n])))
+                newImage[i+1,j+1]= np.sqrt(np.power(S1,2)+np.power(S2,2))
+                
+        newImage *= 255.0 / newImage.max()
         cv2.imwrite("Edge.png",newImage)
         self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Edge.png")) 
-
+    def PrewittFilter(self,img,R,C,n):
+        maskX = [[-1,0,1],[-1,0,1],[-1,0,1]]
+        maskY = [[1,1,1],[0,0,0],[-1,-1,-1]] 
+        newImage = np.zeros((R+n-1,C+n-1))
+        for i in range(1,R-2):
+            for j in range(1,C-2):
+                    S1 = np.sum(np.multiply(maskX,img[i:i+n,j:j+n]))
+                    S2 = np.sum(np.multiply(maskY,img[i:i+n,j:j+n]))
+                    newImage[i+1,j+1] = np.sqrt(np.power(S1,2)+np.power(S2,2))
+        newImage *= 255.0 / newImage.max()                
+        cv2.imwrite("Edge.png",newImage)
+        self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Edge.png"))
+    def RobertsFilter(self,img,R,C,n):
+        maskX = [[1,0],[0,-1]]
+        maskY = [[0,1],[-1,0]]
+        newImage = np.zeros((R+n-1,C+n-1))
+        for i in range(1,R-2):
+            for j in range(1,C-2):
+                    S1 = np.sum(np.multiply(maskX,img[i:i+n,j:j+n]))
+                    S2 = np.sum(np.multiply(maskY,img[i:i+n,j:j+n]))
+                    newImage[i+1,j+1] = np.sqrt(np.power(S1,2)+np.power(S2,2))
+        newImage *= 255.0 / newImage.max()            
+        cv2.imwrite("Edge.png",newImage)
+        self.ui.output1.setPixmap(QPixmap("G:/SBME/CV/Tasks/CV/Task1/Edge.png"))   
+         
     def padding(self,img,n):
         self.R,self.C= img.shape
         imgAfterPadding = np.zeros((self.R+self.n-1,self.C+self.n-1))
