@@ -17,6 +17,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.n=3
         self.precent=0.1
         self.alpha = 0.8
+        self.ui.groupBox_2.hide()
         self.ui.selectTab1.activated.connect(self.chooseFilter)
         self.ui.menuExit.triggered.connect(exit)
         self.ui.loadTab1.clicked.connect(lambda:self.getPicrures(1))
@@ -29,8 +30,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         # self.ui.freqDominFilter.clicked.connect(lambda: self.freqFilter(self.grayImg))
 
     def Hybrid(self):
-        print(self.LowCompImage.shape)
-        print(self.HighCompImage.shape)
         imageSmoothed = self.AvgFilter(self.LowCompImage,3)
         self.ui.outputTab1.setText("Output Image")
         # imageSmoothed = self.gaussianFilter(self.image)
@@ -66,12 +65,47 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         if str(self.ui.selectTab1.currentText())=="Median Filter" :   
             self.FilterImage = self.medianFilter(self.noiseImage,3)
         if str(self.ui.selectTab1.currentText())=="Sobel Filter" :   
-            self.SobelFilter(self.FilterImage,3)
-        if str(self.ui.selectTab1.currentText())=="Roberts Filter" :   
-            self.RobertsFilter(self.FilterImage,2)
+            maskX = [[-1,0,1],[-2,0,2],[-1,0,1]]
+            maskY = [[1,2,1],[0,0,0],[-1,-2,-1]] 
+            file = r"./images/SobelFilter.png"
+            self.highFilter(self.FilterImage,3,maskX,maskY,file)
+        if str(self.ui.selectTab1.currentText())=="Roberts Filter" : 
+            maskX = [[1,0],[0,-1]]
+            maskY = [[0,1],[-1,0]] 
+            file = r"./images/RobertsFilter.png"
+            self.highFilter(self.FilterImage,2,maskX,maskY,file)
         if str(self.ui.selectTab1.currentText())=="Prewitt Filter" :   
-            self.PrewittFilter(self.FilterImage,3) 
+            maskX = [[-1,0,1],[-1,0,1],[-1,0,1]]
+            maskY = [[1,1,1],[0,0,0],[-1,-1,-1]]
+            file = r"./images/PrewittFilter.png"
+            self.highFilter(self.FilterImage,3,maskX,maskY,file) 
+        if str(self.ui.selectTab1.currentText())=="Normalization" :   
+            self.ui.groupBox_2.show()
+            self.Normalization()
+        if str(self.ui.selectTab1.currentText())=="Equalization" :   
+            self.Equalization()
+        if str(self.ui.selectTab1.currentText())=="Local Thresholding" :   
+            self.LocalThresholding()
+        if str(self.ui.selectTab1.currentText())=="Global Thresholding" :   
+            self.GlobalThresholding()
+        if str(self.ui.selectTab1.currentText())=="Low Frequency Filter" :   
+            self.LowFreqFilter()
+        if str(self.ui.selectTab1.currentText())=="High Frequency Filter" :   
+            self.HighFreqFilter()
 
+    def Normalization(self):
+        # feh akher el function ektby keda "self.ui.groupBox_2.hide()"
+        pass
+    def Equalization(self):
+        pass
+    def LocalThresholding(self):
+        pass
+    def GlobalThresholding(self):
+        pass
+    def LowFreqFilter(self):
+        pass
+    def HighFreqFilter(self):
+        pass
     def gaussianFilter(self,img):
         mean = np.mean(img)
         std = np.std(img)
@@ -113,49 +147,19 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.outputTab1.setPixmap(QPixmap(r"./images/AvgFilter.png"))
         return (FilteredImage)
 
-    def SobelFilter(self,img,n):
+    def highFilter(self,img,n,maskX,maskY,file):
         R,C = img.shape
-        maskX = [[-1,0,1],[-2,0,2],[-1,0,1]]
-        maskY = [[1,2,1],[0,0,0],[-1,-2,-1]]  
+        newImage = np.zeros((R+n-1,C+n-1))
         newImage = np.zeros((R+n-1,C+n-1))
         for i in range(1,R-2):
             for j in range(1,C-2):
-                S1 = np.sum(np.sum(np.multiply(maskX,img[i:i+n,j:j+n])))
-                S2 = np.sum(np.sum(np.multiply(maskY,img[i:i+n,j:j+n])))
-                newImage[i+1,j+1]= np.sqrt(np.power(S1,2)+np.power(S2,2))
-                
+                    S1 = np.sum(np.multiply(maskX,img[i:i+n,j:j+n]))
+                    S2 = np.sum(np.multiply(maskY,img[i:i+n,j:j+n]))
+                    newImage[i+1,j+1] = np.sqrt(np.power(S1,2)+np.power(S2,2))
         newImage *= 255.0 / newImage.max()
-        cv2.imwrite(r"./images/SobelFilter.png",newImage)
-        self.ui.outputTab1.setPixmap(QPixmap(r"./images/SobelFilter.png")) 
+        cv2.imwrite(file,newImage)
+        self.ui.outputTab1.setPixmap(QPixmap(file))
 
-    def PrewittFilter(self,img,n):
-        R,C = img.shape
-        maskX = [[-1,0,1],[-1,0,1],[-1,0,1]]
-        maskY = [[1,1,1],[0,0,0],[-1,-1,-1]] 
-        newImage = np.zeros((R+n-1,C+n-1))
-        for i in range(1,R-2):
-            for j in range(1,C-2):
-                    S1 = np.sum(np.multiply(maskX,img[i:i+n,j:j+n]))
-                    S2 = np.sum(np.multiply(maskY,img[i:i+n,j:j+n]))
-                    newImage[i+1,j+1] = np.sqrt(np.power(S1,2)+np.power(S2,2))
-        newImage *= 255.0 / newImage.max()                
-        cv2.imwrite(r"./images/PrewittFilter.png",newImage)
-        self.ui.outputTab1.setPixmap(QPixmap(r"./images/PrewittFilter.png"))
-
-    def RobertsFilter(self,img,n):
-        R,C = img.shape
-        maskX = [[1,0],[0,-1]]
-        maskY = [[0,1],[-1,0]]
-        newImage = np.zeros((R+n-1,C+n-1))
-        for i in range(1,R-2):
-            for j in range(1,C-2):
-                    S1 = np.sum(np.multiply(maskX,img[i:i+n,j:j+n]))
-                    S2 = np.sum(np.multiply(maskY,img[i:i+n,j:j+n]))
-                    newImage[i+1,j+1] = np.sqrt(np.power(S1,2)+np.power(S2,2))
-        newImage *= 255.0 / newImage.max()            
-        cv2.imwrite(r"./images/RobertsFilter.png",newImage)
-        self.ui.outputTab1.setPixmap(QPixmap(r"./images/RobertsFilter.png"))   
-         
     def padding(self,img,n):
         self.R,self.C = img.shape
         imgAfterPadding = np.zeros((self.R+self.n-1,self.C+self.n-1))
