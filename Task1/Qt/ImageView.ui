@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1001</width>
+    <height>654</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="font">
+       <font>
+        <family>Myanmar Text</family>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="filter">
+       <attribute name="title">
+        <string>Filters</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QPushButton" name="loadTab1">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Load Image</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QLabel" name="inputTab1">
+                <property name="frameShape">
+                 <enum>QFrame::Box</enum>
+                </property>
+                <property name="text">
+                 <string>Input Image</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="outputTab1">
+                <property name="frameShape">
+                 <enum>QFrame::Box</enum>
+                </property>
+                <property name="text">
+                 <string>Output Image</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>150</height>
+             </size>
+            </property>
+            <property name="title">
+             <string>Filters</string>
+            </property>
+            <widget class="QComboBox" name="selectTab1">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>50</y>
+               <width>500</width>
+               <height>50</height>
+              </rect>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>500</width>
+               <height>50</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Select Filter</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Salt And Pepper</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Average Filter</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Gaussian Filter</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Median Filter</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Sobel Filter</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Roberts Filter</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Prewitt Filter</string>
+              </property>
+             </item>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="histogram">
+       <attribute name="title">
+        <string>Histograms</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QPushButton" name="loadTab2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>151</width>
+              <height>111</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>151</width>
+              <height>111</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Load</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QLabel" name="inputTab2">
+                <property name="frameShape">
+                 <enum>QFrame::Box</enum>
+                </property>
+                <property name="text">
+                 <string>Input Image</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="outputTab2">
+                <property name="frameShape">
+                 <enum>QFrame::Box</enum>
+                </property>
+                <property name="text">
+                 <string>Output Image</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QLabel" name="inputHistoTab2">
+                <property name="frameShape">
+                 <enum>QFrame::Box</enum>
+                </property>
+                <property name="text">
+                 <string>Input Histogram</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="outputHistoTab2">
+                <property name="frameShape">
+                 <enum>QFrame::Box</enum>
+                </property>
+                <property name="text">
+                 <string>Output Histogram</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="hybrid">
+       <attribute name="title">
+        <string>Hybrid</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QPushButton" name="load1Tab3">
+              <property name="minimumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Loag Image 1</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="load2tab3">
+              <property name="minimumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Load Image 2</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="hybrid">
+              <property name="minimumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Make Hybride</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <widget class="QLabel" name="input1Tab3">
+                <property name="frameShape">
+                 <enum>QFrame::Box</enum>
+                </property>
+                <property name="text">
+                 <string>Input Image 1</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="input2Tab3">
+                <property name="frameShape">
+                 <enum>QFrame::Box</enum>
+                </property>
+                <property name="text">
+                 <string>Input Image 2</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLabel" name="outputTab3">
+              <property name="frameShape">
+               <enum>QFrame::Box</enum>
+              </property>
+              <property name="text">
+               <string>Output Image</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1001</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuExit">
+    <property name="title">
+     <string>Exit</string>
+    </property>
+   </widget>
+   <addaction name="menuExit"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
