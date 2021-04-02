@@ -82,14 +82,14 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             maskY = [[1,1,1],[0,0,0],[-1,-1,-1]]
             file = r"./images/PrewittFilter.png"
             self.highFilter(self.FilterImage,3,maskX,maskY,file) 
-        if str(self.ui.selectTab1.currentText())=="Normalization" :   
+        if str(self.ui.selectTab1.currentText())=="Normalization":
             self.ui.groupBox_2.show()
             self.Normalization()
-        if str(self.ui.selectTab1.currentText())=="Equalization" :   
+        if str(self.ui.selectTab1.currentText())=="Equalization":
             self.Equalization()
-        if str(self.ui.selectTab1.currentText())=="Local Thresholding" :   
+        if str(self.ui.selectTab1.currentText())=="Local Thresholding":
             self.LocalThresholding()
-        if str(self.ui.selectTab1.currentText())=="Global Thresholding" :   
+        if str(self.ui.selectTab1.currentText())=="Global Thresholding":
             self.GlobalThresholding()
         if str(self.ui.selectTab1.currentText())=="Low Frequency Filter" :   
             self.LowFreqFilter()
@@ -105,7 +105,17 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         return(img)
 
     def Equalization(self):
-        pass
+        array = np.around(self.grayImg).astype(int)
+        histo, bins_edges = np.histogram(array.flatten(), bins=256, range=(0, 256))
+        chistogram_array = np.cumsum(histo)
+        chistogram_array = chistogram_array * (255/chistogram_array.max())
+        img_list = list(array.flatten())
+        eq_img_list = [chistogram_array[p] for p in img_list]
+        eq_img_array = np.reshape(np.asarray(eq_img_list), array.shape)
+        cv2.imwrite(r"./images/equalized.png", eq_img_array)
+        self.ui.outputTab1.setPixmap(QPixmap(r"./images/equalized.png"))
+
+
     def LocalThresholding(self):
         n = 5 # mask 5 x 5
         newImg = np.zeros((self.R,self.C))
@@ -127,7 +137,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         return(newImg)
 
     def LowFreqFilter(self):
-        pass
+        self.freqFilter(self.grayImg,"a")
     def HighFreqFilter(self):
         pass
     def gaussianFilter(self,img):
@@ -190,18 +200,18 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         imgAfterPadding[1:1+self.R,1:1+self.C] = img.copy()
         return(imgAfterPadding)
 
-    # def paddingGeneral(self, desiredSize,img, n, backColor):
-    #     # desired size img
-    #     self.R, self.C = desiredSize.shape
-    #     if backColor == 'w':
-    #         imgAfterPadding = np.ones((self.R, self.C))
-    #     elif backColor == 'b':
-    #         imgAfterPadding = np.zeros((row, col))
-    #     #center offset
-    #     xx = (self.R-n) //2
-    #     yy = (self.C-n) //2
-    #     imgAfterPadding[xx:xx+n, yy:yy+n] = img.copy()
-    #     return (imgAfterPadding)
+    def paddingGeneral(self, desiredSize,img, n, backColor):
+        # desired size img
+        row, col = desiredSize.shape
+        if backColor == 'w':
+            imgAfterPadding = np.ones((row, col))
+        elif backColor == 'b':
+            imgAfterPadding = np.zeros((row, col))
+        #center offset
+        xx = (row-n) //2
+        yy = (col-n) //2
+        imgAfterPadding[xx:xx+n, yy:yy+n] = img.copy()
+        return (imgAfterPadding)
 
     def getPicrures(self, tab):
         path, extention = QtWidgets.QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "")
@@ -231,10 +241,10 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         colors = ('r', 'g', 'b')
         for idx, color in enumerate(colors):
             histo, bins_edges = np.histogram(img[:, :, idx], bins=256, range=(0, 256))
-            self.ui.graphicsView.setBackground('w')
+            self.ui.inputHistogram.setBackground('w')
             if type == 'c':
                 histo = np.cumsum(histo)
-            self.ui.graphicsView.plot(bins_edges[0:-1], histo, pen=color)
+            self.ui.inputHistogram.plot(bins_edges[0:-1], histo, pen=color)
 
     def freqFilter(self, img, filterType):
         img_fshift = self.fourrier(img)
@@ -263,20 +273,23 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             newImg *= 255.0 / filteredImg.max()
 
         cv2.imwrite("fourrierTest.png", newImg)
-        self.ui.output1.setPixmap(QPixmap("./fourrierTest.png"))
+        self.ui.outputTab1.setPixmap(QPixmap("./fourrierTest.png"))
 
         # self.ui.graphicsView.image(magnitude_spectrum)
         print("fft then send it to filter func")
-    def fourrier(self,img):
+
+    def fourrier(self, img):
         fourrier = np.fft.fft2(img)
         fshift = np.fft.fftshift(fourrier)
         return fshift
+
     def inverseFourrier(self, fourrImg):
-        img_back = np.fft.ifftshift(fourrImg)
-        img_back = np.fft.ifft2(img_back)
+        f_ishift = np.fft.ifftshift(fourrImg)
+        img_back = cv2.idft(f_ishift)
+        # img_back = np.fft.ifftshift(fourrImg)
+        # img_back = np.fft.ifft2(img_back)
         img_back = np.abs(img_back)
         return img_back
-            # self.padded =self.paddingGeneral(self.grayImg,[[1,1,1],[0,0,0],[-1,-1,-1]] , 3,'w')
 
 
 
@@ -289,4 +302,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()        
+    main()
