@@ -17,6 +17,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.n=3
         self.precent=0.1
         self.alpha = 0.8
+        self.minIntensity = 0
+        self.maxIntensity = 255
+        self.Th = 150 
         self.ui.groupBox_2.hide()
         self.ui.selectTab1.activated.connect(self.chooseFilter)
         self.ui.menuExit.triggered.connect(exit)
@@ -94,8 +97,13 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.HighFreqFilter()
 
     def Normalization(self):
-        # feh akher el function ektby keda "self.ui.groupBox_2.hide()"
-        pass
+        img = self.grayImg
+        maxIntensity = 120
+        minIntensity= 20
+        img = (img-minIntensity)/(maxIntensity-minIntensity)
+        print(img)
+        return(img)
+
     def Equalization(self):
         array = np.around(self.grayImg).astype(int)
         histo, bins_edges = np.histogram(array.flatten(), bins=256, range=(0, 256))
@@ -109,13 +117,29 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
 
     def LocalThresholding(self):
-        pass
+        n = 5 # mask 5 x 5
+        newImg = np.zeros((self.R,self.C))
+        img = self.padding(self.grayImg,n)
+        R,C = img.shape
+        for i in range(R-n//2):
+            for j in range(C-n//2):
+                mask = np.average(img[i:i+5,i:i+5])
+                newImg[i,j] = self.maxIntensity if mask >= self.Th else self.minIntensity
+        return(newImg)
+    
+
     def GlobalThresholding(self):
-        pass
+        img = self.grayImg
+        newImg = np.zeros((self.R,self.C))
+        for i in range(self.R):
+            for j in range(self.C):
+                newImg[i,j] = self.maxIntensity if img[i,j] >= self.Th else self.minIntensity
+        return(newImg)
+
     def LowFreqFilter(self):
         self.freqFilter(self.grayImg,"a")
     def HighFreqFilter(self):
-        pass
+        self.freqFilter(self.grayImg, "p")
     def gaussianFilter(self,img):
         mean = np.mean(img)
         std = np.std(img)
@@ -196,6 +220,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         else:
             self.image = cv2.imread(path)
             self.grayImg = self.rgb2gray(self.image)
+            cv2.imwrite("graylinda.png", self.grayImg)
             self.padded = self.padding(self.grayImg,self.n)
             if (tab == 1):
                 self.ui.inputTab1.setPixmap(QPixmap(path))
@@ -245,8 +270,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.ui.inputHistogram.plot(bins_edges[0:-1], histo)
     def freqFilter(self, img, filterType):
         img_fshift = self.fourrier(img)
-        # magnitude_spectrum = 20 * np.log(np.abs(img_fshift))
-
         # avg filter low pass fft
         if filterType == "a":
             mask = np.ones((3,3),np.float32)/9
@@ -254,20 +277,17 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             maskFFT = self.fourrier(paddedMask)
             resultImg = maskFFT * img_fshift
             newImg = self.inverseFourrier(resultImg)
-        # perwit high pass fft
+        # laplacian high pass fft
         if filterType == "p":
-            maskX = [[-1,0,1],[-1,0,1],[-1,0,1]]
-            maskY = [[1,1,1],[0,0,0],[-1,-1,-1]]
-            paddedMaskX = self.paddingGeneral(img, maskX, 3, 'w')
-            paddedMaskY = self.paddingGeneral(img, maskY, 3, 'w')
-            maskXFFT = self.fourrier(paddedMaskX)
-            maskYFFT = self.fourrier(paddedMaskY)
-            resultImgX = maskXFFT * img_fshift
-            resultImgY = maskYFFT * img_fshift
-            newImgX = self.inverseFourrier(resultImgX)
-            newImgY = self.inverseFourrier(resultImgY)
-            filteredImg = np.sqrt(np.power(newImgX, 2) + np.power(newImgY, 2))
-            newImg *= 255.0 / filteredImg.max()
+            mask = np.array([[0, 1, 0],
+                      [1, -4, 1],
+                      [0, 1, 0]])
+            paddedMask = self.paddingGeneral(img, mask, 3, 'b')
+            maskFFT = self.fourrier(paddedMask)
+            test = np.log(np.abs(maskFFT))
+            cv2.imwrite("maskfft.png", test)
+            resultImg = maskFFT * img_fshift
+            newImg = self.inverseFourrier(resultImg)
 
         cv2.imwrite("fourrierTest.png", newImg)
         self.ui.outputTab1.setPixmap(QPixmap("./fourrierTest.png"))
@@ -278,13 +298,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def fourrier(self, img):
         fourrier = np.fft.fft2(img)
         fshift = np.fft.fftshift(fourrier)
-        return fshift
+        return fourrier
 
     def inverseFourrier(self, fourrImg):
-        f_ishift = np.fft.ifftshift(fourrImg)
-        img_back = cv2.idft(f_ishift)
         # img_back = np.fft.ifftshift(fourrImg)
-        # img_back = np.fft.ifft2(img_back)
+        img_back = np.fft.ifft2(fourrImg)
+        img_back = np.fft.ifftshift(img_back)
         img_back = np.abs(img_back)
         return img_back
 
