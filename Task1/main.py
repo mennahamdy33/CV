@@ -97,7 +97,16 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         # feh akher el function ektby keda "self.ui.groupBox_2.hide()"
         pass
     def Equalization(self):
-        pass
+        array = np.around(self.grayImg).astype(int)
+        histo, bins_edges = np.histogram(array.flatten(), bins=256, range=(0, 256))
+        chistogram_array = np.cumsum(histo)
+        chistogram_array = chistogram_array * (255/chistogram_array.max())
+        img_list = list(array.flatten())
+        eq_img_list = [chistogram_array[p] for p in img_list]
+        eq_img_array = np.reshape(np.asarray(eq_img_list), array.shape)
+        cv2.imwrite(r"./images/equalized.png", eq_img_array)
+        self.ui.outputTab1.setPixmap(QPixmap(r"./images/equalized.png"))
+
     def LocalThresholding(self):
         pass
     def GlobalThresholding(self):
