@@ -17,6 +17,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.n=3
         self.precent=0.1
         self.alpha = 0.8
+        self.minIntensity = 0
+        self.maxIntensity = 255
+        self.Th = 150 
         self.ui.groupBox_2.hide()
         self.ui.selectTab1.activated.connect(self.chooseFilter)
         self.ui.menuExit.triggered.connect(exit)
@@ -94,14 +97,35 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.HighFreqFilter()
 
     def Normalization(self):
-        # feh akher el function ektby keda "self.ui.groupBox_2.hide()"
-        pass
+        img = self.grayImg
+        maxIntensity = 120
+        minIntensity= 20
+        img = (img-minIntensity)/(maxIntensity-minIntensity)
+        print(img)
+        return(img)
+
     def Equalization(self):
         pass
     def LocalThresholding(self):
-        pass
+        n = 5 # mask 5 x 5
+        newImg = np.zeros((self.R,self.C))
+        img = self.padding(self.grayImg,n)
+        R,C = img.shape
+        for i in range(R-n//2):
+            for j in range(C-n//2):
+                mask = np.average(img[i:i+5,i:i+5])
+                newImg[i,j] = self.maxIntensity if mask >= self.Th else self.minIntensity
+        return(newImg)
+    
+
     def GlobalThresholding(self):
-        pass
+        img = self.grayImg
+        newImg = np.zeros((self.R,self.C))
+        for i in range(self.R):
+            for j in range(self.C):
+                newImg[i,j] = self.maxIntensity if img[i,j] >= self.Th else self.minIntensity
+        return(newImg)
+
     def LowFreqFilter(self):
         pass
     def HighFreqFilter(self):
