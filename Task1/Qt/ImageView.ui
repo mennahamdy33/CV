@@ -24,7 +24,7 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="filter">
        <attribute name="title">
@@ -345,7 +345,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="cumcolor">
               <property name="minimumSize">
                <size>
                 <width>151</width>
