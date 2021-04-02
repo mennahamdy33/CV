@@ -231,6 +231,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         if type == 'color':
             # intenisties = np.arange(256)
             # histo = np.bincount(img[2], minlength=256)
+            
             colors = ('r', 'g', 'b')
             for idx, color in enumerate(colors):
                 histo, bins_edges = np.histogram(img[:, :, idx], bins=256, range=(0, 256))
