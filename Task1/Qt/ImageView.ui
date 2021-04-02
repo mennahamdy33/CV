@@ -24,13 +24,13 @@
        </font>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="filter">
        <attribute name="title">
         <string>Filters</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_6">
+       <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
@@ -97,126 +97,126 @@
             <property name="title">
              <string>Filters</string>
             </property>
-            <layout class="QGridLayout" name="gridLayout_2">
-             <item row="0" column="0">
-              <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <layout class="QHBoxLayout" name="horizontalLayout_12">
+             <item>
+              <widget class="QComboBox" name="selectTab1">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>500</width>
+                 <height>50</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>500</width>
+                 <height>50</height>
+                </size>
+               </property>
                <item>
-                <widget class="QComboBox" name="selectTab1">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>500</width>
-                   <height>50</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>500</width>
-                   <height>50</height>
-                  </size>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>Select Filter</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Salt And Pepper</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Average Filter</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Gaussian Filter</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Median Filter</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Sobel Filter</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Roberts Filter</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Prewitt Filter</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Normalization</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Equalization</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Local Thresholding</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Global Thresholding</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Low Frequency Filter</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>High Frequency Filter</string>
-                  </property>
-                 </item>
-                </widget>
+                <property name="text">
+                 <string>Select Filter</string>
+                </property>
                </item>
                <item>
-                <widget class="QGroupBox" name="groupBox_2">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>80</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>80</height>
-                  </size>
-                 </property>
-                 <property name="title">
-                  <string>Add Parameters</string>
-                 </property>
-                 <layout class="QGridLayout" name="gridLayout">
-                  <item row="0" column="0">
+                <property name="text">
+                 <string>Salt And Pepper</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Average Filter</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Gaussian Filter</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Median Filter</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Sobel Filter</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Roberts Filter</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Prewitt Filter</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Normalization</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Equalization</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Local Thresholding</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Global Thresholding</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Low Frequency Filter</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>High Frequency Filter</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="groupBox_2">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>80</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>80</height>
+                </size>
+               </property>
+               <property name="title">
+                <string>Add Parameters</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout">
+                <item row="0" column="0">
+                 <layout class="QHBoxLayout" name="horizontalLayout_11">
+                  <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_10">
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -248,10 +248,17 @@
                     </item>
                    </layout>
                   </item>
+                  <item>
+                   <widget class="QPushButton" name="set">
+                    <property name="text">
+                     <string>Set</string>
+                    </property>
+                   </widget>
+                  </item>
                  </layout>
-                </widget>
-               </item>
-              </layout>
+                </item>
+               </layout>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -559,7 +566,7 @@
      <x>0</x>
      <y>0</y>
      <width>1001</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuExit">
