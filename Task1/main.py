@@ -98,11 +98,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def Normalization(self):
         img = self.grayImg
-        maxIntensity = 120
-        minIntensity= 20
-        img = (img-minIntensity)/(maxIntensity-minIntensity)
-        print(img)
+        minIntensity = np.int(self.ui.lineEdit.text())
+        maxIntensity= np.int(self.ui.lineEdit_2.text())
+        img = ((img-minIntensity)*maxIntensity)/(maxIntensity-minIntensity)
         return(img)
+    
+    
 
     def Equalization(self):
         array = np.around(self.grayImg).astype(int)
@@ -114,7 +115,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         eq_img_array = np.reshape(np.asarray(eq_img_list), array.shape)
         cv2.imwrite(r"./images/equalized.png", eq_img_array)
         self.ui.outputTab1.setPixmap(QPixmap(r"./images/equalized.png"))
-
 
     def LocalThresholding(self):
         n = 5 # mask 5 x 5
