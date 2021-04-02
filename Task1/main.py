@@ -107,6 +107,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         cv2.imwrite(r"./images/equalized.png", eq_img_array)
         self.ui.outputTab1.setPixmap(QPixmap(r"./images/equalized.png"))
 
+
     def LocalThresholding(self):
         pass
     def GlobalThresholding(self):
