@@ -84,7 +84,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.highFilter(self.FilterImage,3,maskX,maskY,file) 
         if str(self.ui.selectTab1.currentText())=="Normalization":
             self.ui.groupBox_2.show()
-            self.Normalization()
+            # self.Normalization()
         if str(self.ui.selectTab1.currentText())=="Equalization":
             self.Equalization()
         if str(self.ui.selectTab1.currentText())=="Local Thresholding":
@@ -98,10 +98,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def Normalization(self):
         img = self.grayImg
-        minIntensity = np.int(self.ui.lineEdit.text())
-        maxIntensity= np.int(self.ui.lineEdit_2.text())
+        minIntensity = np.int(self.ui.minText.text())
+        maxIntensity= np.int(self.ui.maxText.text())
         img = ((img-minIntensity)*maxIntensity)/(maxIntensity-minIntensity)
-        return(img)
+        cv2.imwrite(r"./images/normalized.png", eq_img_array)
+        self.ui.outputTab1.setPixmap(QPixmap(r"./images/normalized.png"))
+    
     
     
 
@@ -141,9 +143,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def HighFreqFilter(self):
         self.freqFilter(self.grayImg, "p")
     def gaussianFilter(self,img):
-        mean = np.mean(img)
-        std = np.std(img)
-        FilteredImage = (img-mean)/std
+        sigma =1
+        FilteredImage = np.zeros(img.shape)
+        for i in range(self.R):
+            for j in range(self.C):
+                FilteredImage[i,j] =1 / (sigma * np.sqrt(2*np.pi)) * np.exp(-float(img[i,j])**2/(2*sigma**2))
+        print(FilteredImage)
         cv2.imwrite(r"./images/GaussianFilter.png",FilteredImage)
         self.ui.outputTab1.setPixmap(QPixmap(r"./images/GaussianFilter.png"))
         return (FilteredImage)        
