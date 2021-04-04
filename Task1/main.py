@@ -19,7 +19,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.alpha = 0.8
         self.minIntensity = 0
         self.maxIntensity = 255
-        self.Th = 150 
+        self.Th = 150
         self.ui.groupBox_2.hide()
         self.ui.selectTab1.activated.connect(self.chooseFilter)
         self.ui.menuExit.triggered.connect(exit)
@@ -29,8 +29,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.load2tab3.clicked.connect(lambda:self.getPicrures(4))
         self.ui.hybrid1.clicked.connect(self.Hybrid)
 
-        # self.ui.histogram.clicked.connect(lambda: self.getHistogram(self.image, 'c'))
-        # self.ui.freqDominFilter.clicked.connect(lambda: self.freqFilter(self.grayImg))
+        self.ui.color.clicked.connect(lambda: self.getHistogram(self.image, ' '))
+        self.ui.cumcolor.clicked.connect(lambda: self.getHistogram(self.image, 'c'))
+
 
     def Hybrid(self):
         imageSmoothed = self.AvgFilter(self.LowCompImage,3)
@@ -63,25 +64,25 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.noiseImage = self.salt_pepper_noise(self.padded,self.precent)
         if str(self.ui.selectTab1.currentText())=="Average Filter":
             self.FilterImage = self.AvgFilter(self.noiseImage,3)
-        if str(self.ui.selectTab1.currentText())=="Gaussian Filter" :   
+        if str(self.ui.selectTab1.currentText())=="Gaussian Filter" :
             self.FilterImage = self.gaussianFilter(self.noiseImage)
-        if str(self.ui.selectTab1.currentText())=="Median Filter" :   
+        if str(self.ui.selectTab1.currentText())=="Median Filter" :
             self.FilterImage = self.medianFilter(self.noiseImage,3)
-        if str(self.ui.selectTab1.currentText())=="Sobel Filter" :   
+        if str(self.ui.selectTab1.currentText())=="Sobel Filter" :
             maskX = [[-1,0,1],[-2,0,2],[-1,0,1]]
-            maskY = [[1,2,1],[0,0,0],[-1,-2,-1]] 
+            maskY = [[1,2,1],[0,0,0],[-1,-2,-1]]
             file = r"./images/SobelFilter.png"
             self.highFilter(self.FilterImage,3,maskX,maskY,file)
-        if str(self.ui.selectTab1.currentText())=="Roberts Filter" : 
+        if str(self.ui.selectTab1.currentText())=="Roberts Filter" :
             maskX = [[1,0],[0,-1]]
-            maskY = [[0,1],[-1,0]] 
+            maskY = [[0,1],[-1,0]]
             file = r"./images/RobertsFilter.png"
             self.highFilter(self.FilterImage,2,maskX,maskY,file)
-        if str(self.ui.selectTab1.currentText())=="Prewitt Filter" :   
+        if str(self.ui.selectTab1.currentText())=="Prewitt Filter" :
             maskX = [[-1,0,1],[-1,0,1],[-1,0,1]]
             maskY = [[1,1,1],[0,0,0],[-1,-1,-1]]
             file = r"./images/PrewittFilter.png"
-            self.highFilter(self.FilterImage,3,maskX,maskY,file) 
+            self.highFilter(self.FilterImage,3,maskX,maskY,file)
         if str(self.ui.selectTab1.currentText())=="Normalization":
             self.ui.groupBox_2.show()
             # self.Normalization()
@@ -91,9 +92,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.LocalThresholding()
         if str(self.ui.selectTab1.currentText())=="Global Thresholding":
             self.GlobalThresholding()
-        if str(self.ui.selectTab1.currentText())=="Low Frequency Filter" :   
+        if str(self.ui.selectTab1.currentText())=="Low Frequency Filter" :
             self.LowFreqFilter()
-        if str(self.ui.selectTab1.currentText())=="High Frequency Filter" :   
+        if str(self.ui.selectTab1.currentText())=="High Frequency Filter" :
             self.HighFreqFilter()
 
     def Normalization(self):
@@ -128,7 +129,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
                 mask = np.average(img[i:i+5,i:i+5])
                 newImg[i,j] = self.maxIntensity if mask >= self.Th else self.minIntensity
         return(newImg)
-    
+
 
     def GlobalThresholding(self):
         img = self.grayImg
@@ -151,7 +152,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         print(FilteredImage)
         cv2.imwrite(r"./images/GaussianFilter.png",FilteredImage)
         self.ui.outputTab1.setPixmap(QPixmap(r"./images/GaussianFilter.png"))
-        return (FilteredImage)        
+        return (FilteredImage)
 
     def medianFilter(self,img,n):
         R,C = img.shape
@@ -245,6 +246,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         # intenisties = np.arange(256)
         # histo = np.bincount(img[2], minlength=256)
         colors = ('r', 'g', 'b')
+        self.ui.inputHistogram.clear()
         for idx, color in enumerate(colors):
             histo, bins_edges = np.histogram(img[:, :, idx], bins=256, range=(0, 256))
             self.ui.inputHistogram.setBackground('w')
@@ -282,7 +284,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def fourrier(self, img):
         fourrier = np.fft.fft2(img)
         fshift = np.fft.fftshift(fourrier)
-        return fourrier
+        return fshift
 
     def inverseFourrier(self, fourrImg):
         # img_back = np.fft.ifftshift(fourrImg)
