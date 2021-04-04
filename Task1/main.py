@@ -29,7 +29,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.load2tab3.clicked.connect(lambda:self.getPicrures(4))
         self.ui.hybrid1.clicked.connect(self.Hybrid)
         self.ui.set.clicked.connect(self.Normalization)
-
+        self.ui.gray.clicked.connect(lambda:self.getHistogram(self.grayImg,'grey'))
         self.ui.color.clicked.connect(lambda: self.getHistogram(self.image, ' '))
         self.ui.cumcolor.clicked.connect(lambda: self.getHistogram(self.image, 'c'))
 
@@ -239,21 +239,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
                 self.ui.inputTab2.setPixmap(QPixmap(path))
                 # test image
 
-                r, g, b = cv2.split(self.image)
-                # spliting b,g,r and getting differences between them
-                r_g = np.count_nonzero(abs(r - g))
-                r_b = np.count_nonzero(abs(r - b))
-                g_b = np.count_nonzero(abs(g - b))
-                diff_sum = float(r_g + r_b + g_b)
-                # finding ratio of diff_sum with respect to size of image
-                ratio = diff_sum / self.image.size
-                if ratio > 0.005:
-                    label = 'color'
 
-                else:
-                    label = 'grey'
-                    self.getHistogram(self.image,label)
-                print(label)
             elif (tab == 3):
                 self.ui.input1Tab3.setPixmap(QPixmap(path))
                 self.LowCompImage = self.padded
@@ -264,17 +250,20 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             # self.paddingGeneral(self.grayImg,[[1,1,1],[0,0,0],[-1,-1,-1]] , 3,'w')
 
     def getHistogram(self, img, type):
-
+        if type == 'grey':
+            histo, bins_edges = np.histogram(img[:, :], bins=256, range=(0, 256))
+            self.ui.inputHistogram.plot(bins_edges[0:-1], histo)
         # intenisties = np.arange(256)
         # histo = np.bincount(img[2], minlength=256)
-        colors = ('r', 'g', 'b')
-        self.ui.inputHistogram.clear()
-        for idx, color in enumerate(colors):
-            histo, bins_edges = np.histogram(img[:, :, idx], bins=256, range=(0, 256))
-            self.ui.inputHistogram.setBackground('w')
-            if type == 'c':
-                histo = np.cumsum(histo)
-            self.ui.inputHistogram.plot(bins_edges[0:-1], histo, pen=color)
+        else :
+            colors = ('r', 'g', 'b')
+            self.ui.inputHistogram.clear()
+            for idx, color in enumerate(colors):
+                histo, bins_edges = np.histogram(img[:, :, idx], bins=256, range=(0, 256))
+                self.ui.inputHistogram.setBackground('w')
+                if type == 'c':
+                    histo = np.cumsum(histo)
+                self.ui.inputHistogram.plot(bins_edges[0:-1], histo, pen=color)
 
 
     def freqFilter(self, img, filterType):
