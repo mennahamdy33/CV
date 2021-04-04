@@ -62,24 +62,31 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def chooseFilter(self):
         if str(self.ui.selectTab1.currentText())=="Salt And Pepper":
+            self.ui.groupBox_2.hide()
             self.noiseImage = self.salt_pepper_noise(self.padded,self.precent)
         if str(self.ui.selectTab1.currentText())=="Average Filter":
+            self.ui.groupBox_2.hide()
             self.FilterImage = self.AvgFilter(self.noiseImage,3)
         if str(self.ui.selectTab1.currentText())=="Gaussian Filter" :
+            self.ui.groupBox_2.hide()
             self.FilterImage = self.gaussianFilter(self.noiseImage)
         if str(self.ui.selectTab1.currentText())=="Median Filter" :
+            self.ui.groupBox_2.hide()
             self.FilterImage = self.medianFilter(self.noiseImage,3)
         if str(self.ui.selectTab1.currentText())=="Sobel Filter" :
+            self.ui.groupBox_2.hide()
             maskX = [[-1,0,1],[-2,0,2],[-1,0,1]]
             maskY = [[1,2,1],[0,0,0],[-1,-2,-1]]
             file = r"./images/SobelFilter.png"
             self.highFilter(self.FilterImage,3,maskX,maskY,file)
         if str(self.ui.selectTab1.currentText())=="Roberts Filter" :
+            self.ui.groupBox_2.hide()
             maskX = [[1,0],[0,-1]]
             maskY = [[0,1],[-1,0]]
             file = r"./images/RobertsFilter.png"
             self.highFilter(self.FilterImage,2,maskX,maskY,file)
         if str(self.ui.selectTab1.currentText())=="Prewitt Filter" :
+            self.ui.groupBox_2.hide()
             maskX = [[-1,0,1],[-1,0,1],[-1,0,1]]
             maskY = [[1,1,1],[0,0,0],[-1,-1,-1]]
             file = r"./images/PrewittFilter.png"
@@ -88,14 +95,19 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.ui.groupBox_2.show()
             # self.Normalization()
         if str(self.ui.selectTab1.currentText())=="Equalization":
+            self.ui.groupBox_2.hide()
             self.Equalization()
         if str(self.ui.selectTab1.currentText())=="Local Thresholding":
+            self.ui.groupBox_2.hide()
             self.LocalThresholding()
         if str(self.ui.selectTab1.currentText())=="Global Thresholding":
+            self.ui.groupBox_2.hide()
             self.GlobalThresholding()
         if str(self.ui.selectTab1.currentText())=="Low Frequency Filter" :
+            self.ui.groupBox_2.hide()
             self.LowFreqFilter()
         if str(self.ui.selectTab1.currentText())=="High Frequency Filter" :
+            self.ui.groupBox_2.hide()
             self.HighFreqFilter()
 
     def Normalization(self):
@@ -103,13 +115,14 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         minIntensity = np.int(self.ui.min.text())
         maxIntensity= np.int(self.ui.max.text())
         img = ((img-minIntensity)*maxIntensity)/(maxIntensity-minIntensity)
-        cv2.imwrite(r"./images/normalized.png", img)
-        self.ui.outputTab1.setPixmap(QPixmap(r"./images/normalized.png"))
+        cv2.imwrite(r".\images\normalized.png", img)
+        self.ui.outputTab1.setPixmap(QPixmap(r".\images\normalized.png"))
     
     
     
 
     def Equalization(self):
+      
         array = np.around(self.grayImg).astype(int)
         histo, bins_edges = np.histogram(array.flatten(), bins=256, range=(0, 256))
         chistogram_array = np.cumsum(histo)
