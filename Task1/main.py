@@ -28,6 +28,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.load1Tab3.clicked.connect(lambda:self.getPicrures(3))
         self.ui.load2tab3.clicked.connect(lambda:self.getPicrures(4))
         self.ui.hybrid1.clicked.connect(self.Hybrid)
+        self.ui.set.clicked.connect(self.Normalization)
 
         self.ui.color.clicked.connect(lambda: self.getHistogram(self.image, ' '))
         self.ui.cumcolor.clicked.connect(lambda: self.getHistogram(self.image, 'c'))
@@ -99,10 +100,10 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def Normalization(self):
         img = self.grayImg
-        minIntensity = np.int(self.ui.minText.text())
-        maxIntensity= np.int(self.ui.maxText.text())
+        minIntensity = np.int(self.ui.min.text())
+        maxIntensity= np.int(self.ui.max.text())
         img = ((img-minIntensity)*maxIntensity)/(maxIntensity-minIntensity)
-        cv2.imwrite(r"./images/normalized.png", eq_img_array)
+        cv2.imwrite(r"./images/normalized.png", img)
         self.ui.outputTab1.setPixmap(QPixmap(r"./images/normalized.png"))
     
     
@@ -128,7 +129,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             for j in range(C-n//2):
                 mask = np.average(img[i:i+5,i:i+5])
                 newImg[i,j] = self.maxIntensity if mask >= self.Th else self.minIntensity
-        return(newImg)
+        cv2.imwrite(r"./images/LocalThresholding.png", eq_img_array)
+        self.ui.outputTab1.setPixmap(QPixmap(r"./images/LocalThresholding.png"))
+        # return(newImg)
 
 
     def GlobalThresholding(self):
@@ -137,7 +140,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         for i in range(self.R):
             for j in range(self.C):
                 newImg[i,j] = self.maxIntensity if img[i,j] >= self.Th else self.minIntensity
-        return(newImg)
+        cv2.imwrite(r"./images/GlobalThresholding.png", eq_img_array)
+        self.ui.outputTab1.setPixmap(QPixmap(r"./images/GlobalThresholding.png"))
+        # return(newImg)
 
     def LowFreqFilter(self):
         self.freqFilter(self.grayImg,"a")
