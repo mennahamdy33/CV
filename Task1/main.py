@@ -56,8 +56,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         img_noisy[cleanPixels_ind] = img[cleanPixels_ind]
         img_noisy[pepper] = 0
         img_noisy[salt] = 1
-        cv2.imwrite(r"D:\CV\RepFotTeam\CV\Task1\images\noise.png", img_noisy)
-        self.ui.outputTab1.setPixmap(QPixmap(r"D:\CV\RepFotTeam\CV\Task1\images\noise.png"))
+        cv2.imwrite(r".\images\noise.png", img_noisy)
+        self.ui.outputTab1.setPixmap(QPixmap(r".\images\noise.png"))
         return (img_noisy)
 
     def chooseFilter(self):
@@ -140,10 +140,11 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         R,C = img.shape
         for i in range(R-n//2):
             for j in range(C-n//2):
-                mask = np.average(img[i:i+n,i:i+n])
+                mask = np.mean(img[i:i+n,j:j+n])
+                print(mask)
                 newImg[i,j] = self.maxIntensity if mask >= self.Th else self.minIntensity
-        cv2.imwrite(r"./images/LocalThresholding.png", eq_img_array)
-        self.ui.outputTab1.setPixmap(QPixmap(r"./images/LocalThresholding.png"))
+        cv2.imwrite(r".\images\LocalThresholding.png", newImg)
+        self.ui.outputTab1.setPixmap(QPixmap(r".\images\LocalThresholding.png"))
         # return(newImg)
 
 
@@ -153,8 +154,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         for i in range(self.R):
             for j in range(self.C):
                 newImg[i,j] = self.maxIntensity if img[i,j] >= self.Th else self.minIntensity
-        cv2.imwrite(r"./images/GlobalThresholding.png", eq_img_array)
-        self.ui.outputTab1.setPixmap(QPixmap(r"./images/GlobalThresholding.png"))
+        cv2.imwrite(r".\images\GlobalThresholding.png", newImg)
+        self.ui.outputTab1.setPixmap(QPixmap(r".\images\GlobalThresholding.png"))
         # return(newImg)
 
     def LowFreqFilter(self):
@@ -171,8 +172,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             for j in range(self.C-n//2):
                     window = img[i : i + n, j : j + n]
                     filteredImg[i,j] = np.sum(window*kernel)
-        cv2.imwrite(r"D:\CV\RepFotTeam\CV\Task1\images\GaussianFilter.png",filteredImg)
-        self.ui.outputTab1.setPixmap(QPixmap(r"D:\CV\RepFotTeam\CV\Task1.\images\GaussianFilter.png"))
+        cv2.imwrite(r".\images\GaussianFilter.png",filteredImg)
+        self.ui.outputTab1.setPixmap(QPixmap(r".\images\GaussianFilter.png"))
         return filteredImg
 
     def gaussian_kernel(self,k_size, sigma):
@@ -183,13 +184,13 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     
     def medianFilter(self,img,n):
         R,C = img.shape
-        FilteredImage = np.zeros((R+n-1,C+n-1))
-        for i in range(1,R-2):
-            for j in range(1,C-2):
+        FilteredImage = np.zeros((self.R,self.C))
+        for i in range(self.R-n//2):
+            for j in range(self.C-n//2):
                 mask = img[i:i+n,j:j+n]
-                FilteredImage[i-1,j-1] = np.median(mask[:])
-        cv2.imwrite(r"./images/MedianFilter.png",FilteredImage)
-        self.ui.outputTab1.setPixmap(QPixmap(r"./images/MedianFilter.png"))
+                FilteredImage[i,j] = np.median(mask[:])
+        cv2.imwrite(r".\images\MedianFilter.png",FilteredImage)
+        self.ui.outputTab1.setPixmap(QPixmap(r".\images\MedianFilter.png"))
         return (FilteredImage)
 
     def LaplacianFilter(self,img,n):
@@ -211,8 +212,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         for i in range(self.R-n//2):
             for j in range(self.C-n//2):
                     FilteredImage[i,j] = np.sum(np.multiply(mask,img[i:i+n,j:j+n]))
-        cv2.imwrite(r"D:\CV\RepFotTeam\CV\Task1\images\AvgFilter.png",FilteredImage)
-        self.ui.outputTab1.setPixmap(QPixmap(r"D:\CV\RepFotTeam\CV\Task1\images\AvgFilter.png"))
+        cv2.imwrite(r".\images\AvgFilter.png",FilteredImage)
+        self.ui.outputTab1.setPixmap(QPixmap(r".\images\AvgFilter.png"))
         return (FilteredImage)
 
     def highFilter(self,img,n,maskX,maskY,file):
