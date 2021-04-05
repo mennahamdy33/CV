@@ -250,7 +250,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         else:
             self.image = cv2.imread(path)
             self.grayImg = self.rgb2gray(self.image)
-            cv2.imwrite("graylinda.png", self.grayImg)
+            cv2.imwrite(r"./images/grayPicture.png", self.grayImg)
             self.padded = self.padding(self.grayImg,self.n)
             if (tab == 1):
                 self.ui.inputTab1.setPixmap(QPixmap(path))
@@ -301,12 +301,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             paddedMask = self.paddingGeneral(img, mask, 3, 'b')
             maskFFT = self.fourrier(paddedMask)
             test = np.log(np.abs(maskFFT))
-            cv2.imwrite("maskfft.png", test)
+            cv2.imwrite(r"./images/maskfft.png", test)
             resultImg = maskFFT * img_fshift
             newImg = self.inverseFourrier(resultImg)
 
-        cv2.imwrite("fourrierTest.png", newImg)
-        self.ui.outputTab1.setPixmap(QPixmap("./fourrierTest.png"))
+        cv2.imwrite(r"./images/fourrierTest.png", newImg)
+        self.ui.outputTab1.setPixmap(QPixmap(r"./images/fourrierTest.png"))
 
         # self.ui.graphicsView.image(magnitude_spectrum)
         print("fft then send it to filter func")
