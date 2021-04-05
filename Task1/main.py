@@ -33,11 +33,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.color.clicked.connect(lambda: self.getHistogram(self.image, ' '))
         self.ui.cumcolor.clicked.connect(lambda: self.getHistogram(self.image, 'c'))
 
-
     def Hybrid(self):
-        imageSmoothed = self.AvgFilter(self.LowCompImage,3)
+        imageSmoothed = self.gaussianFilter(self.LowCompImage)
         self.ui.outputTab1.setText("Output Image")
-        # imageSmoothed = self.gaussianFilter(self.image)
         imageSharped = self.LaplacianFilter(self.HighCompImage,3)
         outputImage = (imageSmoothed * (1-self.alpha)) + (imageSharped*self.alpha)
         cv2.imwrite(r"./images/HybridImage.png",outputImage)
@@ -117,9 +115,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         img = ((img-minIntensity)*maxIntensity)/(maxIntensity-minIntensity)
         cv2.imwrite(r".\images\normalized.png", img)
         self.ui.outputTab1.setPixmap(QPixmap(r".\images\normalized.png"))
-    
-    
-    
 
     def Equalization(self):
       
@@ -147,7 +142,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.outputTab1.setPixmap(QPixmap(r".\images\LocalThresholding.png"))
         # return(newImg)
 
-
     def GlobalThresholding(self):
         img = self.grayImg
         newImg = np.zeros((self.R,self.C))
@@ -160,6 +154,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def LowFreqFilter(self):
         self.freqFilter(self.grayImg,"a")
+
     def HighFreqFilter(self):
         self.freqFilter(self.grayImg, "p")
     
@@ -196,9 +191,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def LaplacianFilter(self,img,n):
         R,C = img.shape
         mask = [[0,-1,0],[-1,4,-1],[0,-1,0]]
-        newImage = np.zeros((R+n-1,C+n-1))
-        for i in range(1,R-2):
-            for j in range(1,C-2):
+        newImage = np.zeros((self.R,self.C))
+        for i in range(self.R-n//2):
+            for j in range(self.C-n//2):
                 newImage[i+1,j+1] = np.sum(np.sum(np.multiply(mask,img[i:i+n,j:j+n])))
         newImage *= 255.0 / newImage.max()
         cv2.imwrite(r"./images/LaplacianFilter.png",newImage)
@@ -288,7 +283,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
                 if type == 'c':
                     histo = np.cumsum(histo)
                 self.ui.inputHistogram.plot(bins_edges[0:-1], histo, pen=color)
-
 
     def freqFilter(self, img, filterType):
         img_fshift = self.fourrier(img)
