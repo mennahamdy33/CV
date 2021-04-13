@@ -33,11 +33,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.color.clicked.connect(lambda: self.getHistogram(self.image, ' '))
         self.ui.cumcolor.clicked.connect(lambda: self.getHistogram(self.image, 'c'))
 
-
     def Hybrid(self):
-        imageSmoothed = self.AvgFilter(self.LowCompImage,3)
+        imageSmoothed = self.gaussianFilter(self.LowCompImage)
         self.ui.outputTab1.setText("Output Image")
-        # imageSmoothed = self.gaussianFilter(self.image)
         imageSharped = self.LaplacianFilter(self.HighCompImage,3)
         outputImage = (imageSmoothed * (1-self.alpha)) + (imageSharped*self.alpha)
         cv2.imwrite(r"./images/HybridImage.png",outputImage)
@@ -56,30 +54,37 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         img_noisy[cleanPixels_ind] = img[cleanPixels_ind]
         img_noisy[pepper] = 0
         img_noisy[salt] = 1
-        cv2.imwrite(r"./images/noise.png", img_noisy)
-        self.ui.outputTab1.setPixmap(QPixmap(r"./images/noise.png"))
+        cv2.imwrite(r".\images\noise.png", img_noisy)
+        self.ui.outputTab1.setPixmap(QPixmap(r".\images\noise.png"))
         return (img_noisy)
 
     def chooseFilter(self):
         if str(self.ui.selectTab1.currentText())=="Salt And Pepper":
+            self.ui.groupBox_2.hide()
             self.noiseImage = self.salt_pepper_noise(self.padded,self.precent)
         if str(self.ui.selectTab1.currentText())=="Average Filter":
+            self.ui.groupBox_2.hide()
             self.FilterImage = self.AvgFilter(self.noiseImage,3)
         if str(self.ui.selectTab1.currentText())=="Gaussian Filter" :
+            self.ui.groupBox_2.hide()
             self.FilterImage = self.gaussianFilter(self.noiseImage)
         if str(self.ui.selectTab1.currentText())=="Median Filter" :
+            self.ui.groupBox_2.hide()
             self.FilterImage = self.medianFilter(self.noiseImage,3)
         if str(self.ui.selectTab1.currentText())=="Sobel Filter" :
+            self.ui.groupBox_2.hide()
             maskX = [[-1,0,1],[-2,0,2],[-1,0,1]]
             maskY = [[1,2,1],[0,0,0],[-1,-2,-1]]
             file = r"./images/SobelFilter.png"
             self.highFilter(self.FilterImage,3,maskX,maskY,file)
         if str(self.ui.selectTab1.currentText())=="Roberts Filter" :
+            self.ui.groupBox_2.hide()
             maskX = [[1,0],[0,-1]]
             maskY = [[0,1],[-1,0]]
             file = r"./images/RobertsFilter.png"
             self.highFilter(self.FilterImage,2,maskX,maskY,file)
         if str(self.ui.selectTab1.currentText())=="Prewitt Filter" :
+            self.ui.groupBox_2.hide()
             maskX = [[-1,0,1],[-1,0,1],[-1,0,1]]
             maskY = [[1,1,1],[0,0,0],[-1,-1,-1]]
             file = r"./images/PrewittFilter.png"
@@ -88,14 +93,19 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.ui.groupBox_2.show()
             # self.Normalization()
         if str(self.ui.selectTab1.currentText())=="Equalization":
+            self.ui.groupBox_2.hide()
             self.Equalization()
         if str(self.ui.selectTab1.currentText())=="Local Thresholding":
+            self.ui.groupBox_2.hide()
             self.LocalThresholding()
         if str(self.ui.selectTab1.currentText())=="Global Thresholding":
+            self.ui.groupBox_2.hide()
             self.GlobalThresholding()
         if str(self.ui.selectTab1.currentText())=="Low Frequency Filter" :
+            self.ui.groupBox_2.hide()
             self.LowFreqFilter()
         if str(self.ui.selectTab1.currentText())=="High Frequency Filter" :
+            self.ui.groupBox_2.hide()
             self.HighFreqFilter()
 
     def Normalization(self):
@@ -103,13 +113,11 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         minIntensity = np.int(self.ui.min.text())
         maxIntensity= np.int(self.ui.max.text())
         img = ((img-minIntensity)*maxIntensity)/(maxIntensity-minIntensity)
-        cv2.imwrite(r"./images/normalized.png", img)
-        self.ui.outputTab1.setPixmap(QPixmap(r"./images/normalized.png"))
-    
-    
-    
+        cv2.imwrite(r".\images\normalized.png", img)
+        self.ui.outputTab1.setPixmap(QPixmap(r".\images\normalized.png"))
 
     def Equalization(self):
+      
         array = np.around(self.grayImg).astype(int)
         histo, bins_edges = np.histogram(array.flatten(), bins=256, range=(0, 256))
         chistogram_array = np.cumsum(histo)
@@ -127,12 +135,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         R,C = img.shape
         for i in range(R-n//2):
             for j in range(C-n//2):
-                mask = np.average(img[i:i+5,i:i+5])
+                mask = np.mean(img[i:i+n,j:j+n])
+                print(mask)
                 newImg[i,j] = self.maxIntensity if mask >= self.Th else self.minIntensity
-        cv2.imwrite(r"./images/LocalThresholding.png", eq_img_array)
-        self.ui.outputTab1.setPixmap(QPixmap(r"./images/LocalThresholding.png"))
+        cv2.imwrite(r".\images\LocalThresholding.png", newImg)
+        self.ui.outputTab1.setPixmap(QPixmap(r".\images\LocalThresholding.png"))
         # return(newImg)
-
 
     def GlobalThresholding(self):
         img = self.grayImg
@@ -140,42 +148,52 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         for i in range(self.R):
             for j in range(self.C):
                 newImg[i,j] = self.maxIntensity if img[i,j] >= self.Th else self.minIntensity
-        cv2.imwrite(r"./images/GlobalThresholding.png", eq_img_array)
-        self.ui.outputTab1.setPixmap(QPixmap(r"./images/GlobalThresholding.png"))
+        cv2.imwrite(r".\images\GlobalThresholding.png", newImg)
+        self.ui.outputTab1.setPixmap(QPixmap(r".\images\GlobalThresholding.png"))
         # return(newImg)
 
     def LowFreqFilter(self):
         self.freqFilter(self.grayImg,"a")
+
     def HighFreqFilter(self):
         self.freqFilter(self.grayImg, "p")
+    
     def gaussianFilter(self,img):
-        sigma =1
-        FilteredImage = np.zeros(img.shape)
-        for i in range(self.R):
-            for j in range(self.C):
-                FilteredImage[i,j] =1 / (sigma * np.sqrt(2*np.pi)) * np.exp(-float(img[i,j])**2/(2*sigma**2))
-        print(FilteredImage)
-        cv2.imwrite(r"./images/GaussianFilter.png",FilteredImage)
-        self.ui.outputTab1.setPixmap(QPixmap(r"./images/GaussianFilter.png"))
-        return (FilteredImage)
+        n = 3
+        sigma = 1
+        kernel = self.gaussian_kernel(n, sigma)
+        filteredImg = np.zeros((self.R,self.C))
+        for i in range(self.R-n//2):
+            for j in range(self.C-n//2):
+                    window = img[i : i + n, j : j + n]
+                    filteredImg[i,j] = np.sum(window*kernel)
+        cv2.imwrite(r".\images\GaussianFilter.png",filteredImg)
+        self.ui.outputTab1.setPixmap(QPixmap(r".\images\GaussianFilter.png"))
+        return filteredImg
 
+    def gaussian_kernel(self,k_size, sigma):
+        center = k_size // 2
+        x, y = np.mgrid[0 - center : k_size - center, 0 - center : k_size - center ]
+        g = 1 / (2 * np.pi * sigma) * np.exp(-(np.square(x) + np.square(y)) / (2 * np.square(sigma)))
+        return g
+    
     def medianFilter(self,img,n):
         R,C = img.shape
-        FilteredImage = np.zeros((R+n-1,C+n-1))
-        for i in range(1,R-2):
-            for j in range(1,C-2):
+        FilteredImage = np.zeros((self.R,self.C))
+        for i in range(self.R-n//2):
+            for j in range(self.C-n//2):
                 mask = img[i:i+n,j:j+n]
-                FilteredImage[i-1,j-1] = np.median(mask[:])
-        cv2.imwrite(r"./images/MedianFilter.png",FilteredImage)
-        self.ui.outputTab1.setPixmap(QPixmap(r"./images/MedianFilter.png"))
+                FilteredImage[i,j] = np.median(mask[:])
+        cv2.imwrite(r".\images\MedianFilter.png",FilteredImage)
+        self.ui.outputTab1.setPixmap(QPixmap(r".\images\MedianFilter.png"))
         return (FilteredImage)
 
     def LaplacianFilter(self,img,n):
         R,C = img.shape
         mask = [[0,-1,0],[-1,4,-1],[0,-1,0]]
-        newImage = np.zeros((R+n-1,C+n-1))
-        for i in range(1,R-2):
-            for j in range(1,C-2):
+        newImage = np.zeros((self.R,self.C))
+        for i in range(self.R-n//2):
+            for j in range(self.C-n//2):
                 newImage[i+1,j+1] = np.sum(np.sum(np.multiply(mask,img[i:i+n,j:j+n])))
         newImage *= 255.0 / newImage.max()
         cv2.imwrite(r"./images/LaplacianFilter.png",newImage)
@@ -183,13 +201,14 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def AvgFilter(self,img,n):
         R,C = img.shape
-        mask = np.ones((3,3),np.float32)/9
-        FilteredImage = np.zeros((R+n-1,C+n-1))
-        for i in range(1,R-2):
-            for j in range(1,C-2):
-                    FilteredImage[i+1,j+1] = np.sum(np.multiply(mask,img[i:i+n,j:j+n]))
-        cv2.imwrite(r"./images/AvgFilter.png",FilteredImage)
-        self.ui.outputTab1.setPixmap(QPixmap(r"./images/AvgFilter.png"))
+        n = 3
+        mask = np.ones((n,n),np.float32)/(n*n)
+        FilteredImage = np.zeros((self.R,self.C))
+        for i in range(self.R-n//2):
+            for j in range(self.C-n//2):
+                    FilteredImage[i,j] = np.sum(np.multiply(mask,img[i:i+n,j:j+n]))
+        cv2.imwrite(r".\images\AvgFilter.png",FilteredImage)
+        self.ui.outputTab1.setPixmap(QPixmap(r".\images\AvgFilter.png"))
         return (FilteredImage)
 
     def highFilter(self,img,n,maskX,maskY,file):
@@ -231,7 +250,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         else:
             self.image = cv2.imread(path)
             self.grayImg = self.rgb2gray(self.image)
-            cv2.imwrite("graylinda.png", self.grayImg)
+            cv2.imwrite(r"./images/grayPicture.png", self.grayImg)
             self.padded = self.padding(self.grayImg,self.n)
             if (tab == 1):
                 self.ui.inputTab1.setPixmap(QPixmap(path))
@@ -265,7 +284,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
                     histo = np.cumsum(histo)
                 self.ui.inputHistogram.plot(bins_edges[0:-1], histo, pen=color)
 
-
     def freqFilter(self, img, filterType):
         img_fshift = self.fourrier(img)
         # avg filter low pass fft
@@ -283,12 +301,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             paddedMask = self.paddingGeneral(img, mask, 3, 'b')
             maskFFT = self.fourrier(paddedMask)
             test = np.log(np.abs(maskFFT))
-            cv2.imwrite("maskfft.png", test)
+            cv2.imwrite(r"./images/maskfft.png", test)
             resultImg = maskFFT * img_fshift
             newImg = self.inverseFourrier(resultImg)
 
-        cv2.imwrite("fourrierTest.png", newImg)
-        self.ui.outputTab1.setPixmap(QPixmap("./fourrierTest.png"))
+        cv2.imwrite(r"./images/fourrierTest.png", newImg)
+        self.ui.outputTab1.setPixmap(QPixmap(r"./images/fourrierTest.png"))
 
         # self.ui.graphicsView.image(magnitude_spectrum)
         print("fft then send it to filter func")
