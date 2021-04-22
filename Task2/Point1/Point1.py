@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from scipy.ndimage.filters import convolve
 
-path = "./final.png"
+path = "./HoughCircles.jpg"
 
 
 def rgb2gray(rgb_image):

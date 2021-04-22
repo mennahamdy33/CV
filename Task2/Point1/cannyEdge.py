@@ -3,55 +3,12 @@ import numpy as np
 from scipy.ndimage.filters import convolve
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-path = "./emara.jpg"
+from collections import defaultdict
 
+path = "./Chess_Board.png"
 
-def hough_line(image):
-    # Get image dimensions
-    # y for rows and x for columns
-    Ny = image.shape[0]
-    Nx = image.shape[1]
-
-    # Max diatance is diagonal one
-    Maxdist = int(np.round(np.sqrt(Nx ** 2 + Ny ** 2)))
-
-    # 1. initialize parameter space rs, thetas
-    # Theta in range from -90 to 90 degrees
-    thetas = np.deg2rad(np.arange(-90, 90))
-    # Range of radius
-    rs = np.linspace(-Maxdist, Maxdist, 2 * Maxdist)
-
-    # 2. Create accumulator array and initialize to zero
-    accumulator = np.zeros((2 * Maxdist, len(thetas)))
-
-    # 3. Loop for each edge pixel
-    for y in range(Ny):
-        for x in range(Nx):
-            # Check if it is an edge pixel
-            #  NB: y -> rows , x -> columns
-            if image[y, x] > 0:
-                # 4. Loop for each theta
-                # Map edge pixel to hough space
-                for k in range(len(thetas)):
-                    # 5. calculate $\rho$
-                    # Calculate space parameter
-                    r = x * np.cos(thetas[k]) + y * np.sin(thetas[k])
-
-                    # 6. Increment accumulator at r, theta
-                    # Update the accumulator
-                    # N.B: r has value -max to max
-                    # map r to its idx 0 : 2*max
-                    accumulator[int(r) + Maxdist, k] += 1
-    return accumulator, thetas, rs
 def rgb2gray(rgb_image):
     return np.dot(rgb_image[..., :3], [0.299, 0.587, 0.114])
-
-
-def show(image):
-    cv2.imshow('sample image', image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
 
 def gaussian_kernel(size, sigma):
     size = int(size) // 2
@@ -59,7 +16,6 @@ def gaussian_kernel(size, sigma):
     normal = 1 / (2.0 * np.pi * sigma ** 2)
     g = np.exp(-((x ** 2 + y ** 2) / (2.0 * sigma ** 2))) * normal
     return g
-
 
 def gaussianFilter(img):
     n = 5
@@ -92,6 +48,7 @@ def highFilter(img,file):
     newImage *= 255.0 / newImage.max()
     cv2.imwrite("./oldSobel.png",newImage)
     return newImage,angles
+
 def sobel_filters(img):
     Kx = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], np.float32)
     Ky = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]], np.float32)
@@ -109,7 +66,6 @@ def sobel_filters(img):
     # show(G)
 
     return G, theta
-
 
 def non_max_suppression(img, D):
     M, N = img.shape
@@ -150,7 +106,6 @@ def non_max_suppression(img, D):
     # show(np.uint8(Z))
     return Z
 
-
 def threshold(img, lowThresholdRatio=0.05, highThresholdRatio=0.09):
     highThreshold = img.max() * highThresholdRatio
     lowThreshold = highThreshold * lowThresholdRatio
@@ -171,7 +126,6 @@ def threshold(img, lowThresholdRatio=0.05, highThresholdRatio=0.09):
 
     return res, weak, strong
 
-
 def hysteresis(img, weak, strong=255):
     M, N = img.shape
     for i in range(1, M - 1):
@@ -189,77 +143,72 @@ def hysteresis(img, weak, strong=255):
                     pass
     return img
 
+def hough_line(image):
 
-img = cv2.imread(path, 0)
-# rgbImg = cv2.imread(path)
-# grayImg = rgb2gray(rgbImg)
-# show(img)
-smoothedImg = gaussianFilter(img)
-# filteredImg = cv2.imread("./GaussianFilter.png",0)
-mg, angle = highFilter(smoothedImg, " ")
+    Ny = image.shape[0]
+    Nx = image.shape[1]
+    Maxdist = int(np.round(np.sqrt(Nx ** 2 + Ny ** 2)))
 
-nonMaxImg = non_max_suppression(mg, angle)
-thresh, weak, strong = threshold(nonMaxImg, 0.05, 0.09)
-img_final = hysteresis(thresh, weak, strong)
+    thetas = np.deg2rad(np.arange(-90, 90))
 
-cv2.imwrite("./final.png", img_final)
-hough_imgs =  hough_line(img_final)
-from collections import defaultdict
+    rs = np.linspace(-Maxdist, Maxdist, 2 * Maxdist)
 
+    accumulator = np.zeros((2 * Maxdist, len(thetas)))
+
+    for y in range(Ny):
+        for x in range(Nx):
+            if image[y, x] > 0:
+                for k in range(len(thetas)):
+                    r = x * np.cos(thetas[k]) + y * np.sin(thetas[k])
+                    accumulator[int(r) + Maxdist, k] += 1
+    return accumulator, thetas, rs
 
 def extract_lines(accumulator, thetas, rhos, percentile):
     lines = defaultdict()
     threshold = np.quantile(accumulator, percentile)
-    acc2 = np.zeros(accumulator.shape)
     for rho_idx in range(accumulator.shape[0]):
         for theta_idx in range(accumulator.shape[1]):
             if accumulator[rho_idx, theta_idx] > threshold:
                 theta = thetas[theta_idx]
                 rho = rhos[rho_idx]
-                # print (angle , rho , accumulator[angle_index , rho])
                 lines[(rho, theta)] = accumulator[rho_idx, theta_idx]
-                acc2[rho_idx, theta_idx] = accumulator[rho_idx, theta_idx]
-    return lines, acc2
+
+    return lines
 
 
 def show_lines(img, hough_img, percentile):
-    lines_img2, acc2_img2 = extract_lines(*hough_img, percentile)
-
-    fig = plt.figure(figsize=(20, 20))
-    gs = fig.add_gridspec(2, 2)
-    ax1 = fig.add_subplot(gs[0, 0])
-    ax2 = fig.add_subplot(gs[0, 1])
-    ax3 = fig.add_subplot(gs[1, :])
+    fig, ax = plt.subplots()
 
     acc, thetas, rhos = hough_img
 
-    limits = [rhos[0], rhos[-1], np.rad2deg(thetas[0]), np.rad2deg(thetas[-1])]
-    ax1.set_title('Hough Space')
-    ax1.imshow(acc, aspect='auto', extent=limits, cmap=cm.hot, interpolation='bilinear')
-    ax1.set_ylabel('Theta')
-    ax1.set_xlabel('Rho')
-    ax1.set_title('Hough')
+    lines = extract_lines(*hough_img, percentile)
 
-    lines, acc2 = extract_lines(*hough_img, percentile)
-    ax2.set_title('Hough Space (Processed)')
-    ax2.imshow(acc2, aspect='auto', extent=limits, cmap=cm.hot, interpolation='bilinear')
-    ax2.set_ylabel('Theta')
-    ax2.set_xlabel('Rho')
-
-    im = ax3.imshow(img)
-    ax3.set_title('Original Image /w lines')
-    ax3.autoscale(False)
+    ax.imshow(img)
+    ax.set_title('Original Image /w lines')
+    ax.autoscale(False)
 
     for (rho, theta), val in lines.items():
         a = np.cos(theta)
         b = np.sin(theta)
+        width = 1000
         x0 = a * rho
         y0 = b * rho
-        x1 = int(x0 + 1000 * (-b))
-        y1 = int(y0 + 1000 * (a))
-        x2 = int(x0 - 1000 * (-b))
-        y2 = int(y0 - 1000 * (a))
-        ax3.plot((x0, x1), (y0, y1), '-r')
+        x1 = int(x0 + width * (-b))
+        y1 = int(y0 + width * (a))
+        x2 = int(x0 - width * (-b))
+        y2 = int(y0 - width * (a))
+        ax.plot((x1, x2), (y1, y2), '-r')
 
     plt.show()
-show_lines(img, hough_imgs, 0.9995)
+
+rgbImg = cv2.imread(path)
+grayImg = rgb2gray(rgbImg)
+cv2.imwrite("./gray.png", grayImg)
+smoothedImg = gaussianFilter(grayImg)
+mg, angle = highFilter(smoothedImg, " ")
+nonMaxImg = non_max_suppression(mg, angle)
+thresh, weak, strong = threshold(nonMaxImg, 0.05, 0.09)
+img_final = hysteresis(thresh, weak, strong)
+cv2.imwrite("./final.png", img_final)
+hough_imgs =  hough_line(img_final)
+show_lines(rgbImg, hough_imgs, 0.9995)
