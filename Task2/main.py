@@ -3,6 +3,7 @@ from imageview import Ui_MainWindow
 import sys
 import numpy as np
 import cv2
+# import Point1.cannyEdge
 
 QPixmap = QtGui.QPixmap
 from pyqtgraph import PlotWidget, plot
