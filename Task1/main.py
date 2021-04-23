@@ -2,7 +2,6 @@ from PyQt5 import QtWidgets,QtGui
 from ImageView import Ui_MainWindow
 import sys
 import numpy as np
-import pandas as pd
 import cv2
 QPixmap = QtGui.QPixmap
 from pyqtgraph import PlotWidget, plot
