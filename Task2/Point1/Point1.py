@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from scipy.ndimage.filters import convolve
 
-path = "./HoughCircles.jpg"
+path = "./final.png"
 
 # menna add canny code heree
 
@@ -19,7 +19,7 @@ def detectCircles(img, threshold, region, radius):
 
     R = maxR - minR
     # Acc. array for the radius, X and Y
-    # Also appending a padding of 2 times maxR to overcome the problems of overflow!!
+    # Also appending a padding of 2 times maxR.
     A = np.zeros((maxR, M + 2 * maxR, N + 2 * maxR))
     B = np.zeros((maxR, M + 2 * maxR, N + 2 * maxR))
 
@@ -65,7 +65,9 @@ def displayCircles(A):
     for r, x, y in circleCoordinates:
         circle.append(plt.Circle((y, x), r, color=(1, 0, 0), fill=False))
         fig.add_subplot(111).add_artist(circle[-1])
-    plt.show()
+    # plt.show()
+    plt.axis('off')
+    plt.savefig('houghcircles.png',bbox_inches='tight', pad_inches = 0)
 
 
 res = detectCircles(img, 15, 15, [10, 60])

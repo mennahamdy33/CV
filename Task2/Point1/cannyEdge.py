@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from collections import defaultdict
 
-path = "./Chess_Board.png"
+path = "./final.png"
 
 def rgb2gray(rgb_image):
     return np.dot(rgb_image[..., :3], [0.299, 0.587, 0.114])
