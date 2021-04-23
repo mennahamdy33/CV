@@ -34,10 +34,10 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.gray.clicked.connect(lambda: self.getHistogram(self.grayImg, 'grey'))
         self.ui.color.clicked.connect(lambda: self.getHistogram(self.image, ' '))
         self.ui.cumcolor.clicked.connect(lambda: self.getHistogram(self.image, 'c'))
-        self.ui.CannyEdgeBtn.clicked.connect(self.cannyFilter)
+        #self.ui.CannyEdgeBtn.clicked.connect(self.cannyFilter)
 
-    def cannyFilter(self):
-        self.gaussianFilter(self.grayImg)
+    # def cannyFilter(self):
+    #     self.gaussianFilter(self.grayImg)
 
 
     def Hybrid(self):
