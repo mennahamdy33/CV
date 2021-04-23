@@ -28,11 +28,17 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.loadTab2.clicked.connect(lambda: self.getPicrures(2))
         self.ui.load1Tab3.clicked.connect(lambda: self.getPicrures(3))
         self.ui.load2tab3.clicked.connect(lambda: self.getPicrures(4))
+        self.ui.loadEdgeImg.clicked.connect(lambda: self.getPicrures(5))
         self.ui.hybrid1.clicked.connect(self.Hybrid)
         self.ui.set.clicked.connect(self.Normalization)
         self.ui.gray.clicked.connect(lambda: self.getHistogram(self.grayImg, 'grey'))
         self.ui.color.clicked.connect(lambda: self.getHistogram(self.image, ' '))
         self.ui.cumcolor.clicked.connect(lambda: self.getHistogram(self.image, 'c'))
+        self.ui.CannyEdgeBtn.clicked.connect(self.cannyFilter)
+
+    def cannyFilter(self):
+        self.gaussianFilter(self.grayImg)
+
 
     def Hybrid(self):
         imageSmoothed = self.gaussianFilter(self.LowCompImage)
@@ -266,8 +272,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             elif (tab == 4):
                 self.ui.input2Tab3.setPixmap(QPixmap(path))
                 self.HighCompImage = self.padded
-
-            # self.paddingGeneral(self.grayImg,[[1,1,1],[0,0,0],[-1,-1,-1]] , 3,'w')
+            elif (tab == 5):
+                self.ui.InputTab4.setPixmap(QPixmap(path))
 
     def getHistogram(self, img, type):
         if type == 'grey':
