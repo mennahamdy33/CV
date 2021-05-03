@@ -1,138 +1,98 @@
-# Shivam Chourey
-# Implementation of Harris Corner detection algorithm
-# This algoruthm is very useful in corner detection and is used in a number of applications
-# It's also used in algorithms like FAST and ORB(which uses FAST and BREIF)
-
+from PyQt5 import QtWidgets, QtGui
+from imageview import Ui_MainWindow
+import sys
 import numpy as np
 import cv2
-import glob
+import sift
+import time
+# import Point1.cannyEdge
+
+QPixmap = QtGui.QPixmap
+from pyqtgraph import PlotWidget, plot
+import pyqtgraph as pg
 
 
-# Kernel operation using input operator of size 3*3
-def GetSobel(image, Sobel, width, height):
-    # Initialize the matrix
-    I_d = np.zeros((width, height), np.float32)
+class ApplicationWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(ApplicationWindow, self).__init__()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+        self.n = 3
+        self.precent = 0.1
+        self.alpha = 0.8
+        self.minIntensity = 0
+        self.maxIntensity = 255
+        self.Th = 150
+        # self.ui.groupBox_2.hide()
+        # self.ui.selectTab1.activated.connect(self.chooseFilter)
+        self.ui.menuExit.triggered.connect(exit)
+        self.ui.loadTab1.clicked.connect(lambda: self.getPicrures(1))
+        self.ui.loadTab2.clicked.connect(lambda: self.getPicrures(2))
+        self.ui.load1Tab3.clicked.connect(lambda: self.getPicrures(3))
+        self.ui.load2tab3.clicked.connect(lambda: self.getPicrures(4))
+        self.ui.loadEdgeImg.clicked.connect(lambda: self.getPicrures(5))
+        self.ui.Load1Tab7.clicked.connect(lambda: self.getPicrures(7))
+        self.ui.Load2Tab7.clicked.connect(lambda: self.getPicrures(8))
+        self.ui.Match.clicked.connect(self.SIFT)
 
-    # For every pixel in the image
-    for rows in range(width):
-        for cols in range(height):
-            # Run the Sobel kernel for each pixel
-            if rows >= 1 or rows <= width-2 and cols >= 1 or cols <= height-2:
-                for ind in range(3):
-                    for ite in range(3):
-                        I_d[rows][cols] += Sobel[ind][ite] * image[rows - ind - 1][cols - ite - 1]
-            else:
-                I_d[rows][cols] = image[rows][cols]
+        # self.ui.hybrid1.clicked.connect(self.Hybrid)
+        # self.ui.set.clicked.connect(self.Normalization)
+        # self.ui.gray.clicked.connect(lambda: self.getHistogram(self.grayImg, 'grey'))
+        # self.ui.color.clicked.connect(lambda: self.getHistogram(self.image, ' '))
+        # self.ui.cumcolor.clicked.connect(lambda: self.getHistogram(self.image, 'c'))
+        #self.ui.CannyEdgeBtn.clicked.connect(self.cannyFilter)
 
-    return I_d
-
-
-# Method implements the Harris Corner Detection algorithm
-def HarrisCornerDetection(image):
-
-    # The two Sobel operators - for x and y direction
-    SobelX = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
-    SobelY = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
-
-    w, h = image.shape
-
-    # X and Y derivative of image using Sobel operator
-    ImgX = GetSobel(image, SobelX, w, h)
-    ImgY = GetSobel(image, SobelY, w, h)
-
-    # # Eliminate the negative values
-    # There are multiple ways this can be done
-    # 1. Off setting with a positive value (commented out below)
-    # 2. Setting negative values to Zero (commented out)
-    # 3. Multiply by -1 (implemented below, found most reliable method)
-    # ImgX += 128.0
-    # ImgY += 128.0
-    for ind1 in range(w):
-        for ind2 in range(h):
-            if ImgY[ind1][ind2] < 0:
-                ImgY[ind1][ind2] *= -1
-                # ImgY[ind1][ind2] = 0
-            if ImgX[ind1][ind2] < 0:
-                ImgX[ind1][ind2] *= -1
-                # ImgX[ind1][ind2] = 0
-
-    # # Display the output results after Sobel operations
-    # cv2.imshow("SobelX", ImgX)
-    # cv2.imshow("SobelY", ImgY)
-
-    ImgX_2 = np.square(ImgX)
-    ImgY_2 = np.square(ImgY)
-
-    ImgXY = np.multiply(ImgX, ImgY)
-    ImgYX = np.multiply(ImgY, ImgX)
-
-    #Use Gaussian Blur
-    Sigma = 1.4
-    kernelsize = (3, 3)
-
-    ImgX_2 = cv2.GaussianBlur(ImgX_2, kernelsize, Sigma)
-    ImgY_2 = cv2.GaussianBlur(ImgY_2, kernelsize, Sigma)
-    ImgXY = cv2.GaussianBlur(ImgXY, kernelsize, Sigma)
-    ImgYX = cv2.GaussianBlur(ImgYX, kernelsize, Sigma)
-    # print(ImgXY.shape, ImgYX.shape)
-
-    alpha = 0.06
-    R = np.zeros((w, h), np.float32)
-    # For every pixel find the corner strength
-    for row in range(w):
-        for col in range(h):
-            M_bar = np.array([[ImgX_2[row][col], ImgXY[row][col]], [ImgYX[row][col], ImgY_2[row][col]]])
-            R[row][col] = np.linalg.det(M_bar) - (alpha * np.square(np.trace(M_bar)))
-    return R
+    def SIFT(self):
+        start = time.time()
+        self.sift = sift.Sift(self.path1,self.path2)
+        output = self.sift.OutPut()
+        cv2.imwrite("./images/siftPicture.png", output)
+        self.ui.OutputTab7.setPixmap(QPixmap("./images/siftPicture.png"))
+        end = time.time()
+        timeNeeded = (end - start )/60 
+        timeNeeded = round(timeNeeded,2)
+        self.ui.TimeTab7.setText(str(timeNeeded))
 
 
-#### Main Program ####
-firstimage = cv2.imread("./images/cow.png",0)
+    def getPicrures(self, tab):
+        path, extention = QtWidgets.QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "")
+        if path == "":
+            pass
+        else:
+            # self.image = cv2.imread(path)
+            # self.grayImg = self.rgb2gray(self.image)
+            # cv2.imwrite(r"./images/grayPicture.png", self.grayImg)
+            # self.padded = self.padding(self.grayImg, self.n)
+            if (tab == 1):
+                self.ui.inputTab1.setPixmap(QPixmap(path))
+            elif (tab == 2):
+                self.ui.inputTab2.setPixmap(QPixmap(path))
+                # test image
 
-# Get the first image
-w, h = firstimage.shape
 
-# Covert image to color to draw colored circles on it
-bgr = cv2.cvtColor(firstimage, cv2.COLOR_GRAY2RGB)
+            elif (tab == 3):
+                self.ui.input1Tab3.setPixmap(QPixmap(path))
+                self.LowCompImage = self.padded
+            elif (tab == 4):
+                self.ui.input2Tab3.setPixmap(QPixmap(path))
+                self.HighCompImage = self.padded
+            elif (tab == 5):
+                self.ui.InputTab4.setPixmap(QPixmap(path))
+            elif (tab == 7):
+                self.ui.Input1Tab7.setPixmap(QPixmap(path))
+                self.path1 = path
+            elif (tab == 8):
+                self.ui.Input2Tab7.setPixmap(QPixmap(path))  
+                self.path2 = path      
 
-# Corner detection
-R = HarrisCornerDetection(firstimage)
 
-# Empirical Parameter
-# This parameter will need tuning based on the use-case
-CornerStrengthThreshold = 600000
+    
+def main():
+    app = QtWidgets.QApplication(sys.argv)
+    application = ApplicationWindow()
+    application.show()
+    app.exec_()
 
-# Plot detected corners on image
-radius = 1
-color = (0, 255, 0)  # Green
-thickness = 1
 
-PointList = []
-# Look for Corner strengths above the threshold
-for row in range(w):
-    for col in range(h):
-        if R[row][col] > CornerStrengthThreshold:
-            # print(R[row][col])
-            max = R[row][col]
-
-            # Local non-maxima suppression
-            skip = False
-            for nrow in range(5):
-                for ncol in range(5):
-                    if row + nrow - 2 < w and col + ncol - 2 < h:
-                        if R[row + nrow - 2][col + ncol - 2] > max:
-                            skip = True
-                            break
-
-            if not skip:
-                # Point is expressed in x, y which is col, row
-                cv2.circle(bgr, (col, row), radius, color, thickness)
-                PointList.append((row, col))
-
-# Display image indicating corners and save it
-cv2.imshow("Corners", bgr)
-outname = "Output_" + str(CornerStrengthThreshold) + ".png"
-cv2.imwrite(outname, bgr)
-
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+if __name__ == "__main__":
+    main()
