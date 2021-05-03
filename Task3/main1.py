@@ -56,7 +56,7 @@ def HarrisCornerDetection(image):
                 ImgX[ind1][ind2] *= -1
                 # ImgX[ind1][ind2] = 0
 
-    # # Display the output results after Sobel operations
+    # Display the output results after Sobel operations
     # cv2.imshow("SobelX", ImgX)
     # cv2.imshow("SobelY", ImgY)
 
@@ -85,22 +85,20 @@ def HarrisCornerDetection(image):
             R[row][col] = np.linalg.det(M_bar) - (alpha * np.square(np.trace(M_bar)))
     return R
 
+def rgb2gray(rgb_image):
+    return np.dot(rgb_image[..., :3], [0.299, 0.587, 0.114])
 
 #### Main Program ####
-firstimage = cv2.imread("./images/cow.png",0)
-
-# Get the first image
-w, h = firstimage.shape
-
-# Covert image to color to draw colored circles on it
-bgr = cv2.cvtColor(firstimage, cv2.COLOR_GRAY2RGB)
+firstimage = cv2.imread("./images/cow.png")
+greyimg = rgb2gray(firstimage)
+w, h = greyimg.shape
 
 # Corner detection
-R = HarrisCornerDetection(firstimage)
+R = HarrisCornerDetection(greyimg)
 
 # Empirical Parameter
 # This parameter will need tuning based on the use-case
-CornerStrengthThreshold = 600000
+CornerStrengthThreshold = 300000
 
 # Plot detected corners on image
 radius = 1
@@ -126,13 +124,13 @@ for row in range(w):
 
             if not skip:
                 # Point is expressed in x, y which is col, row
-                cv2.circle(bgr, (col, row), radius, color, thickness)
+                cv2.circle(firstimage, (col, row), radius, color, thickness)
                 PointList.append((row, col))
 
 # Display image indicating corners and save it
-cv2.imshow("Corners", bgr)
+cv2.imshow("Corners", firstimage)
 outname = "Output_" + str(CornerStrengthThreshold) + ".png"
-cv2.imwrite(outname, bgr)
+cv2.imwrite(outname, firstimage)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
