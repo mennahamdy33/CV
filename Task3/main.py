@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui,QtCore
 from imageview import Ui_MainWindow
 import sys
 import numpy as np
@@ -46,8 +46,10 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         start = time.time()
         self.sift = sift.Sift(self.path1,self.path2)
         output = self.sift.OutPut()
-        cv2.imwrite("./images/siftPicture.png", output)
-        self.ui.OutputTab7.setPixmap(QPixmap("./images/siftPicture.png"))
+        cv2.imwrite("./images/siftPicture.png",  cv2.cvtColor(output, cv2.COLOR_RGB2BGR))
+        w = self.ui.OutputTab7.width()
+        h = self.ui.OutputTab7.height()
+        self.ui.OutputTab7.setPixmap(QPixmap("./images/siftPicture.png").scaled(w,h,QtCore.Qt.KeepAspectRatio))
         end = time.time()
         timeNeeded = (end - start )/60 
         timeNeeded = round(timeNeeded,2)
@@ -79,10 +81,14 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             elif (tab == 5):
                 self.ui.InputTab4.setPixmap(QPixmap(path))
             elif (tab == 7):
-                self.ui.Input1Tab7.setPixmap(QPixmap(path))
+                w = self.ui.Input1Tab7.width()
+                h = self.ui.Input1Tab7.height()
+                self.ui.Input1Tab7.setPixmap(QPixmap(path).scaled(w,h,QtCore.Qt.KeepAspectRatio))
                 self.path1 = path
             elif (tab == 8):
-                self.ui.Input2Tab7.setPixmap(QPixmap(path))  
+                w = self.ui.Input2Tab7.width()
+                h = self.ui.Input2Tab7.height()
+                self.ui.Input2Tab7.setPixmap(QPixmap(path).scaled(w,h,QtCore.Qt.KeepAspectRatio))
                 self.path2 = path      
 
 

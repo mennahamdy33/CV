@@ -27,7 +27,7 @@ class Sift:
         self.imgs_gray = self.rgb2gray(self.img_rgb_used)
         self.img_sift = self.pipeline(self.imgs_gray)
         self.img2_rgb,_ = self.sift_resize(np.array(Image.open(Image2)), ratio )
-        self.img2_rgb = rotate(self.img2_rgb,90)
+        # self.img2_rgb = rotate(self.img2_rgb,90)
         self.imgs_gray2 = self.rgb2gray(self.img2_rgb)
         self.img_sift2 = self.pipeline(self.imgs_gray2)
         # outputImage = self.match(img_rgb_used, img_sift[0], img_sift[1], img2_rgb, img_sift2[0], img_sift2[1])
@@ -288,4 +288,5 @@ class Sift:
 
         cv2.drawMatches(img_a,pts_a,img_b,pts_b,good, outImg = img_match,
                     flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+                  
         return img_match
