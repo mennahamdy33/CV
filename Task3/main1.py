@@ -6,8 +6,22 @@
 import numpy as np
 import cv2
 import glob
+from scipy.ndimage.filters import convolve
+
+def gaussianFilter(grayImg):
+    n = 5
+    sigma = 1.4
+    kernel = gaussian_kernel(n, sigma)
+    img_smoothed = convolve(grayImg, kernel)
+    return img_smoothed
 
 
+def gaussian_kernel( size, sigma):
+    size = int(size) // 2
+    x, y = np.mgrid[-size:size + 1, -size:size + 1]
+    normal = 1 / (2.0 * np.pi * sigma ** 2)
+    g = np.exp(-((x ** 2 + y ** 2) / (2.0 * sigma ** 2))) * normal
+    return g
 # Kernel operation using input operator of size 3*3
 def GetSobel(image, Sobel, width, height):
     # Initialize the matrix
@@ -67,13 +81,11 @@ def HarrisCornerDetection(image):
     ImgYX = np.multiply(ImgY, ImgX)
 
     #Use Gaussian Blur
-    Sigma = 1.4
-    kernelsize = (3, 3)
 
-    ImgX_2 = cv2.GaussianBlur(ImgX_2, kernelsize, Sigma)
-    ImgY_2 = cv2.GaussianBlur(ImgY_2, kernelsize, Sigma)
-    ImgXY = cv2.GaussianBlur(ImgXY, kernelsize, Sigma)
-    ImgYX = cv2.GaussianBlur(ImgYX, kernelsize, Sigma)
+    ImgX_2 = gaussianFilter(ImgX_2)
+    ImgY_2 = gaussianFilter(ImgY_2)
+    ImgXY = gaussianFilter(ImgXY)
+    ImgYX = gaussianFilter(ImgYX)
     # print(ImgXY.shape, ImgYX.shape)
 
     alpha = 0.06
@@ -98,10 +110,10 @@ R = HarrisCornerDetection(greyimg)
 
 # Empirical Parameter
 # This parameter will need tuning based on the use-case
-CornerStrengthThreshold = 300000
+CornerStrengthThreshold = 3000000
 
 # Plot detected corners on image
-radius = 1
+radius = 2
 color = (0, 255, 0)  # Green
 thickness = 1
 
