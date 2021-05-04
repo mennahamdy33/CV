@@ -114,10 +114,8 @@ class Sift:
         return dog , octaves  
 
     def corners( self,dog , r = 10 ):
-        print(dog.shape)
         threshold = ((r + 1.0)**2)/r
         dx = np.array([-1,1]).reshape((1,2))
-        print(dx.shape)
         dy = dx.T
         dog_x = convolve2d( dog , dx , boundary='symm', mode='same' )
         dog_y = convolve2d( dog , dy , boundary='symm', mode='same' )
@@ -257,7 +255,6 @@ class Sift:
         img_max = input_img.max()
         dogs, octaves = self.image_dog( input_img )
         keypoints = self.dog_keypoints( dogs , img_max , 0.03 )
-        # print("hey")
         keypoints_ijso = self.dog_keypoints_orientations( octaves , keypoints , 36 )
         points,descriptors = self.extract_sift_descriptors128(octaves , keypoints_ijso , 8)
         return points, descriptors
