@@ -5,6 +5,10 @@ import numpy as np
 import cv2
 import sift
 import time
+import nms
+import importlib
+importlib.reload(nms)
+
 # import Point1.cannyEdge
 
 QPixmap = QtGui.QPixmap
@@ -55,6 +59,10 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         timeNeeded = round(timeNeeded,2)
         self.ui.TimeTab7.setText(str(timeNeeded))
 
+    
+    def templateMatching(self):
+        star = time.time()
+        
 
     def getPicrures(self, tab):
         path, extention = QtWidgets.QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "")
