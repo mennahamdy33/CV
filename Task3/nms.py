@@ -2,7 +2,7 @@
 import numpy as np
 import scipy.ndimage as ndimage
 import scipy.ndimage.filters as filters
-
+from scipy.signal import correlate2d
 
 def maximum_filter_ignore_nan(array, *args, **kwargs):
     nans = np.isnan(array)

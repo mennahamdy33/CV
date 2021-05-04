@@ -46,18 +46,18 @@ def match_template_xcorr( f , t ):
     return response
  
 
-imgs_dir = r'D:\CV\CV\Task3\images'
-imgs_names = ['cell.jpeg']
+imgs_dir = r'D:\CV\task#3'
+imgs_names = ['chess.png']
 imgs_fnames = [ join( imgs_dir, img_name) for img_name in imgs_names ]
 imgs_rgb = [ np.array(Image.open(img)) for img in imgs_fnames ]
 imgs_gray = [ rgb2gray( img ) for img in imgs_rgb ]
 
 print(imgs_gray[0])
-template = np.array(Image.open(r'D:\CV\CV\Task3\images\temp_cell.jpeg'))
+template = np.array(Image.open(r'D:\CV\CV\Task3\images\temp_chess.png'))
 templates = [rgb2gray(template)]
 fig, ax = plt.subplots(1,2,figsize = (15, 10))
-path1 = r"D:\CV\CV\Task3\images\cell.jpeg"
-path2 = r"D:\CV\CV\Task3\images\temp_cell.jpeg"
+path1 = r"D:\CV\task#3\chess.png"
+path2 = r"D:\CV\CV\Task3\images\temp_chess.png"
 image = cv2.imread(path1,1)
 h = cv2.imread(path2,0)
 
@@ -87,57 +87,41 @@ for i,(im,temp,mssd,mxcorr,pssd,pxcorr) in enumerate(patches):
         x, y = ij[::-1]
         # highlight matched region
         htemp, wtemp = temp.shape
-
         startX = int(x - wtemp/2)
         startY = int(y - htemp/2)
         endX = int(x + wtemp/2)
         endY = int(y + wtemp/2)
-        cv2.rectangle(image, (startX,startY),(endX, endY) , (255,255,255), 2)
+        print("get_rect_on_maximum")
+        cv2.rectangle(image, (startX,startY),(endX, endY) , (0,255,255), 2)
 
-        htemp, wtemp = template.shape
-        rect = plt.Rectangle((x-wtemp/2, y-htemp/2), wtemp, htemp, edgecolor='r', facecolor='none')
-        return rect,x,y
     
-    def make_rects(plt_object,xy,template):
+    def make_rects(xy,template):
         htemp, wtemp = template.shape
+        print("make_rects")
         for ridx in range(xy.shape[0]):
             y,x = xy[ridx]
-            r =  plt.Rectangle((x-wtemp/2, y-htemp/2), wtemp, htemp, edgecolor='g', facecolor='none')
+            # r =  plt.Rectangle((x-wtemp/2, y-htemp/2), wtemp, htemp, edgecolor='g', facecolor='none')
             startX = int(x - wtemp/2)
             startY = int(y - htemp/2)
             endX = int(x + wtemp/2)
             endY = int(y + wtemp/2)
             cv2.rectangle(image, (startX,startY),(endX, endY) , (255,255,255), 2)
 
-            plt_object.add_patch(r)
+       
     
-    def make_circles(plt_object,xy,template):
-        htemp, wtemp = template.shape
-        for ridx in range(xy.shape[0]):
-            y,x = xy[ridx]
-            plt_object.plot(x, y, 'o', markeredgecolor='g', markerfacecolor='none', markersize=10)
-            
+    print("for",i)
     
-    
-    
-    row = (methods_n+1)*i 
-    ax[row,0].imshow(im, cmap = 'gray')
-    ax[row,1].imshow(temp, cmap = 'gray')
+    get_rect_on_maximum( mssd ,temp)
+   
+    make_rects( pssd , temp )
 
-    r,x,y = get_rect_on_maximum(mssd,temp)
-    ax[row + 1,0].imshow(im, cmap = 'gray')
-    make_rects( ax[row + 1,0] , pssd, temp )
-    ax[row + 1,0].add_patch(r)
+    cv2.imwrite("D:\CV\CV\Task3\images\TestYarab1.jpeg", image)
     
-    r,x,y = get_rect_on_maximum(mxcorr,temp)
-    ax[row + 2,0].imshow(im, cmap = 'gray')
-    make_rects( ax[row + 2,0] , pxcorr, temp )
-    ax[row + 2,0].add_patch(r)
-    ax[row + 2,1].imshow(mxcorr, cmap = 'gray')
-    make_circles(ax[row + 2,1], pxcorr,temp)
-    ax[row + 2,1].plot(x, y, 'o', markeredgecolor='r', markerfacecolor='none', markersize=10)
-
+    get_rect_on_maximum(mxcorr,temp)
+   
+    make_rects( pxcorr, temp )
+  
     cv2.imwrite("D:\CV\CV\Task3\images\TestYarab.jpeg", image)
 
-plt.show()
+
 
