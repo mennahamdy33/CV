@@ -6,8 +6,22 @@
 import numpy as np
 import cv2
 import glob
+from scipy.ndimage.filters import convolve
+
+def gaussianFilter(grayImg):
+    n = 5
+    sigma = 1.4
+    kernel = gaussian_kernel(n, sigma)
+    img_smoothed = convolve(grayImg, kernel)
+    return img_smoothed
 
 
+def gaussian_kernel( size, sigma):
+    size = int(size) // 2
+    x, y = np.mgrid[-size:size + 1, -size:size + 1]
+    normal = 1 / (2.0 * np.pi * sigma ** 2)
+    g = np.exp(-((x ** 2 + y ** 2) / (2.0 * sigma ** 2))) * normal
+    return g
 # Kernel operation using input operator of size 3*3
 def GetSobel(image, Sobel, width, height):
     # Initialize the matrix
@@ -56,7 +70,7 @@ def HarrisCornerDetection(image):
                 ImgX[ind1][ind2] *= -1
                 # ImgX[ind1][ind2] = 0
 
-    # # Display the output results after Sobel operations
+    # Display the output results after Sobel operations
     # cv2.imshow("SobelX", ImgX)
     # cv2.imshow("SobelY", ImgY)
 
@@ -67,13 +81,11 @@ def HarrisCornerDetection(image):
     ImgYX = np.multiply(ImgY, ImgX)
 
     #Use Gaussian Blur
-    Sigma = 1.4
-    kernelsize = (3, 3)
 
-    ImgX_2 = cv2.GaussianBlur(ImgX_2, kernelsize, Sigma)
-    ImgY_2 = cv2.GaussianBlur(ImgY_2, kernelsize, Sigma)
-    ImgXY = cv2.GaussianBlur(ImgXY, kernelsize, Sigma)
-    ImgYX = cv2.GaussianBlur(ImgYX, kernelsize, Sigma)
+    ImgX_2 = gaussianFilter(ImgX_2)
+    ImgY_2 = gaussianFilter(ImgY_2)
+    ImgXY = gaussianFilter(ImgXY)
+    ImgYX = gaussianFilter(ImgYX)
     # print(ImgXY.shape, ImgYX.shape)
 
     alpha = 0.06
@@ -85,25 +97,23 @@ def HarrisCornerDetection(image):
             R[row][col] = np.linalg.det(M_bar) - (alpha * np.square(np.trace(M_bar)))
     return R
 
+def rgb2gray(rgb_image):
+    return np.dot(rgb_image[..., :3], [0.299, 0.587, 0.114])
 
 #### Main Program ####
-firstimage = cv2.imread("./images/cow.png",0)
-
-# Get the first image
-w, h = firstimage.shape
-
-# Covert image to color to draw colored circles on it
-bgr = cv2.cvtColor(firstimage, cv2.COLOR_GRAY2RGB)
+firstimage = cv2.imread("./images/cow.png")
+greyimg = rgb2gray(firstimage)
+w, h = greyimg.shape
 
 # Corner detection
-R = HarrisCornerDetection(firstimage)
+R = HarrisCornerDetection(greyimg)
 
 # Empirical Parameter
 # This parameter will need tuning based on the use-case
-CornerStrengthThreshold = 600000
+CornerStrengthThreshold = 3000000
 
 # Plot detected corners on image
-radius = 1
+radius = 2
 color = (0, 255, 0)  # Green
 thickness = 1
 
@@ -126,13 +136,13 @@ for row in range(w):
 
             if not skip:
                 # Point is expressed in x, y which is col, row
-                cv2.circle(bgr, (col, row), radius, color, thickness)
+                cv2.circle(firstimage, (col, row), radius, color, thickness)
                 PointList.append((row, col))
 
 # Display image indicating corners and save it
-cv2.imshow("Corners", bgr)
+cv2.imshow("Corners", firstimage)
 outname = "Output_" + str(CornerStrengthThreshold) + ".png"
-cv2.imwrite(outname, bgr)
+cv2.imwrite(outname, firstimage)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()

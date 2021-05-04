@@ -12,6 +12,10 @@ import matplotlib.pyplot as plt
 import random
 import cv2
 from matplotlib import cm
+# import numpy as np
+# import cv2
+import glob
+from scipy.ndimage.filters import convolve
 
 class Sift:
 
@@ -27,7 +31,7 @@ class Sift:
         self.imgs_gray = self.rgb2gray(self.img_rgb_used)
         self.img_sift = self.pipeline(self.imgs_gray)
         self.img2_rgb,_ = self.sift_resize(np.array(Image.open(Image2)), ratio )
-        # self.img2_rgb = rotate(self.img2_rgb,90)
+        self.img2_rgb = rotate(self.img2_rgb,90)
         self.imgs_gray2 = self.rgb2gray(self.img2_rgb)
         self.img_sift2 = self.pipeline(self.imgs_gray2)
         # outputImage = self.match(img_rgb_used, img_sift[0], img_sift[1], img2_rgb, img_sift2[0], img_sift2[1])
@@ -94,6 +98,7 @@ class Sift:
         octaves = []
         dog = []
         base = rescale( img, 2, anti_aliasing=False) 
+        # R = self.HarrisCornerDetection(dog)
         kernal = self.Kernal()
         octaves.append([ convolve2d( base , kernel , 'same', 'symm') 
                             for kernel in kernal ])
@@ -124,7 +129,9 @@ class Sift:
         
         coords = list(map( tuple , np.argwhere( response < threshold ).tolist() ))
         return coords  
+    
 
+    
     def contrast(self, dog , img_max, threshold = 0.03 ):
         dog_norm = dog / img_max
         coords = list(map( tuple , np.argwhere( np.abs( dog_norm ) > threshold ).tolist() ))
