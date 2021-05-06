@@ -45,6 +45,9 @@ def match_template_xcorr( f , t ):
     response[valid] = numerator[valid]/denumerator[valid]
     return response
  
+np.mean(np.multiply((img1-np.mean(img1)),(img2-np.mean(img2))))/(np.std(img1)*np.std(img2))
+
+
 
 imgs_dir = r'D:\CV\task#3'
 imgs_names = ['chess.png']

@@ -65,20 +65,16 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         start = time.time()
         self.sift = sift.Sift(self.path1,self.path2)
         output = self.sift.OutPut()
-        cv2.imwrite("./images/siftPicture.png",  cv2.cvtColor(output, cv2.COLOR_RGB2BGR))
+        cv2.imwrite("D:\CV\CV\Task3\images\siftPicture.png",  cv2.cvtColor(output, cv2.COLOR_RGB2BGR))
         w = self.ui.OutputTab7.width()
         h = self.ui.OutputTab7.height()
-        self.ui.OutputTab7.setPixmap(QPixmap("./images/siftPicture.png").scaled(w,h,QtCore.Qt.KeepAspectRatio))
+        self.ui.OutputTab7.setPixmap(QPixmap("D:\CV\CV\Task3\images\siftPicture.png").scaled(w,h,QtCore.Qt.KeepAspectRatio))
         end = time.time()
         timeNeeded = (end - start )/60 
         timeNeeded = round(timeNeeded,2)
         self.ui.TimeTab7.setText(str(timeNeeded))
 
-    # def Correlation(self):
-
-    # def templateMatching(self):
-    #     star = time.time()
-
+  
 
     def SSD(self):
         start = time.time()

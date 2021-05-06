@@ -38,7 +38,7 @@ class Sift:
         # return (outputImage)
     
     def OutPut(self):
-        outputImage = self.match(self.img_rgb_used, self.img_sift[0], self.img_sift[1], self.img2_rgb, self.img_sift2[0], self.img_sift2[1])
+        outputImage = self.match2(self.img_rgb_used, self.img_sift[0], self.img_sift[1], self.img2_rgb, self.img_sift2[0], self.img_sift2[1])
         return (outputImage)
 
     def Kernal(self):
@@ -263,12 +263,10 @@ class Sift:
         
         opencv_kp_list = []
         for kp in kp_list:
-            opencv_kp = cv2.KeyPoint(x=kp[1] * (2**(kp[2]-1)),
-                                    y=kp[0] * (2**(kp[2]-1)),
-                                    _size=kp[3],
-                                    _angle=kp[4]
-                                    )
-            opencv_kp_list += [opencv_kp]
+            k = cv2.KeyPoint()
+            k.pt = (float(kp[0]), float(kp[1]))
+            k.angle = float(kp[2])
+            opencv_kp_list += [k]
 
         return opencv_kp_list        
 
@@ -290,10 +288,146 @@ class Sift:
         for m,n in matches:
             if m.distance < 0.25*n.distance:
                 good.append(m)
-
+        print(matches)
         img_match = np.empty((max(img_a.shape[0], img_b.shape[0]), img_a.shape[1] + img_b.shape[1], 3), dtype=np.uint8)
 
         cv2.drawMatches(img_a,pts_a,img_b,pts_b,good, outImg = img_match,
                     flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-                  
+        
         return img_match
+
+    def match2(self, img_a, pts_a, desc1, img_b, pts_b, desc2):
+            img_a, img_b = tuple(map( lambda i: np.uint8(i*255), [img_a,img_b] ))
+        
+            desc1 = np.array(desc1)
+            desc2 = np.array(desc2)
+            
+            assert desc1.ndim == 2
+   
+            assert desc2.ndim == 2
+         
+            assert desc1.shape[1] == desc2.shape[1]
+
+            if desc1.shape[0] == 0 or desc2.shape[0] == 0:
+                return []
+
+            numKeyPoints1 = desc1.shape[0]
+            numKeyPoints2 = desc2.shape[0]
+            matches = []
+            good = []
+            pts_a = self.kp_list_2_opencv_kp_list(pts_a)
+            pts_b = self.kp_list_2_opencv_kp_list(pts_b)
+            i = 0
+
+
+          
+            # for x in range(numKeyPoints1):
+            #     distance = -1
+            #     y_ind = -1
+            #     for y in range(numKeyPoints2):
+            #         sumSquare = 0
+            #         for m in xrange(desc1.shape[1]):
+            #             sumSquare += (desc1[x][m] - desc2[y][m]) **2
+            #         sumSquare = np.sqrt(sumSquare)
+            #         if distance < 0 or (sumSquare < distance and distance >=0):
+            #             distance = sumSquare
+            #             y_ind = y
+            
+            #     cur = cv2.DMatch()
+            #     cur.queryIdx = x
+            #     cur.trainIdx = y_ind
+            #     cur.distance = distance1 /distance2
+            #     matches.append(cur)
+            #     if (cur.distance < 0.2 ):
+            #         good.append(cur)
+            #         i+=1
+           
+            for x in range(numKeyPoints1):
+                distance = -1
+                y_ind = -1
+                mean_desc1 = np.mean(desc1[x])
+                std_desc1 = np.std(desc1[x])
+               
+                for y in range(numKeyPoints2):
+                    mean_desc2 = np.mean(desc2[y])
+                    std_desc2 = np.std(desc2[y])
+                    ncorr = 0
+                    for m in range(desc1.shape[1]):
+                        result = np.mean((desc1[x][m]-mean_desc1)*(desc2[y][m] - mean_desc2))
+                        ncorr += (result/(std_desc1*std_desc2))
+                        
+                    if distance < 0 or (ncorr < distance and distance >=0):
+                        distance = ncorr
+                        y_ind = y
+            
+                cur = cv2.DMatch()
+                cur.queryIdx = x
+                cur.trainIdx = y_ind
+                cur.distance = distance
+                matches.append(cur)
+                if (cur.distance < 0.2 ):
+                    good.append(cur)
+                    i+=1
+                    print(i)
+           
+            # img_match = np.empty((max(img_a.shape[0], img_b.shape[0]), img_a.shape[1] + img_b.shape[1], 3), dtype=np.uint8)
+            
+            print(len(good))
+            cv2.imwrite("D:\CV\CV\Task3\images\output1"+".jpeg", img_a)
+            cv2.imwrite("D:\CV\CV\Task3\images\output2"+".jpeg", img_b)
+           
+            
+            output = self.drawMatches(img_a, pts_a, img_b, pts_b, good)    
+            print("d5lt draw")
+            return output
+
+  
+    def concatImages(self, imgs):
+        # Skip Nones
+        imgs = [img for img in imgs if img is not None]
+        maxh = max([img.shape[0] for img in imgs]) if imgs else 0
+        sumw = sum([img.shape[1] for img in imgs]) if imgs else 0
+        vis = np.zeros((maxh, sumw, 3), np.uint8)
+        vis.fill(255)
+        accumw = 0
+        for img in imgs:
+            h, w = img.shape[:2]
+            vis[:h, accumw:accumw+w, :] = img
+            accumw += w
+
+        return vis
+
+        
+    def drawMatches(self, img1, kp1, img2, kp2, matches):
+        h1, w1 = img1.shape[:2]
+        h2, w2 = img2.shape[:2]
+
+        vis = self.concatImages([img1, img2])
+
+        kp_pairs = [[kp1[m.queryIdx], kp2[m.trainIdx]] for m in matches]
+        status = np.ones(len(kp_pairs), np.bool_)
+        p1 = np.int32([kpp[0].pt for kpp in kp_pairs])
+        p2 = np.int32([kpp[1].pt for kpp in kp_pairs]) + (w1, 0)
+
+        green = (0, 255, 0)
+        red = (0, 0, 255)
+        white = (255, 255, 255)
+        kp_color = (51, 103, 236)
+        for (x1, y1), (x2, y2), inlier in zip(p1, p2, status):
+            if inlier:
+                cv2.circle(vis, (x1, y1), 5, green, 2)
+                cv2.circle(vis, (x2, y2), 5, green, 2)
+            else:
+                r = 5
+                thickness = 6
+                cv2.line(vis, (x1-r, y1-r), (x1+r, y1+r), red, thickness)
+                cv2.line(vis, (x1-r, y1+r), (x1+r, y1-r), red, thickness)
+                cv2.line(vis, (x2-r, y2-r), (x2+r, y2+r), red, thickness)
+                cv2.line(vis, (x2-r, y2+r), (x2+r, y2-r), red, thickness)
+        for (x1, y1), (x2, y2), inlier in zip(p1, p2, status):
+            if inlier:
+                cv2.line(vis, (x1, y1), (x2, y2), white)
+
+        return vis
+
+  
