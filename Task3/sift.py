@@ -128,6 +128,7 @@ class Sift:
         response = ( tr**2 +10e-8) / (det+10e-8)
         
         coords = list(map( tuple , np.argwhere( response < threshold ).tolist() ))
+        print(coords)
         return coords  
     
 
@@ -214,6 +215,86 @@ class Sift:
 
         return cv2.warpAffine(image,mapping,(width, height),flags=cv2.INTER_NEAREST+cv2.WARP_INVERSE_MAP,borderMode=cv2.BORDER_CONSTANT)
     
+    def box_filter(self,f):
+        kernel = np.ones((f,f)) / (f**2)
+        return kernel
+
+    # def corners(self,image):
+        
+        
+    #     smothed_image = signal.convolve2d(image, self.gaussian_kernel2d(7,1) ,'same')
+    #     Ix =  cv2.Sobel(smothed_image,cv2.CV_64F,1,0,ksize=3)
+    #     Iy = cv2.Sobel(smothed_image,cv2.CV_64F,0,1,ksize=3)
+    #     Ixx =  np.multiply( Ix, Ix) 
+    #     Iyy =  np.multiply( Iy, Iy)
+    #     Ixy =  np.multiply( Ix, Iy)
+    #     Ixx_hat = signal.convolve2d( Ixx , self.box_filter(3) ,'same') 
+    #     Iyy_hat = signal.convolve2d( Iyy , self.box_filter(3) ,'same') 
+    #     Ixy_hat = signal.convolve2d( Ixy , self.box_filter(3) ,'same')
+    #     k = 0.04
+    #     detM = np.multiply(Ixx_hat,Iyy_hat) - np.multiply(Ixy_hat,Ixy_hat) 
+    #     trM = Ixx_hat + Iyy_hat
+    #     R = detM - (k * (trM**2))
+    #     corners = R > 0.01*R.max()
+    #     points_x = np.where(corners==True)[0].reshape(len(np.where(corners==True)[0]),-1)
+    #     points_y = np.where(corners==True)[1].reshape(len(np.where(corners==True)[1]),-1)
+    #     points = np.concatenate((points_x,points_y),axis = 1)
+    #     points = list(points)
+        
+    #     return points
+
+    def Oriantation(self,img , points, num_bins):
+    #     print(img.shape)
+        orintation = []
+        gx,gy,magnitude,direction = self.sift_gradient(img)
+        for i in range(len(points)):
+            orintation.append(direction[points[i][0]][points[i][1]])
+        return orintation
+
+    # def extract_sift_descriptors128(self, img_gaussians, keypoints, oriant, num_bins = 8 ):
+    #     print(len(keypoints))
+    #     descriptors = []; points = [];  data = {} # 
+    # #     print(len(keypoints))
+            
+    #     count =0 
+    #     for (i,j) in keypoints:
+            
+                        
+
+    #         # data['kernel'] = gaussian_kernel2d(std = 1.5, kernlen = 16)
+    # #         print(data['kernel'])
+    #         gx,gy,magnitude,direction = self.sift_gradient(img_gaussians)
+    #         data['magnitude'] = magnitude
+    #         data['direction'] = direction
+
+    #         window_mag = self.rotated_subimage(data['magnitude'],(j,i), oriant[count], 16,16)
+    #         # window_mag = window_mag * data['kernel']
+    #         window_dir = self.rotated_subimage(data['direction'],(j,i), oriant[count], 16,16)
+    #         window_dir = (((window_dir - oriant[count]) % 360) * num_bins / 360.).astype(int)
+            
+    #         features = []
+    #         for sub_i in range(4):
+    # #             print("hal ana dakhlt hena?")
+    #             for sub_j in range(4):
+    # #                 print("ayb w hena?")
+    #                 sub_weights = window_mag[sub_i*4:(sub_i+1)*4, sub_j*4:(sub_j+1)*4]
+    #                 sub_dir_idx = window_dir[sub_i*4:(sub_i+1)*4, sub_j*4:(sub_j+1)*4]
+    #                 hist = np.zeros(num_bins, dtype=np.float32)
+    #                 for bin_idx in range(num_bins):
+    # #                     print("m3lesh w henaaaaaaaa?")
+    #                     hist[bin_idx] = np.sum( sub_weights[ sub_dir_idx == bin_idx ] )
+    #                 features.extend( hist.tolist())
+    #         features = np.array(features) 
+    #         features /= (np.linalg.norm(features))
+    #         np.clip( features , np.finfo(np.float16).eps , 0.2 , out = features )
+    #         assert features.shape[0] == 128, "features missing!"
+    #         features /= (np.linalg.norm(features))
+    #         descriptors.append(features)
+    #         points.append( (i ,j ,oriant[count]))
+    #         count = count +1
+    #         print(count)
+    #     return points , descriptors
+
     def extract_sift_descriptors128(self, img_gaussians, keypoints, num_bins = 8 ):
         descriptors = []; points = [];  data = {} # 
         for (i,j,oct_idx,scale_idx, orientation) in keypoints:
@@ -259,25 +340,95 @@ class Sift:
         points,descriptors = self.extract_sift_descriptors128(octaves , keypoints_ijso , 8)
         return points, descriptors
     
-    def kp_list_2_opencv_kp_list(self, kp_list):
+    # def pipeline( self, input_img ):
+    #     img_max = input_img.max()
+    #     print("1")
+    #     corner = self.corners(input_img)
+    #     print("2")
+    #     orintation = self.Oriantation( input_img , corner ,8)
+    #     print("3")
+    #     points,descriptors = self.extract_sift_descriptors128(input_img , corner ,orintation , 8)
+    #     print("4")
+    #     return points, descriptors
+
+    # def kp_list_2_opencv_kp_list(self, kp_list):
         
+    #     opencv_kp_list = []
+    #     for kp in kp_list:
+    #         k = cv2.KeyPoint()
+    #         k.pt = (float(kp[0]), float(kp[1]))
+    #         k.angle = float(kp[2])
+    #         opencv_kp_list += [k]
+
+    #     return opencv_kp_list
+
+    def kp_list_2_opencv_kp_list(self,kp_list):
+        # print(kp_list)
+
+
         opencv_kp_list = []
         for kp in kp_list:
-            k = cv2.KeyPoint()
-            k.pt = (float(kp[0]), float(kp[1]))
-            k.angle = float(kp[2])
-            opencv_kp_list += [k]
+            opencv_kp = cv2.KeyPoint(x=kp[1] * (2**(kp[2]-1)),
+                                        y=kp[0] * (2**(kp[2]-1)),
+                                        _size=kp[3],
+                                        _angle=kp[4]
+    #                                  _response=kp[IDX_RESPONSE],
+    #                                  _octave=np.int32(kp[2]),
+                                    # _class_id=np.int32(kp[IDX_CLASSID])
+                                    )
+            opencv_kp_list += [opencv_kp]
 
-        return opencv_kp_list        
+        return opencv_kp_list    
 
-    def match(self, img_a, pts_a, desc_a, img_b, pts_b, desc_b):
+    # def match(self, img_a, pts_a, desc_a, img_b, pts_b, desc_b):
+    #     img_a, img_b = tuple(map( lambda i: np.uint8(i*255), [img_a,img_b] ))
+        
+    #     desc_a = np.array( desc_a , dtype = np.float32 )
+    #     desc_b = np.array( desc_b , dtype = np.float32 )
+
+    #     pts_a = self.kp_list_2_opencv_kp_list(pts_a)
+    #     pts_b = self.kp_list_2_opencv_kp_list(pts_b)
+
+    #     # create BFMatcher object
+    #     # BFMatcher with default params
+    #     bf = cv2.BFMatcher()
+    #     matches = bf.knnMatch(desc_a,desc_b,k=2)
+    #     # Apply ratio test
+    #     good = []
+    #     for m,n in matches:
+    #         if m.distance < 0.25*n.distance:
+    #             good.append(m)
+
+    #     img_match = np.empty((max(img_a.shape[0], img_b.shape[0]), img_a.shape[1] + img_b.shape[1], 3), dtype=np.uint8)
+
+    #     cv2.drawMatches(img_a,pts_a,img_b,pts_b,good, outImg = img_match,
+    #                 flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+                  
+    #     return img_match
+
+
+    def match(self, img_a, pts_a, desc1, img_b, pts_b, desc2):
         img_a, img_b = tuple(map( lambda i: np.uint8(i*255), [img_a,img_b] ))
         
-        desc_a = np.array( desc_a , dtype = np.float32 )
-        desc_b = np.array( desc_b , dtype = np.float32 )
+        desc1 = np.array(desc1)
+        desc2 = np.array(desc2)
+        
+        assert desc1.ndim == 2
 
+        assert desc2.ndim == 2
+        
+        assert desc1.shape[1] == desc2.shape[1]
+
+        if desc1.shape[0] == 0 or desc2.shape[0] == 0:
+            return []
+
+        numKeyPoints1 = desc1.shape[0]
+        numKeyPoints2 = desc2.shape[0]
+        matches = []
+        good = []
         pts_a = self.kp_list_2_opencv_kp_list(pts_a)
         pts_b = self.kp_list_2_opencv_kp_list(pts_b)
+        i = 0
 
         # create BFMatcher object
         # BFMatcher with default params
@@ -381,6 +532,10 @@ class Sift:
             print("d5lt draw")
             return output
 
+       
+        # img_match = np.empty((max(img_a.shape[0], img_b.shape[0]), img_a.shape[1] + img_b.shape[1], 3), dtype=np.uint8)
+       
+
   
     def concatImages(self, imgs):
         # Skip Nones
@@ -401,9 +556,10 @@ class Sift:
     def drawMatches(self, img1, kp1, img2, kp2, matches):
         h1, w1 = img1.shape[:2]
         h2, w2 = img2.shape[:2]
-
+        cv2.imwrite("./images/Khara1.png",  cv2.cvtColor(img1, cv2.COLOR_RGB2BGR))
+        cv2.imwrite("./images/Khara2.png",  cv2.cvtColor(img2, cv2.COLOR_RGB2BGR))
         vis = self.concatImages([img1, img2])
-
+        cv2.imwrite("./images/Khara.png",  cv2.cvtColor(vis, cv2.COLOR_RGB2BGR))
         kp_pairs = [[kp1[m.queryIdx], kp2[m.trainIdx]] for m in matches]
         status = np.ones(len(kp_pairs), np.bool_)
         p1 = np.int32([kpp[0].pt for kpp in kp_pairs])
@@ -426,8 +582,6 @@ class Sift:
                 cv2.line(vis, (x2-r, y2+r), (x2+r, y2-r), red, thickness)
         for (x1, y1), (x2, y2), inlier in zip(p1, p2, status):
             if inlier:
-                cv2.line(vis, (x1, y1), (x2, y2), white)
+                cv2.line(vis, (x1, y1), (x2, y2), red)
 
-        return vis
-
-  
+        return vis        
