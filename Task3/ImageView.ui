@@ -27,7 +27,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>7</number>
       </property>
       <widget class="QWidget" name="filter">
        <attribute name="title">
@@ -1355,6 +1355,75 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QPushButton" name="SIFTTab8">
+              <property name="minimumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>SIFT</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="correlationTab8">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Correlation</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="ssdTab8">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>SSD</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item>
@@ -1435,8 +1504,8 @@
             <widget class="QLabel" name="label_9">
              <property name="geometry">
               <rect>
-               <x>20</x>
-               <y>100</y>
+               <x>10</x>
+               <y>80</y>
                <width>121</width>
                <height>31</height>
               </rect>
@@ -1466,7 +1535,7 @@
             <widget class="QLabel" name="timeTab8">
              <property name="geometry">
               <rect>
-               <x>20</x>
+               <x>10</x>
                <y>150</y>
                <width>100</width>
                <height>31</height>
@@ -1497,66 +1566,107 @@
               <string/>
              </property>
             </widget>
-            <widget class="QPushButton" name="correlationTab8">
+            <widget class="QLabel" name="label">
              <property name="geometry">
               <rect>
-               <x>10</x>
-               <y>220</y>
+               <x>20</x>
+               <y>110</y>
                <width>121</width>
-               <height>111</height>
+               <height>31</height>
               </rect>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
              </property>
              <property name="minimumSize">
               <size>
                <width>121</width>
-               <height>111</height>
+               <height>31</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
                <width>121</width>
-               <height>111</height>
+               <height>31</height>
               </size>
              </property>
              <property name="text">
-              <string>Correlation</string>
+              <string>SIFT</string>
              </property>
             </widget>
-            <widget class="QPushButton" name="ssdTab8">
+            <widget class="QLabel" name="label_4">
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>360</y>
+               <y>280</y>
                <width>121</width>
-               <height>111</height>
+               <height>31</height>
               </rect>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
              </property>
              <property name="minimumSize">
               <size>
                <width>121</width>
-               <height>111</height>
+               <height>31</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
                <width>121</width>
-               <height>111</height>
+               <height>31</height>
               </size>
              </property>
              <property name="text">
-              <string>SSD</string>
+              <string>Matching</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_7">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>240</y>
+               <width>121</width>
+               <height>31</height>
+              </rect>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>121</width>
+               <height>31</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>121</width>
+               <height>31</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Time(Min):</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="timeMatchTab8">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>320</y>
+               <width>100</width>
+               <height>31</height>
+              </rect>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>31</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>31</height>
+              </size>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::Box</enum>
+             </property>
+             <property name="text">
+              <string/>
              </property>
             </widget>
            </widget>

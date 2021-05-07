@@ -44,14 +44,14 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.load1Tab3.clicked.connect(lambda: self.getPicrures(3))
         self.ui.load2tab3.clicked.connect(lambda: self.getPicrures(4))
         self.ui.loadEdgeImg.clicked.connect(lambda: self.getPicrures(5))
-        self.ui.Load1Tab7.clicked.connect(lambda: self.getPicrures(7))
-        self.ui.Load2Tab7.clicked.connect(lambda: self.getPicrures(8))
-        self.ui.load1Tab8.clicked.connect(lambda: self.getPicrures(9))
-        self.ui.load2Tab8.clicked.connect(lambda: self.getPicrures(10))
+        # self.ui.Load1Tab7.clicked.connect(lambda: self.getPicrures(7))
+        # self.ui.Load2Tab7.clicked.connect(lambda: self.getPicrures(8))
+        self.ui.load1Tab8.clicked.connect(lambda: self.getPicrures(7))
+        self.ui.load2Tab8.clicked.connect(lambda: self.getPicrures(8))
         
-        self.ui.Match.clicked.connect(self.SIFT)
-        self.ui.correlationTab8.clicked.connect(self.Correlation)
-        self.ui.ssdTab8.clicked.connect(self.SSD)
+        self.ui.SIFTTab8.clicked.connect(self.SIFT)
+        self.ui.correlationTab8.clicked.connect(lambda:self.TemplateMatching(1))
+        self.ui.ssdTab8.clicked.connect(lambda:self.TemplateMatching(0))
         
 
         # self.ui.hybrid1.clicked.connect(self.Hybrid)
@@ -63,86 +63,100 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def SIFT(self):
         start = time.time()
+        # print(start)
         self.sift = sift.Sift(self.path1,self.path2)
-        output = self.sift.OutPut()
-        cv2.imwrite("./images/siftPicture.png",  cv2.cvtColor(output, cv2.COLOR_RGB2BGR))
-        w = self.ui.OutputTab7.width()
-        h = self.ui.OutputTab7.height()
-        self.ui.OutputTab7.setPixmap(QPixmap("./images/siftPicture.png").scaled(w,h,QtCore.Qt.KeepAspectRatio))
+        # output = self.sift.OutPut()
+        # cv2.imwrite("./images/siftPicture.png",  cv2.cvtColor(output, cv2.COLOR_RGB2BGR))
+        # w = self.ui.OutputTab7.width()
+        # h = self.ui.OutputTab7.height()
+        # self.ui.OutputTab7.setPixmap(QPixmap("./images/siftPicture.png").scaled(w,h,QtCore.Qt.KeepAspectRatio))
+        done = self.sift.sift_timing()
+        # print(done)
         end = time.time()
+        # print(start)
         timeNeeded = (end - start )/60 
         timeNeeded = round(timeNeeded,2)
-        self.ui.TimeTab7.setText(str(timeNeeded))
+        self.ui.timeTab8.setText(str(timeNeeded))
 
     # def Correlation(self):
 
     # def templateMatching(self):
     #     star = time.time()
 
-
-    def SSD(self):
+    def TemplateMatching(self,flag):
         start = time.time()
-        matches_ssd = nms.match_template_ssd(self.original_gray,self.Template)
-        matches_ssd_maxima = nms.local_maxima(self.original_gray,min(self.Template.shape)) 
-        self.plot(matches_ssd,matches_ssd_maxima,self.original_RGB,1)
+        self.output = self.sift.OutPut(flag)
         end = time.time()
+        w = self.ui.output1Tab8.width()
+        h = self.ui.output2Tab8.height()
+        self.outputTabs[flag].setPixmap(QPixmap("./images/M"+str(flag)+".png").scaled(w,h,QtCore.Qt.KeepAspectRatio))
         timeNeeded = (end - start )/60 
         timeNeeded = round(timeNeeded,2)
-        self.ui.timeTab8.setText(str(timeNeeded))
+        self.ui.timeMatchTab8.setText(str(timeNeeded))
+
+    # def SSD(self):
+    #     start = time.time()
+    #     matches_ssd = nms.match_template_ssd(self.original_gray,self.Template)
+    #     matches_ssd_maxima = nms.local_maxima(self.original_gray,min(self.Template.shape)) 
+    #     self.plot(matches_ssd,matches_ssd_maxima,self.original_RGB,1)
+    #     end = time.time()
+    #     timeNeeded = (end - start )/60 
+    #     timeNeeded = round(timeNeeded,2)
+    #     self.ui.timeTab8.setText(str(timeNeeded))
     
-    def Correlation(self):
-        start = time.time()
-        grayImg = np.array(self.original_gray)
-        grayImg = np.array(self.original_gray)
-        tempGray = np.array(self.Template)
+    # def Correlation(self):
+    #     start = time.time()
+    #     grayImg = np.array(self.original_gray)
+    #     grayImg = np.array(self.original_gray)
+    #     tempGray = np.array(self.Template)
 
-        matches_xcorr = nms.match_template_ssd(grayImg,tempGray)
-        matches_xcorr_maxima = nms.local_maxima(grayImg,min(tempGray.shape)) 
-        self.plot(matches_xcorr,matches_xcorr_maxima,self.original_RGB,2)
-        end = time.time()
-        timeNeeded = (end - start )/60 
-        timeNeeded = round(timeNeeded,2)
-        self.ui.timeTab8.setText(str(timeNeeded))
+    #     matches_xcorr = nms.match_template_ssd(grayImg,tempGray)
+    #     matches_xcorr_maxima = nms.local_maxima(grayImg,min(tempGray.shape)) 
+    #     self.plot(matches_xcorr,matches_xcorr_maxima,self.original_RGB,2)
+    #     end = time.time()
+    #     timeNeeded = (end - start )/60 
+    #     timeNeeded = round(timeNeeded,2)
+    #     self.ui.timeTab8.setText(str(timeNeeded))
       
 
-    def plot(self,match,MaximaMatch,image,flag):
-        temp = np.array(self.Template)
-        imgs_gray = self.original_gray
-        patches = zip([imgs_gray],[temp],[match],[MaximaMatch])
-        for i,(img,temp,mssd,pssd) in enumerate (patches):
-            def get_rect_on_maximum(y,template):
-                ij = np.unravel_index(np.argmax(y), y.shape)
-                x, y = ij[::-1]
-                # highlight matched region
-                htemp, wtemp = temp.shape
+    # def plot(self,match,MaximaMatch,image,flag):
+    #     temp = np.array(self.Template)
+    #     imgs_gray = self.original_gray
+    #     patches = zip([imgs_gray],[temp],[match],[MaximaMatch])
+    #     for i,(img,temp,mssd,pssd) in enumerate (patches):
+    #         def get_rect_on_maximum(y,template):
+    #             ij = np.unravel_index(np.argmax(y), y.shape)
+    #             x, y = ij[::-1]
+    #             # highlight matched region
+    #             htemp, wtemp = temp.shape
 
-                startX = int(x - wtemp/2)
-                startY = int(y - htemp/2)
-                endX = int(x + wtemp/2)
-                endY = int(y + wtemp/2)
-                cv2.rectangle(image, (startX,startY),(endX, endY) , (255,255,255), 2)
+    #             startX = int(x - wtemp/2)
+    #             startY = int(y - htemp/2)
+    #             endX = int(x + wtemp/2)
+    #             endY = int(y + wtemp/2)
+    #             cv2.rectangle(image, (startX,startY),(endX, endY) , (255,255,255), 2)
 
             
-            def make_rects(xy,template):
-                htemp, wtemp = template.shape
-                for ridx in range(xy.shape[0]):
-                    y,x = xy[ridx]
-                    startX = int(x - wtemp/2)
-                    startY = int(y - htemp/2)
-                    endX = int(x + wtemp/2)
-                    endY = int(y + wtemp/2)
-                    cv2.rectangle(image, (startX,startY),(endX, endY) , (255,255,255), 2)
+    #         def make_rects(xy,template):
+    #             htemp, wtemp = template.shape
+    #             for ridx in range(xy.shape[0]):
+    #                 y,x = xy[ridx]
+    #                 startX = int(x - wtemp/2)
+    #                 startY = int(y - htemp/2)
+    #                 endX = int(x + wtemp/2)
+    #                 endY = int(y + wtemp/2)
+    #                 cv2.rectangle(image, (startX,startY),(endX, endY) , (255,255,255), 2)
      
-            get_rect_on_maximum( mssd ,temp)
+    #         get_rect_on_maximum( mssd ,temp)
         
-            make_rects( pssd , temp )
+    #         make_rects( pssd , temp )
         
-            cv2.imwrite("D:\CV\CV\Task3\images\output"+str(flag)+".jpeg", image)
-            w = self.ui.output1Tab8.width()
-            h = self.ui.output1Tab8.height()
-            self.outputTabs[flag-1].setPixmap(QPixmap("D:\CV\CV\Task3\images\output"+str(flag)+".jpeg"))
+    #         cv2.imwrite("D:\CV\CV\Task3\images\output"+str(flag)+".jpeg", image)
+    #         w = self.ui.output1Tab8.width()
+    #         h = self.ui.output1Tab8.height()
+    #         self.outputTabs[flag-1].setPixmap(QPixmap("D:\CV\CV\Task3\images\output"+str(flag)+".jpeg"))
         
-            return 
+    #         return 
 
 
 
@@ -175,28 +189,28 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             elif (tab == 5):
                 self.ui.InputTab4.setPixmap(QPixmap(path))
             elif (tab == 7):
-                w = self.ui.Input1Tab7.width()
-                h = self.ui.Input1Tab7.height()
-                self.ui.Input1Tab7.setPixmap(QPixmap(path).scaled(w,h,QtCore.Qt.KeepAspectRatio))
+                w = self.ui.input1Tab8.width()
+                h = self.ui.input1Tab8.height()
+                self.ui.input1Tab8.setPixmap(QPixmap(path).scaled(w,h,QtCore.Qt.KeepAspectRatio))
                 self.path1 = path
             elif (tab == 8):
-                w = self.ui.Input2Tab7.width()
-                h = self.ui.Input2Tab7.height()
-                self.ui.Input2Tab7.setPixmap(QPixmap(path).scaled(w,h,QtCore.Qt.KeepAspectRatio))
-                self.path2 = path  
-            elif(tab == 9): 
-                self.original_RGB = cv2.imread(path,1)  
-                self.original_gray = rgb2gray(np.array(Image.open(path)))
-
-                w = self.ui.input1Tab8.width()
-                h =  self.ui.input1Tab8.height()
-                self.ui.input1Tab8.setPixmap(QPixmap(path).scaled(w,h,QtCore.Qt.KeepAspectRatio))
-
-            elif(tab == 10):
-                self.Template = rgb2gray(np.array(Image.open(path)))
                 w = self.ui.input2Tab8.width()
-                h =  self.ui.input2Tab8.height()
+                h = self.ui.input2Tab8.height()
                 self.ui.input2Tab8.setPixmap(QPixmap(path).scaled(w,h,QtCore.Qt.KeepAspectRatio))
+                self.path2 = path  
+            # elif(tab == 9): 
+            #     self.original_RGB = cv2.imread(path,1)  
+            #     self.original_gray = rgb2gray(np.array(Image.open(path)))
+
+            #     w = self.ui.input1Tab8.width()
+            #     h =  self.ui.input1Tab8.height()
+            #     self.ui.input1Tab8.setPixmap(QPixmap(path).scaled(w,h,QtCore.Qt.KeepAspectRatio))
+
+            # elif(tab == 10):
+            #     self.Template = rgb2gray(np.array(Image.open(path)))
+            #     w = self.ui.input2Tab8.width()
+            #     h =  self.ui.input2Tab8.height()
+            #     self.ui.input2Tab8.setPixmap(QPixmap(path).scaled(w,h,QtCore.Qt.KeepAspectRatio))
           
 
 

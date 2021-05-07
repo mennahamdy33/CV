@@ -107,7 +107,7 @@ w, h = greyimg.shape
 
 # Corner detection
 R = HarrisCornerDetection(greyimg)
-
+print(R)
 # Empirical Parameter
 # This parameter will need tuning based on the use-case
 CornerStrengthThreshold = 3000000
@@ -122,7 +122,7 @@ PointList = []
 for row in range(w):
     for col in range(h):
         if R[row][col] > CornerStrengthThreshold:
-            # print(R[row][col])
+            print(R[row][col])
             max = R[row][col]
 
             # Local non-maxima suppression
@@ -139,6 +139,7 @@ for row in range(w):
                 cv2.circle(firstimage, (col, row), radius, color, thickness)
                 PointList.append((row, col))
 
+print(list(PointList))
 # Display image indicating corners and save it
 cv2.imshow("Corners", firstimage)
 outname = "Output_" + str(CornerStrengthThreshold) + ".png"
