@@ -27,7 +27,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>7</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="filter">
        <attribute name="title">
@@ -1068,243 +1068,15 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="sift">
-       <attribute name="title">
-        <string>SIFT</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_8">
-        <item row="0" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_19">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_18">
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_9">
-              <item>
-               <widget class="QPushButton" name="Load1Tab7">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>151</width>
-                  <height>111</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>151</width>
-                  <height>111</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>Load A</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="Load2Tab7">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>151</width>
-                  <height>111</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>151</width>
-                  <height>111</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>Load B</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_10">
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_17">
-                <item>
-                 <widget class="QLabel" name="Input1Tab7">
-                  <property name="frameShape">
-                   <enum>QFrame::Box</enum>
-                  </property>
-                  <property name="text">
-                   <string>Input Image 1</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="Input2Tab7">
-                  <property name="frameShape">
-                   <enum>QFrame::Box</enum>
-                  </property>
-                  <property name="text">
-                   <string>Input Image 2</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QLabel" name="OutputTab7">
-                <property name="frameShape">
-                 <enum>QFrame::Box</enum>
-                </property>
-                <property name="text">
-                 <string>Output Image</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="groupBox_3">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>141</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>141</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="title">
-             <string>Time Needed</string>
-            </property>
-            <widget class="QLabel" name="label_6">
-             <property name="geometry">
-              <rect>
-               <x>20</x>
-               <y>150</y>
-               <width>121</width>
-               <height>31</height>
-              </rect>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>121</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>121</width>
-               <height>31</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Time(Min):</string>
-             </property>
-            </widget>
-            <widget class="QLabel" name="TimeTab7">
-             <property name="geometry">
-              <rect>
-               <x>20</x>
-               <y>200</y>
-               <width>100</width>
-               <height>31</height>
-              </rect>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>100</width>
-               <height>31</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>31</height>
-              </size>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::Box</enum>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-            <widget class="QPushButton" name="Match">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>350</y>
-               <width>121</width>
-               <height>111</height>
-              </rect>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>121</width>
-               <height>111</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>121</width>
-               <height>111</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Match</string>
-             </property>
-            </widget>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
       <widget class="QWidget" name="tab_4">
        <attribute name="title">
         <string>Template Matching</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_10">
+       <layout class="QGridLayout" name="gridLayout_8">
         <item row="0" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_23">
+         <layout class="QHBoxLayout" name="horizontalLayout_17">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_13">
+           <layout class="QVBoxLayout" name="verticalLayout_9">
             <item>
              <widget class="QPushButton" name="load1Tab8">
               <property name="sizePolicy">
@@ -1375,31 +1147,6 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="correlationTab8">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>151</width>
-                <height>111</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>151</width>
-                <height>111</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Correlation</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QPushButton" name="ssdTab8">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1421,6 +1168,31 @@
               </property>
               <property name="text">
                <string>SSD</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="correlationTab8">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>151</width>
+                <height>111</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Correlation</string>
               </property>
              </widget>
             </item>
@@ -1460,7 +1232,7 @@
                  <enum>QFrame::Box</enum>
                 </property>
                 <property name="text">
-                 <string>Output Image 1</string>
+                 <string>SSD Output</string>
                 </property>
                </widget>
               </item>
@@ -1470,7 +1242,7 @@
                  <enum>QFrame::Box</enum>
                 </property>
                 <property name="text">
-                 <string>Output Image 2</string>
+                 <string>Correlation Output</string>
                 </property>
                </widget>
               </item>

@@ -32,7 +32,7 @@ class Sift:
         self.imgs_gray = self.rgb2gray(self.img_rgb_used)
         self.img_sift = self.pipeline(self.imgs_gray)
         self.img2_rgb,_ = self.sift_resize(np.array(Image.open(Image2)), ratio )
-        self.img2_rgb = rotate(self.img2_rgb,90)
+        # self.img2_rgb = rotate(self.img2_rgb,90)
         self.imgs_gray2 = self.rgb2gray(self.img2_rgb)
         self.img_sift2 = self.pipeline(self.imgs_gray2)
 
@@ -131,7 +131,6 @@ class Sift:
         response = ( tr**2 +10e-8) / (det+10e-8)
         
         coords = list(map( tuple , np.argwhere( response < threshold ).tolist() ))
-        # print(len(coords))
         return coords  
     
     def contrast(self, dog , img_max, threshold = 0.03 ):
@@ -256,13 +255,9 @@ class Sift:
     def pipeline(self, input_img ):
         img_max = input_img.max()
         dogs, octaves = self.image_dog( input_img )
-        print("1")
         keypoints = self.dog_keypoints( dogs , img_max , 0.03 )
-        print("2")
         keypoints_ijso = self.dog_keypoints_orientations( octaves , keypoints , 36 )
-        print("3")
         points,descriptors = self.extract_sift_descriptors128(octaves , keypoints_ijso , 8)
-        print("4")
         return points, descriptors
     
     def kp_list_2_opencv_kp_list(self,kp_list):
@@ -320,9 +315,8 @@ class Sift:
                 cur.queryIdx = x
                 cur.trainIdx = y_ind
                 cur.distance = distance
-                print(cur.distance)
                 matches.append(cur)
-                if (cur.distance < 0.2 ):
+                if (cur.distance < 0.23 ):
                     good.append(cur)
                     i+=1
         
@@ -354,10 +348,9 @@ class Sift:
                 cur.queryIdx = x
                 cur.trainIdx = y_ind
                 cur.distance = distance
-                print(cur.distance)
                 matches.append(cur)
                 
-                if (cur.distance == 1 ):
+                if (cur.distance > 0.97 ):
                     good.append(cur)
                     i+=1
 
@@ -375,7 +368,6 @@ class Sift:
         vis.fill(255)
         accumw = 0
         for img in imgs:
-            # print("imge shape",img.shape)
             h, w = img.shape[:2]
             vis[:h, accumw:accumw+w, :] = img
             accumw += w
@@ -398,18 +390,18 @@ class Sift:
         kp_color = (51, 103, 236)
         for (x1, y1), (x2, y2), inlier in zip(p1, p2, status):
             if inlier:
-                cv2.circle(vis, (x1, y1), 5, green, 2)
-                cv2.circle(vis, (x2, y2), 5, green, 2)
+                cv2.circle(vis, (x1, y1), 2, green, 1)
+                cv2.circle(vis, (x2, y2), 2, green, 1)
             else:
-                r = 5
-                thickness = 6
-                cv2.line(vis, (x1-r, y1-r), (x1+r, y1+r), red, thickness)
-                cv2.line(vis, (x1-r, y1+r), (x1+r, y1-r), red, thickness)
-                cv2.line(vis, (x2-r, y2-r), (x2+r, y2+r), red, thickness)
-                cv2.line(vis, (x2-r, y2+r), (x2+r, y2-r), red, thickness)
+                r = 2
+                thickness = 1
+                cv2.line(vis, (x1-r, y1-r), (x1+r, y1+r), white, thickness)
+                cv2.line(vis, (x1-r, y1+r), (x1+r, y1-r), white, thickness)
+                cv2.line(vis, (x2-r, y2-r), (x2+r, y2+r), white, thickness)
+                cv2.line(vis, (x2-r, y2+r), (x2+r, y2-r), white, thickness)
         for (x1, y1), (x2, y2), inlier in zip(p1, p2, status):
             if inlier:
-                cv2.line(vis, (x1, y1), (x2, y2), red)
+                cv2.line(vis, (x1, y1), (x2, y2), white , 1)
 
         return vis      
 
@@ -420,7 +412,6 @@ class Sift:
     #     SobelY = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
 
     #     w, h = image.shape
-    #     # print(w,h)
 
     #     # X and Y derivative of image using Sobel operator
     #     ImgX = cv2.Sobel(image, cv2.CV_64F,1 , 0, ksize=1)
@@ -458,7 +449,6 @@ class Sift:
     #     ImgY_2 = cv2.GaussianBlur(ImgY_2,(5,5),0)
     #     ImgXY = cv2.GaussianBlur(ImgXY,(5,5),0)
     #     ImgYX = cv2.GaussianBlur(ImgYX,(5,5),0)
-    #     # print(ImgXY.shape, ImgYX.shape)
 
     #     alpha = 0.06
     #     R = np.zeros((w, h), np.float32)
@@ -504,12 +494,9 @@ class Sift:
     #     # firstimage = cv2.imread("./images/cow.png")
     #     # greyimg = self.rgb2gray(img)
     #     w, h = img.shape
-    #     # print(w,h)
     #     # Corner detection
     #     R = self.HarrisCornerDetection(img)
     #     ave = R.mean()
-    #     # print(ave)
-    #     # print(R)
 
     #     # Empirical Parameter
     #     # This parameter will need tuning based on the use-case
@@ -523,12 +510,8 @@ class Sift:
     #     PointList = []
     #     # Look for Corner strengths above the threshold
     #     for row in range(w):
-    #         # print("ROW",row)
     #         for col in range(h):
-    #             # print("COL",col)
     #             if R[row][col] > CornerStrengthThreshold:
-    #                 # print("eh")
-    #                 # print(R[row][col])
     #                 max = R[row][col]
 
     #                 # Local non-maxima suppression
@@ -536,124 +519,18 @@ class Sift:
     #                 for nrow in range(5):
     #                     for ncol in range(5):
     #                         if row + nrow - 2 < w and col + ncol - 2 < h:
-    #                             # print("kher")
     #                             if R[row + nrow - 2][col + ncol - 2] > max:
-    #                                 # print("inshallah")
     #                                 skip = True
     #                                 break
 
     #                 if not skip:
-    #                     # print("row",row,"col",col)
     #                     # Point is expressed in x, y which is col, row
     #                     # cv2.circle(img, (col, row), radius, color, thickness)
     #                     PointList.append((row, col))
-    #                     # print(PointList)
 
-    #     # print(list(PointList))
     #     # Display image indicating corners and save it
     #     return PointList    
 
-##mhmd sayed
-    # def box_filter(self,f):
-    #     kernel = np.ones((f,f)) / (f**2)
-    #     return kernel
-
-    # def corners(self,image):
-        
-        
-        # smothed_image = signal.convolve2d(image, self.gaussian_kernel2d(7,1) ,'same')
-        # Ix =  cv2.Sobel(smothed_image,cv2.CV_64F,1,0,ksize=3)
-        # Iy = cv2.Sobel(smothed_image,cv2.CV_64F,0,1,ksize=3)
-        # Ixx =  np.multiply( Ix, Ix) 
-        # Iyy =  np.multiply( Iy, Iy)
-        # Ixy =  np.multiply( Ix, Iy)
-        # Ixx_hat = signal.convolve2d( Ixx , self.box_filter(3) ,'same') 
-        # Iyy_hat = signal.convolve2d( Iyy , self.box_filter(3) ,'same') 
-        # Ixy_hat = signal.convolve2d( Ixy , self.box_filter(3) ,'same')
-        # k = 0.04
-        # detM = np.multiply(Ixx_hat,Iyy_hat) - np.multiply(Ixy_hat,Ixy_hat) 
-        # trM = Ixx_hat + Iyy_hat
-        # R = detM - (k * (trM**2))
-        # corners = R > 0.01*R.max()
-        # points_x = np.where(corners==True)[0].reshape(len(np.where(corners==True)[0]),-1)
-        # points_y = np.where(corners==True)[1].reshape(len(np.where(corners==True)[1]),-1)
-        # points = np.concatenate((points_x,points_y),axis = 1)
-        # points = points[:,0]
-        # points = list(points)
-        # return points
-## DH ana 
-    # def Oriantation(self,img , points, num_bins):
-    #     orintation = []
-    #     gx,gy,magnitude,direction = self.sift_gradient(img)
-    #     for i in range(len(points)):
-    #         orintation.append(direction[points[i][0]][points[i][1]])
-    #     return orintation
-
-    # def extract_sift_descriptors128(self, img_gaussians, keypoints, oriant, num_bins = 8 ):
-    #     print(len(keypoints))
-    #     descriptors = []; points = [];  data = {} # 
-    # #     print(len(keypoints))
-            
-    #     count =0 
-    #     for (i,j) in keypoints:
-            
-                        
-
-    #         # data['kernel'] = gaussian_kernel2d(std = 1.5, kernlen = 16)
-    # #         print(data['kernel'])
-    #         gx,gy,magnitude,direction = self.sift_gradient(img_gaussians)
-    #         data['magnitude'] = magnitude
-    #         data['direction'] = direction
-
-    #         window_mag = self.rotated_subimage(data['magnitude'],(j,i), oriant[count], 16,16)
-    #         # window_mag = window_mag * data['kernel']
-    #         window_dir = self.rotated_subimage(data['direction'],(j,i), oriant[count], 16,16)
-    #         window_dir = (((window_dir - oriant[count]) % 360) * num_bins / 360.).astype(int)
-            
-    #         features = []
-    #         for sub_i in range(4):
-    # #             print("hal ana dakhlt hena?")
-    #             for sub_j in range(4):
-    # #                 print("ayb w hena?")
-    #                 sub_weights = window_mag[sub_i*4:(sub_i+1)*4, sub_j*4:(sub_j+1)*4]
-    #                 sub_dir_idx = window_dir[sub_i*4:(sub_i+1)*4, sub_j*4:(sub_j+1)*4]
-    #                 hist = np.zeros(num_bins, dtype=np.float32)
-    #                 for bin_idx in range(num_bins):
-    # #                     print("m3lesh w henaaaaaaaa?")
-    #                     hist[bin_idx] = np.sum( sub_weights[ sub_dir_idx == bin_idx ] )
-    #                 features.extend( hist.tolist())
-    #         features = np.array(features) 
-    #         features /= (np.linalg.norm(features))
-    #         np.clip( features , np.finfo(np.float16).eps , 0.2 , out = features )
-    #         assert features.shape[0] == 128, "features missing!"
-    #         features /= (np.linalg.norm(features))
-    #         descriptors.append(features)
-    #         points.append( (i ,j ,oriant[count]))
-    #         count = count +1
-    #         print(count)
-    #     return points , descriptors
-
-    # def pipeline( self, input_img ):
-        # img_max = input_img.max()
-        # print("1")
-        # corner = self.corners(input_img)
-        # print("2")
-        # orintation = self.Oriantation( input_img , corner ,8)
-        # print("3")
-        # points,descriptors = self.extract_sift_descriptors128(input_img , corner ,orintation , 8)
-        # print("4")
-        # return points, descriptors
-
-    # def kp_list_2_opencv_kp_list(self, kp_list):
-        
-    #     opencv_kp_list = []
-    #     for kp in kp_list:
-    #         k = cv2.KeyPoint()
-    #         k.pt = (float(kp[0]), float(kp[1]))
-    #         k.angle = float(kp[2])
-    #         opencv_kp_list += [k]
-
-    #     return opencv_kp_list
 
     ## DH MATCH EL FUNCTION
 
