@@ -11,9 +11,10 @@ class meanShift:
     Hs = 90
     Iter = 100
     Mode = 2
-    
+
     def __init__(self , Image1):
         self.img = cv2.imread(Image1,cv2.IMREAD_COLOR)
+        # self.img = cv2.cvtColor(self.img,cv2.COLOR_RGB2LUV)
         self.opImg = np.zeros(self.img.shape,np.uint8)
         self.boundaryImg = np.zeros(self.img.shape,np.uint8)
 
