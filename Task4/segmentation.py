@@ -6,52 +6,40 @@ import matplotlib.pyplot as plt
 import cv2
 
 class meanShift:
-    H = 90
     Hr = 90
     Hs = 90
     Iter = 100
-    Mode = 2
 
     def __init__(self , Image1):
         self.img = cv2.imread(Image1,cv2.IMREAD_COLOR)
         # self.img = cv2.cvtColor(self.img,cv2.COLOR_RGB2LUV)
-        self.opImg = np.zeros(self.img.shape,np.uint8)
-        self.boundaryImg = np.zeros(self.img.shape,np.uint8)
+        self.outputImg = np.zeros(self.img.shape)
 
     def output(self):  
-        self.performMeanShift(self.img)
-        return(self.opImg)
+        self.meanShift(self.img)
+        # self.opImg = cv2.cvtColor(self.opImg,cv2.COLOR_LUV2RGB)
+        return(self.outputImg)
 
-    def getNeighbors(self,seed,matrix,mode=2):
+    def neighbors(self,randomFeatures,features):
         neighbors = []
-        nAppend = neighbors.append
-        sqrt = math.sqrt
-        for i in range(0,len(matrix)):
-            cPixel = matrix[i]
-            # if mode is 1, we threshold using H
-            if (mode == 1):
-                d = sqrt(sum((cPixel-seed)**2))
-                if(d<self.H):
-                    nAppend(i)
-            # otherwise, we threshold using H
-            else:
-                r = sqrt(sum((cPixel[:3]-seed[:3])**2))
-                s = sqrt(sum((cPixel[3:5]-seed[3:5])**2))
-                if(s < self.Hs and r < self.Hr ):
-                    nAppend(i)
+        for i in range(0,len(features)):
+            pixel = features[i]
+            r = math.sqrt(sum((pixel[:3]-randomFeatures[:3])**2))
+            s = math.sqrt(sum((pixel[3:5]-randomFeatures[3:5])**2))
+            if(s < self.Hs and r < self.Hr ):
+                neighbors.append(i)
         return neighbors
 
-    def markPixels(self,neighbors,mean,matrix,cluster):
+    def markPixels(self,neighbors,mean,features):
         for i in neighbors:
-            cPixel = matrix[i]
-            x=cPixel[3]
-            y=cPixel[4]
-            self.opImg[x][y] = np.array(mean[:3],np.uint8)
-            self.boundaryImg[x][y] = cluster
-        return np.delete(matrix,neighbors,axis=0)    
+            pixel = features[i]
+            x=pixel[3]
+            y=pixel[4]
+            self.outputImg[x][y] = np.array(mean[:3])
+        return np.delete(features,neighbors,axis=0)    
 
-    def calculateMean(self,neighbors,matrix):
-        neighbors = matrix[neighbors]
+    def mean(self,neighbors,features):
+        neighbors = features[neighbors]
         r=neighbors[:,:1]
         g=neighbors[:,1:2]
         b=neighbors[:,2:3]
@@ -60,34 +48,33 @@ class meanShift:
         mean = np.array([np.mean(r),np.mean(g),np.mean(b),np.mean(x),np.mean(y)])
         return mean  
 
-    def createFeatureMatrix(self,img):
-        h,w,d = img.shape
-        F = []
-        FAppend = F.append
-        for row in range(0,h):
-            for col in range(0,w):
+    def features(self,img):
+        r,c,_ = img.shape
+        Features = []
+        for row in range(0,r):
+            for col in range(0,c):
                 r,g,b = img[row][col]
                 # l , u , v = LUVConvertion(r,g,b)
-                FAppend([r,g,b,row,col])
+                Features.append([r,g,b,row,col])
                 # FAppend([l,u,v,row,col])
-        F = np.array(F)
-        return F
+        Features = np.array(Features)
+        return Features
 
-    def performMeanShift(self,img):
+    def meanShift(self,img):
         clusters = 0
-        F = self.createFeatureMatrix(img)
-        while(len(F) > 0):
-            randomIndex = randint(0,len(F)-1)
-            seed = F[randomIndex]
-            initialMean = seed
-            neighbors = self.getNeighbors(seed,F,self.Mode)
+        feature = self.features(img)
+        while(len(feature) > 0):
+            index = randint(0,len(feature)-1)
+            randomFeature = feature[index]
+            initialCluster = randomFeature
+            neighbors = self.neighbors(randomFeature,feature)
             if(len(neighbors) == 1):
-                F=self.markPixels([randomIndex],initialMean,F,clusters)
+                feature=self.markPixels([index],initialCluster,feature)
                 clusters+=1
                 continue
-            mean = self.calculateMean(neighbors,F)
-            meanShift = abs(mean-initialMean)
+            mean = self.mean(neighbors,feature)
+            meanShift = abs(mean-initialCluster)
             if(np.mean(meanShift)<self.Iter):
-                F = self.markPixels(neighbors,mean,F,clusters)
+                feature = self.markPixels(neighbors,mean,feature)
                 clusters+=1
         return clusters
