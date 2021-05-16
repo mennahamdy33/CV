@@ -27,16 +27,25 @@ class Sift:
     def __init__(self , Image1 , Image2):
         # 
         self.img_rgb = np.array(Image.open(Image1))
-        self.img_rgb_used,ratio = self.sift_resize(self.img_rgb)
+        # res = cv2.resize(self, dsize=(54, 140), interpolation=cv2.INTER_CUBIC)
+        self.img_rgb_used,ratio = self.sift_resize(self.img_rgb,0.6)
         self.imgs_gray = self.rgb2gray(self.img_rgb_used)
         self.img_sift = self.pipeline(self.imgs_gray)
         self.img2_rgb,_ = self.sift_resize(np.array(Image.open(Image2)), ratio )
-        self.img2_rgb = rotate(self.img2_rgb,90)
+        # self.img2_rgb = rotate(self.img2_rgb,90)
         self.imgs_gray2 = self.rgb2gray(self.img2_rgb)
         self.img_sift2 = self.pipeline(self.imgs_gray2)
+<<<<<<< HEAD
         # outputImage = self.match(img_rgb_used, img_sift[0], img_sift[1], img2_rgb, img_sift2[0], img_sift2[1])
         # return (outputImage)
     
+=======
+
+    def sift_timing(self):
+        if (self.img_sift2):
+            return "done"
+
+>>>>>>> b0e0aa5b5dfddd6165938377a45673797e41d71c
     def OutPut(self,flag):
         outputImage = self.match2(self.img_rgb_used, self.img_sift[0], self.img_sift[1], self.img2_rgb, self.img_sift2[0], self.img_sift2[1],flag)
         return (outputImage)
@@ -128,10 +137,11 @@ class Sift:
         response = ( tr**2 +10e-8) / (det+10e-8)
         
         coords = list(map( tuple , np.argwhere( response < threshold ).tolist() ))
+<<<<<<< HEAD
         # print(coords)
+=======
+>>>>>>> b0e0aa5b5dfddd6165938377a45673797e41d71c
         return coords  
-    
-
     
     def contrast(self, dog , img_max, threshold = 0.03 ):
         dog_norm = dog / img_max
@@ -215,86 +225,6 @@ class Sift:
 
         return cv2.warpAffine(image,mapping,(width, height),flags=cv2.INTER_NEAREST+cv2.WARP_INVERSE_MAP,borderMode=cv2.BORDER_CONSTANT)
     
-    def box_filter(self,f):
-        kernel = np.ones((f,f)) / (f**2)
-        return kernel
-
-    # def corners(self,image):
-        
-        
-    #     smothed_image = signal.convolve2d(image, self.gaussian_kernel2d(7,1) ,'same')
-    #     Ix =  cv2.Sobel(smothed_image,cv2.CV_64F,1,0,ksize=3)
-    #     Iy = cv2.Sobel(smothed_image,cv2.CV_64F,0,1,ksize=3)
-    #     Ixx =  np.multiply( Ix, Ix) 
-    #     Iyy =  np.multiply( Iy, Iy)
-    #     Ixy =  np.multiply( Ix, Iy)
-    #     Ixx_hat = signal.convolve2d( Ixx , self.box_filter(3) ,'same') 
-    #     Iyy_hat = signal.convolve2d( Iyy , self.box_filter(3) ,'same') 
-    #     Ixy_hat = signal.convolve2d( Ixy , self.box_filter(3) ,'same')
-    #     k = 0.04
-    #     detM = np.multiply(Ixx_hat,Iyy_hat) - np.multiply(Ixy_hat,Ixy_hat) 
-    #     trM = Ixx_hat + Iyy_hat
-    #     R = detM - (k * (trM**2))
-    #     corners = R > 0.01*R.max()
-    #     points_x = np.where(corners==True)[0].reshape(len(np.where(corners==True)[0]),-1)
-    #     points_y = np.where(corners==True)[1].reshape(len(np.where(corners==True)[1]),-1)
-    #     points = np.concatenate((points_x,points_y),axis = 1)
-    #     points = list(points)
-        
-    #     return points
-
-    def Oriantation(self,img , points, num_bins):
-    #     print(img.shape)
-        orintation = []
-        gx,gy,magnitude,direction = self.sift_gradient(img)
-        for i in range(len(points)):
-            orintation.append(direction[points[i][0]][points[i][1]])
-        return orintation
-
-    # def extract_sift_descriptors128(self, img_gaussians, keypoints, oriant, num_bins = 8 ):
-    #     print(len(keypoints))
-    #     descriptors = []; points = [];  data = {} # 
-    # #     print(len(keypoints))
-            
-    #     count =0 
-    #     for (i,j) in keypoints:
-            
-                        
-
-    #         # data['kernel'] = gaussian_kernel2d(std = 1.5, kernlen = 16)
-    # #         print(data['kernel'])
-    #         gx,gy,magnitude,direction = self.sift_gradient(img_gaussians)
-    #         data['magnitude'] = magnitude
-    #         data['direction'] = direction
-
-    #         window_mag = self.rotated_subimage(data['magnitude'],(j,i), oriant[count], 16,16)
-    #         # window_mag = window_mag * data['kernel']
-    #         window_dir = self.rotated_subimage(data['direction'],(j,i), oriant[count], 16,16)
-    #         window_dir = (((window_dir - oriant[count]) % 360) * num_bins / 360.).astype(int)
-            
-    #         features = []
-    #         for sub_i in range(4):
-    # #             print("hal ana dakhlt hena?")
-    #             for sub_j in range(4):
-    # #                 print("ayb w hena?")
-    #                 sub_weights = window_mag[sub_i*4:(sub_i+1)*4, sub_j*4:(sub_j+1)*4]
-    #                 sub_dir_idx = window_dir[sub_i*4:(sub_i+1)*4, sub_j*4:(sub_j+1)*4]
-    #                 hist = np.zeros(num_bins, dtype=np.float32)
-    #                 for bin_idx in range(num_bins):
-    # #                     print("m3lesh w henaaaaaaaa?")
-    #                     hist[bin_idx] = np.sum( sub_weights[ sub_dir_idx == bin_idx ] )
-    #                 features.extend( hist.tolist())
-    #         features = np.array(features) 
-    #         features /= (np.linalg.norm(features))
-    #         np.clip( features , np.finfo(np.float16).eps , 0.2 , out = features )
-    #         assert features.shape[0] == 128, "features missing!"
-    #         features /= (np.linalg.norm(features))
-    #         descriptors.append(features)
-    #         points.append( (i ,j ,oriant[count]))
-    #         count = count +1
-    #         print(count)
-    #     return points , descriptors
-
     def extract_sift_descriptors128(self, img_gaussians, keypoints, num_bins = 8 ):
         descriptors = []; points = [];  data = {} # 
         for (i,j,oct_idx,scale_idx, orientation) in keypoints:
@@ -340,76 +270,21 @@ class Sift:
         points,descriptors = self.extract_sift_descriptors128(octaves , keypoints_ijso , 8)
         return points, descriptors
     
-    # def pipeline( self, input_img ):
-    #     img_max = input_img.max()
-    #     print("1")
-    #     corner = self.corners(input_img)
-    #     print("2")
-    #     orintation = self.Oriantation( input_img , corner ,8)
-    #     print("3")
-    #     points,descriptors = self.extract_sift_descriptors128(input_img , corner ,orintation , 8)
-    #     print("4")
-    #     return points, descriptors
-
-    # def kp_list_2_opencv_kp_list(self, kp_list):
-        
-    #     opencv_kp_list = []
-    #     for kp in kp_list:
-    #         k = cv2.KeyPoint()
-    #         k.pt = (float(kp[0]), float(kp[1]))
-    #         k.angle = float(kp[2])
-    #         opencv_kp_list += [k]
-
-    #     return opencv_kp_list
-
     def kp_list_2_opencv_kp_list(self,kp_list):
-        # print(kp_list)
-
-
         opencv_kp_list = []
         for kp in kp_list:
             opencv_kp = cv2.KeyPoint(x=kp[1] * (2**(kp[2]-1)),
                                         y=kp[0] * (2**(kp[2]-1)),
                                         _size=kp[3],
                                         _angle=kp[4]
-    #                                  _response=kp[IDX_RESPONSE],
-    #                                  _octave=np.int32(kp[2]),
-                                    # _class_id=np.int32(kp[IDX_CLASSID])
                                     )
             opencv_kp_list += [opencv_kp]
 
         return opencv_kp_list    
 
-    # def match(self, img_a, pts_a, desc_a, img_b, pts_b, desc_b):
-    #     img_a, img_b = tuple(map( lambda i: np.uint8(i*255), [img_a,img_b] ))
-        
-    #     desc_a = np.array( desc_a , dtype = np.float32 )
-    #     desc_b = np.array( desc_b , dtype = np.float32 )
-
-    #     pts_a = self.kp_list_2_opencv_kp_list(pts_a)
-    #     pts_b = self.kp_list_2_opencv_kp_list(pts_b)
-
-    #     # create BFMatcher object
-    #     # BFMatcher with default params
-    #     bf = cv2.BFMatcher()
-    #     matches = bf.knnMatch(desc_a,desc_b,k=2)
-    #     # Apply ratio test
-    #     good = []
-    #     for m,n in matches:
-    #         if m.distance < 0.25*n.distance:
-    #             good.append(m)
-
-    #     img_match = np.empty((max(img_a.shape[0], img_b.shape[0]), img_a.shape[1] + img_b.shape[1], 3), dtype=np.uint8)
-
-    #     cv2.drawMatches(img_a,pts_a,img_b,pts_b,good, outImg = img_match,
-    #                 flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-                  
-    #     return img_match
-
-
-    def match(self, img_a, pts_a, desc1, img_b, pts_b, desc2):
+    def match2(self, img_a, pts_a, desc1, img_b, pts_b, desc2,flag):
         img_a, img_b = tuple(map( lambda i: np.uint8(i*255), [img_a,img_b] ))
-        
+    
         desc1 = np.array(desc1)
         desc2 = np.array(desc2)
         
@@ -447,72 +322,51 @@ class Sift:
         
         return img_match
 
-    def match2(self, img_a, pts_a, desc1, img_b, pts_b, desc2,flag):
-            img_a, img_b = tuple(map( lambda i: np.uint8(i*255), [img_a,img_b] ))
-        
-            desc1 = np.array(desc1)
-            desc2 = np.array(desc2)
-            
-            assert desc1.ndim == 2
-   
-            assert desc2.ndim == 2
-         
-            assert desc1.shape[1] == desc2.shape[1]
-
-            if desc1.shape[0] == 0 or desc2.shape[0] == 0:
-                return []
-
-            numKeyPoints1 = desc1.shape[0]
-            numKeyPoints2 = desc2.shape[0]
+        if (flag == 0 ):
             matches = []
             good = []
-            pts_a = self.kp_list_2_opencv_kp_list(pts_a)
-            pts_b = self.kp_list_2_opencv_kp_list(pts_b)
-            i = 0
-
-            if (falg == 0 ):
-             
-                for x in range(numKeyPoints1):
-                    distance = -1
-                    y_ind = -1
-                    for y in range(numKeyPoints2):
-                        sumSquare = 0
-                        for m in xrange(desc1.shape[1]):
-                            sumSquare += (desc1[x][m] - desc2[y][m]) **2
-                        sumSquare = np.sqrt(sumSquare)
-                        if distance < 0 or (sumSquare < distance and distance >=0):
-                            distance = sumSquare
-                            y_ind = y
-                
-                    cur = cv2.DMatch()
-                    cur.queryIdx = x
-                    cur.trainIdx = y_ind
-                    cur.distance = distance1 /distance2
-                    matches.append(cur)
-                    if (cur.distance < 0.2 ):
-                        good.append(cur)
-                        i+=1
+            for x in range(numKeyPoints1):
+                distance = -1
+                y_ind = -1
+                for y in range(numKeyPoints2):
+                    sumSquare = 0
+                    for m in range(desc1.shape[1]):
+                        sumSquare += (desc1[x][m] - desc2[y][m]) **2
+                    sumSquare = np.sqrt(sumSquare)
+                    if distance < 0 or (sumSquare < distance and distance >=0):
+                        distance = sumSquare
+                        y_ind = y
             
-            elif(flag == 1):
-                
-                for x in range (numKeyPoints1):
+                cur = cv2.DMatch()
+                cur.queryIdx = x
+                cur.trainIdx = y_ind
+                cur.distance = distance
+                matches.append(cur)
+                if (cur.distance < 0.23 ):
+                    good.append(cur)
+                    i+=1
+        
+        elif(flag == 1):
+            matches = []
+            good = []
+            for x in range (numKeyPoints1):
                 distance = -1
                 y_ind = -1
                 mean_desc1 = np.mean(desc1[x][:])
                 std_desc1 = np.std(desc1[x][:])
-              
+            
 
                 for y in range(numKeyPoints2):
-              
+                
                     ncorr = 0
                     mean_desc2 = np.mean(desc2[y][:])
                     std_desc2 = np.std(desc2[y][:])
-              
-                    result = np.mean(np.multiply((desc1[x][:]-mean_desc1),(desc2[y][:] - mean_desc2))
+                
+                    result = np.mean(np.multiply((desc1[x][:]-mean_desc1),(desc2[y][:] - mean_desc2)))
         
                     ncorr = (result/(std_desc1*std_desc2))
                         
-                    if distance < 0 or (ncorr < distance and distance >=0):
+                    if distance < 0 or (ncorr > distance and distance >=0):
                         distance = ncorr
                         y_ind = y
             
@@ -522,19 +376,14 @@ class Sift:
                 cur.distance = distance
                 matches.append(cur)
                 
-                if (cur.distance < 0.2 ):
+                if (cur.distance > 0.97 ):
                     good.append(cur)
                     i+=1
 
-            output = self.drawMatches(img_a, pts_a, img_b, pts_b, good )
-            cv2.imwrite("./images/M"+str(flag)+".png",  cv2.cvtColor(output, cv2.COLOR_RGB2BGR))
+        output = self.drawMatches(img_a, pts_a, img_b, pts_b, good )
+        cv2.imwrite("./images/M"+str(flag)+".png",  cv2.cvtColor(output, cv2.COLOR_RGB2BGR))
 
-            return output
-
-       
-        # img_match = np.empty((max(img_a.shape[0], img_b.shape[0]), img_a.shape[1] + img_b.shape[1], 3), dtype=np.uint8)
-       
-
+        return output
   
     def concatImages(self, imgs):
         # Skip Nones
@@ -551,7 +400,6 @@ class Sift:
 
         return vis
 
-        
     def drawMatches(self, img1, kp1, img2, kp2, matches ):
         h1, w1 = img1.shape[:2]
         h2, w2 = img2.shape[:2]
@@ -568,17 +416,172 @@ class Sift:
         kp_color = (51, 103, 236)
         for (x1, y1), (x2, y2), inlier in zip(p1, p2, status):
             if inlier:
-                cv2.circle(vis, (x1, y1), 5, green, 2)
-                cv2.circle(vis, (x2, y2), 5, green, 2)
+                cv2.circle(vis, (x1, y1), 2, green, 1)
+                cv2.circle(vis, (x2, y2), 2, green, 1)
             else:
                 r = 2
                 thickness = 1
-                cv2.line(vis, (x1-r, y1-r), (x1+r, y1+r), red, thickness)
-                cv2.line(vis, (x1-r, y1+r), (x1+r, y1-r), red, thickness)
-                cv2.line(vis, (x2-r, y2-r), (x2+r, y2+r), red, thickness)
-                cv2.line(vis, (x2-r, y2+r), (x2+r, y2-r), red, thickness)
+                cv2.line(vis, (x1-r, y1-r), (x1+r, y1+r), white, thickness)
+                cv2.line(vis, (x1-r, y1+r), (x1+r, y1-r), white, thickness)
+                cv2.line(vis, (x2-r, y2-r), (x2+r, y2+r), white, thickness)
+                cv2.line(vis, (x2-r, y2+r), (x2+r, y2-r), white, thickness)
         for (x1, y1), (x2, y2), inlier in zip(p1, p2, status):
             if inlier:
-                cv2.line(vis, (x1, y1), (x2, y2), red)
+                cv2.line(vis, (x1, y1), (x2, y2), white , 1)
 
-        return vis        
+        return vis      
+
+    # def HarrisCornerDetection(self,image):
+    
+    #     # The two Sobel operators - for x and y direction
+    #     SobelX = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+    #     SobelY = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
+
+    #     w, h = image.shape
+
+    #     # X and Y derivative of image using Sobel operator
+    #     ImgX = cv2.Sobel(image, cv2.CV_64F,1 , 0, ksize=1)
+    #     ImgY = cv2.Sobel(image, cv2.CV_64F, 0, 1, ksize=1)
+
+    #     # # Eliminate the negative values
+    #     # There are multiple ways this can be done
+    #     # 1. Off setting with a positive value (commented out below)
+    #     # 2. Setting negative values to Zero (commented out)
+    #     # 3. Multiply by -1 (implemented below, found most reliable method)
+    #     # ImgX += 128.0
+    #     # ImgY += 128.0
+    #     for ind1 in range(w):
+    #         for ind2 in range(h):
+    #             if ImgY[ind1][ind2] < 0:
+    #                 ImgY[ind1][ind2] *= -1
+    #                 # ImgY[ind1][ind2] = 0
+    #             if ImgX[ind1][ind2] < 0:
+    #                 ImgX[ind1][ind2] *= -1
+    #                 # ImgX[ind1][ind2] = 0
+
+    #     # Display the output results after Sobel operations
+    #     # cv2.imshow("SobelX", ImgX)
+    #     # cv2.imshow("SobelY", ImgY)
+
+    #     ImgX_2 = np.square(ImgX)
+    #     ImgY_2 = np.square(ImgY)
+
+    #     ImgXY = np.multiply(ImgX, ImgY)
+    #     ImgYX = np.multiply(ImgY, ImgX)
+
+    #     #Use Gaussian Blur
+
+    #     ImgX_2 =  cv2.GaussianBlur(ImgX_2,(5,5),0)
+    #     ImgY_2 = cv2.GaussianBlur(ImgY_2,(5,5),0)
+    #     ImgXY = cv2.GaussianBlur(ImgXY,(5,5),0)
+    #     ImgYX = cv2.GaussianBlur(ImgYX,(5,5),0)
+
+    #     alpha = 0.06
+    #     R = np.zeros((w, h), np.float32)
+    #     # For every pixel find the corner strength
+    #     for row in range(w):
+    #         for col in range(h):
+    #             M_bar = np.array([[ImgX_2[row][col], ImgXY[row][col]], [ImgYX[row][col], ImgY_2[row][col]]])
+    #             R[row][col] = np.linalg.det(M_bar) - (alpha * np.square(np.trace(M_bar)))
+    #     return R
+
+    # def GetSobel(self,image, Sobel, width, height):
+    #     # Initialize the matrix
+    #     I_d = np.zeros((width, height), np.float32)
+
+    #     # For every pixel in the image
+    #     for rows in range(width):
+    #         for cols in range(height):
+    #             # Run the Sobel kernel for each pixel
+    #             if rows >= 1 or rows <= width-2 and cols >= 1 or cols <= height-2:
+    #                 for ind in range(3):
+    #                     for ite in range(3):
+    #                         I_d[rows][cols] += Sobel[ind][ite] * image[rows - ind - 1][cols - ite - 1]
+    #             else:
+    #                 I_d[rows][cols] = image[rows][cols]
+
+    #     return I_d
+
+    # def gaussianFilter(self,grayImg):
+    #     n = 5
+    #     sigma = 1.4
+    #     kernel = self.gaussian_kernel(n, sigma)
+    #     img_smoothed = convolve(grayImg, kernel)
+    #     return img_smoothed
+
+    # def gaussian_kernel(self, size, sigma):
+    #     size = int(size) // 2
+    #     x, y = np.mgrid[-size:size + 1, -size:size + 1]
+    #     normal = 1 / (2.0 * np.pi * sigma ** 2)
+    #     g = np.exp(-((x ** 2 + y ** 2) / (2.0 * sigma ** 2))) * normal
+    #     return g
+
+    # def corners(self, img):
+    #     # firstimage = cv2.imread("./images/cow.png")
+    #     # greyimg = self.rgb2gray(img)
+    #     w, h = img.shape
+    #     # Corner detection
+    #     R = self.HarrisCornerDetection(img)
+    #     ave = R.mean()
+
+    #     # Empirical Parameter
+    #     # This parameter will need tuning based on the use-case
+    #     CornerStrengthThreshold = 2.18099991e-08
+
+    #     # Plot detected corners on image
+    #     radius = 2
+    #     color = (0, 255, 0)  # Green
+    #     thickness = 1
+
+    #     PointList = []
+    #     # Look for Corner strengths above the threshold
+    #     for row in range(w):
+    #         for col in range(h):
+    #             if R[row][col] > CornerStrengthThreshold:
+    #                 max = R[row][col]
+
+    #                 # Local non-maxima suppression
+    #                 skip = False
+    #                 for nrow in range(5):
+    #                     for ncol in range(5):
+    #                         if row + nrow - 2 < w and col + ncol - 2 < h:
+    #                             if R[row + nrow - 2][col + ncol - 2] > max:
+    #                                 skip = True
+    #                                 break
+
+    #                 if not skip:
+    #                     # Point is expressed in x, y which is col, row
+    #                     # cv2.circle(img, (col, row), radius, color, thickness)
+    #                     PointList.append((row, col))
+
+    #     # Display image indicating corners and save it
+    #     return PointList    
+
+
+    ## DH MATCH EL FUNCTION
+
+    # def match(self, img_a, pts_a, desc_a, img_b, pts_b, desc_b):
+    #     img_a, img_b = tuple(map( lambda i: np.uint8(i*255), [img_a,img_b] ))
+        
+    #     desc_a = np.array( desc_a , dtype = np.float32 )
+    #     desc_b = np.array( desc_b , dtype = np.float32 )
+
+    #     pts_a = self.kp_list_2_opencv_kp_list(pts_a)
+    #     pts_b = self.kp_list_2_opencv_kp_list(pts_b)
+
+    #     # create BFMatcher object
+    #     # BFMatcher with default params
+    #     bf = cv2.BFMatcher()
+    #     matches = bf.knnMatch(desc_a,desc_b,k=2)
+    #     # Apply ratio test
+    #     good = []
+    #     for m,n in matches:
+    #         if m.distance < 0.25*n.distance:
+    #             good.append(m)
+
+    #     img_match = np.empty((max(img_a.shape[0], img_b.shape[0]), img_a.shape[1] + img_b.shape[1], 3), dtype=np.uint8)
+
+    #     cv2.drawMatches(img_a,pts_a,img_b,pts_b,good, outImg = img_match,
+    #                 flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+                  
+    #     return img_match
