@@ -35,17 +35,11 @@ class Sift:
         # self.img2_rgb = rotate(self.img2_rgb,90)
         self.imgs_gray2 = self.rgb2gray(self.img2_rgb)
         self.img_sift2 = self.pipeline(self.imgs_gray2)
-<<<<<<< HEAD
-        # outputImage = self.match(img_rgb_used, img_sift[0], img_sift[1], img2_rgb, img_sift2[0], img_sift2[1])
-        # return (outputImage)
-    
-=======
 
     def sift_timing(self):
         if (self.img_sift2):
             return "done"
 
->>>>>>> b0e0aa5b5dfddd6165938377a45673797e41d71c
     def OutPut(self,flag):
         outputImage = self.match2(self.img_rgb_used, self.img_sift[0], self.img_sift[1], self.img2_rgb, self.img_sift2[0], self.img_sift2[1],flag)
         return (outputImage)
@@ -137,10 +131,6 @@ class Sift:
         response = ( tr**2 +10e-8) / (det+10e-8)
         
         coords = list(map( tuple , np.argwhere( response < threshold ).tolist() ))
-<<<<<<< HEAD
-        # print(coords)
-=======
->>>>>>> b0e0aa5b5dfddd6165938377a45673797e41d71c
         return coords  
     
     def contrast(self, dog , img_max, threshold = 0.03 ):
