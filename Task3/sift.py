@@ -37,8 +37,8 @@ class Sift:
         # outputImage = self.match(img_rgb_used, img_sift[0], img_sift[1], img2_rgb, img_sift2[0], img_sift2[1])
         # return (outputImage)
     
-    def OutPut(self):
-        outputImage = self.match2(self.img_rgb_used, self.img_sift[0], self.img_sift[1], self.img2_rgb, self.img_sift2[0], self.img_sift2[1])
+    def OutPut(self,flag):
+        outputImage = self.match2(self.img_rgb_used, self.img_sift[0], self.img_sift[1], self.img2_rgb, self.img_sift2[0], self.img_sift2[1],flag)
         return (outputImage)
 
     def Kernal(self):
@@ -128,7 +128,7 @@ class Sift:
         response = ( tr**2 +10e-8) / (det+10e-8)
         
         coords = list(map( tuple , np.argwhere( response < threshold ).tolist() ))
-        print(coords)
+        # print(coords)
         return coords  
     
 
@@ -439,7 +439,7 @@ class Sift:
         for m,n in matches:
             if m.distance < 0.25*n.distance:
                 good.append(m)
-        print(matches)
+     
         img_match = np.empty((max(img_a.shape[0], img_b.shape[0]), img_a.shape[1] + img_b.shape[1], 3), dtype=np.uint8)
 
         cv2.drawMatches(img_a,pts_a,img_b,pts_b,good, outImg = img_match,
@@ -447,7 +447,7 @@ class Sift:
         
         return img_match
 
-    def match2(self, img_a, pts_a, desc1, img_b, pts_b, desc2):
+    def match2(self, img_a, pts_a, desc1, img_b, pts_b, desc2,flag):
             img_a, img_b = tuple(map( lambda i: np.uint8(i*255), [img_a,img_b] ))
         
             desc1 = np.array(desc1)
@@ -470,42 +470,47 @@ class Sift:
             pts_b = self.kp_list_2_opencv_kp_list(pts_b)
             i = 0
 
-
-          
-            # for x in range(numKeyPoints1):
-            #     distance = -1
-            #     y_ind = -1
-            #     for y in range(numKeyPoints2):
-            #         sumSquare = 0
-            #         for m in xrange(desc1.shape[1]):
-            #             sumSquare += (desc1[x][m] - desc2[y][m]) **2
-            #         sumSquare = np.sqrt(sumSquare)
-            #         if distance < 0 or (sumSquare < distance and distance >=0):
-            #             distance = sumSquare
-            #             y_ind = y
+            if (falg == 0 ):
+             
+                for x in range(numKeyPoints1):
+                    distance = -1
+                    y_ind = -1
+                    for y in range(numKeyPoints2):
+                        sumSquare = 0
+                        for m in xrange(desc1.shape[1]):
+                            sumSquare += (desc1[x][m] - desc2[y][m]) **2
+                        sumSquare = np.sqrt(sumSquare)
+                        if distance < 0 or (sumSquare < distance and distance >=0):
+                            distance = sumSquare
+                            y_ind = y
+                
+                    cur = cv2.DMatch()
+                    cur.queryIdx = x
+                    cur.trainIdx = y_ind
+                    cur.distance = distance1 /distance2
+                    matches.append(cur)
+                    if (cur.distance < 0.2 ):
+                        good.append(cur)
+                        i+=1
             
-            #     cur = cv2.DMatch()
-            #     cur.queryIdx = x
-            #     cur.trainIdx = y_ind
-            #     cur.distance = distance1 /distance2
-            #     matches.append(cur)
-            #     if (cur.distance < 0.2 ):
-            #         good.append(cur)
-            #         i+=1
-           
-            for x in range(numKeyPoints1):
+            elif(flag == 1):
+                
+                for x in range (numKeyPoints1):
                 distance = -1
                 y_ind = -1
-                mean_desc1 = np.mean(desc1[x])
-                std_desc1 = np.std(desc1[x])
-               
+                mean_desc1 = np.mean(desc1[x][:])
+                std_desc1 = np.std(desc1[x][:])
+              
+
                 for y in range(numKeyPoints2):
-                    mean_desc2 = np.mean(desc2[y])
-                    std_desc2 = np.std(desc2[y])
+              
                     ncorr = 0
-                    for m in range(desc1.shape[1]):
-                        result = np.mean((desc1[x][m]-mean_desc1)*(desc2[y][m] - mean_desc2))
-                        ncorr += (result/(std_desc1*std_desc2))
+                    mean_desc2 = np.mean(desc2[y][:])
+                    std_desc2 = np.std(desc2[y][:])
+              
+                    result = np.mean(np.multiply((desc1[x][:]-mean_desc1),(desc2[y][:] - mean_desc2))
+        
+                    ncorr = (result/(std_desc1*std_desc2))
                         
                     if distance < 0 or (ncorr < distance and distance >=0):
                         distance = ncorr
@@ -516,20 +521,14 @@ class Sift:
                 cur.trainIdx = y_ind
                 cur.distance = distance
                 matches.append(cur)
+                
                 if (cur.distance < 0.2 ):
                     good.append(cur)
                     i+=1
-                    print(i)
-           
-            # img_match = np.empty((max(img_a.shape[0], img_b.shape[0]), img_a.shape[1] + img_b.shape[1], 3), dtype=np.uint8)
-            
-            print(len(good))
-            cv2.imwrite("D:\CV\CV\Task3\images\output1"+".jpeg", img_a)
-            cv2.imwrite("D:\CV\CV\Task3\images\output2"+".jpeg", img_b)
-           
-            
-            output = self.drawMatches(img_a, pts_a, img_b, pts_b, good)    
-            print("d5lt draw")
+
+            output = self.drawMatches(img_a, pts_a, img_b, pts_b, good )
+            cv2.imwrite("./images/M"+str(flag)+".png",  cv2.cvtColor(output, cv2.COLOR_RGB2BGR))
+
             return output
 
        
@@ -553,13 +552,11 @@ class Sift:
         return vis
 
         
-    def drawMatches(self, img1, kp1, img2, kp2, matches):
+    def drawMatches(self, img1, kp1, img2, kp2, matches ):
         h1, w1 = img1.shape[:2]
         h2, w2 = img2.shape[:2]
-        cv2.imwrite("./images/Khara1.png",  cv2.cvtColor(img1, cv2.COLOR_RGB2BGR))
-        cv2.imwrite("./images/Khara2.png",  cv2.cvtColor(img2, cv2.COLOR_RGB2BGR))
+     
         vis = self.concatImages([img1, img2])
-        cv2.imwrite("./images/Khara.png",  cv2.cvtColor(vis, cv2.COLOR_RGB2BGR))
         kp_pairs = [[kp1[m.queryIdx], kp2[m.trainIdx]] for m in matches]
         status = np.ones(len(kp_pairs), np.bool_)
         p1 = np.int32([kpp[0].pt for kpp in kp_pairs])
@@ -574,8 +571,8 @@ class Sift:
                 cv2.circle(vis, (x1, y1), 5, green, 2)
                 cv2.circle(vis, (x2, y2), 5, green, 2)
             else:
-                r = 5
-                thickness = 6
+                r = 2
+                thickness = 1
                 cv2.line(vis, (x1-r, y1-r), (x1+r, y1+r), red, thickness)
                 cv2.line(vis, (x1-r, y1+r), (x1+r, y1-r), red, thickness)
                 cv2.line(vis, (x2-r, y2-r), (x2+r, y2+r), red, thickness)

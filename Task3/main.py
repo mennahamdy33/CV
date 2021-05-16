@@ -36,6 +36,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
                             self.ui.output2Tab8]
 
         self.Template = None
+        self.output = None 
         # self.ui.groupBox_2.hide()
         # self.ui.selectTab1.activated.connect(self.chooseFilter)
         self.ui.menuExit.triggered.connect(exit)
@@ -64,10 +65,10 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def SIFT(self):
         start = time.time()
         self.sift = sift.Sift(self.path1,self.path2)
-        output = self.sift.OutPut()
-        cv2.imwrite("D:\CV\CV\Task3\images\siftPicture.png",  cv2.cvtColor(output, cv2.COLOR_RGB2BGR))
-        w = self.ui.OutputTab7.width()
-        h = self.ui.OutputTab7.height()
+        self.output = self.sift.OutPut()
+        # cv2.imwrite("D:\CV\CV\Task3\images\siftPicture.png",  cv2.cvtColor(self.output, cv2.COLOR_RGB2BGR))
+        # w = self.ui.OutputTab7.width()
+        # h = self.ui.OutputTab7.height()
         self.ui.OutputTab7.setPixmap(QPixmap("D:\CV\CV\Task3\images\siftPicture.png").scaled(w,h,QtCore.Qt.KeepAspectRatio))
         end = time.time()
         timeNeeded = (end - start )/60 
@@ -76,71 +77,16 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
   
 
-    def SSD(self):
+    def TemplateMatching(self,flag):
         start = time.time()
-        matches_ssd = nms.match_template_ssd(self.original_gray,self.Template)
-        matches_ssd_maxima = nms.local_maxima(self.original_gray,min(self.Template.shape)) 
-        self.plot(matches_ssd,matches_ssd_maxima,self.original_RGB,1)
+        self.output = self.sift.OutPut(flag)
         end = time.time()
+        self.ui.outputTabs[flag].setPixmap(QPixmap("./images/M"+str(flag)+".png").scaled(w,h,QtCore.Qt.KeepAspectRatio))
         timeNeeded = (end - start )/60 
         timeNeeded = round(timeNeeded,2)
         self.ui.timeTab8.setText(str(timeNeeded))
     
-    def Correlation(self):
-        start = time.time()
-        grayImg = np.array(self.original_gray)
-        grayImg = np.array(self.original_gray)
-        tempGray = np.array(self.Template)
-
-        matches_xcorr = nms.match_template_ssd(grayImg,tempGray)
-        matches_xcorr_maxima = nms.local_maxima(grayImg,min(tempGray.shape)) 
-        self.plot(matches_xcorr,matches_xcorr_maxima,self.original_RGB,2)
-        end = time.time()
-        timeNeeded = (end - start )/60 
-        timeNeeded = round(timeNeeded,2)
-        self.ui.timeTab8.setText(str(timeNeeded))
-      
-
-    def plot(self,match,MaximaMatch,image,flag):
-        temp = np.array(self.Template)
-        imgs_gray = self.original_gray
-        patches = zip([imgs_gray],[temp],[match],[MaximaMatch])
-        for i,(img,temp,mssd,pssd) in enumerate (patches):
-            def get_rect_on_maximum(y,template):
-                ij = np.unravel_index(np.argmax(y), y.shape)
-                x, y = ij[::-1]
-                # highlight matched region
-                htemp, wtemp = temp.shape
-
-                startX = int(x - wtemp/2)
-                startY = int(y - htemp/2)
-                endX = int(x + wtemp/2)
-                endY = int(y + wtemp/2)
-                cv2.rectangle(image, (startX,startY),(endX, endY) , (255,255,255), 2)
-
-            
-            def make_rects(xy,template):
-                htemp, wtemp = template.shape
-                for ridx in range(xy.shape[0]):
-                    y,x = xy[ridx]
-                    startX = int(x - wtemp/2)
-                    startY = int(y - htemp/2)
-                    endX = int(x + wtemp/2)
-                    endY = int(y + wtemp/2)
-                    cv2.rectangle(image, (startX,startY),(endX, endY) , (255,255,255), 2)
-     
-            get_rect_on_maximum( mssd ,temp)
-        
-            make_rects( pssd , temp )
-        
-            cv2.imwrite("D:\CV\CV\Task3\images\output"+str(flag)+".jpeg", image)
-            w = self.ui.output1Tab8.width()
-            h = self.ui.output1Tab8.height()
-            self.outputTabs[flag-1].setPixmap(QPixmap("D:\CV\CV\Task3\images\output"+str(flag)+".jpeg"))
-        
-            return 
-
-
+  
 
 
         

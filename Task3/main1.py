@@ -122,7 +122,8 @@ PointList = []
 for row in range(w):
     for col in range(h):
         if R[row][col] > CornerStrengthThreshold:
-            # print(R[row][col])
+            # prin
+            # t(R[row][col])
             max = R[row][col]
 
             # Local non-maxima suppression
