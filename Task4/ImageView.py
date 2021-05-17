@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\ImageView.ui'
+# Form implementation generated from reading ui file '.\imageview.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1001, 791)
+        MainWindow.resize(1001, 792)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.centralwidget)
@@ -642,16 +642,6 @@ class Ui_MainWindow(object):
         self.loadTab9.setMaximumSize(QtCore.QSize(151, 111))
         self.loadTab9.setObjectName("loadTab9")
         self.verticalLayout_10.addWidget(self.loadTab9)
-        self.applyTab9 = QtWidgets.QPushButton(self.thresholding)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.applyTab9.sizePolicy().hasHeightForWidth())
-        self.applyTab9.setSizePolicy(sizePolicy)
-        self.applyTab9.setMinimumSize(QtCore.QSize(151, 111))
-        self.applyTab9.setMaximumSize(QtCore.QSize(151, 111))
-        self.applyTab9.setObjectName("applyTab9")
-        self.verticalLayout_10.addWidget(self.applyTab9)
         self.gridLayout_10.addLayout(self.verticalLayout_10, 0, 0, 1, 1)
         self.verticalLayout_13 = QtWidgets.QVBoxLayout()
         self.verticalLayout_13.setObjectName("verticalLayout_13")
@@ -763,16 +753,6 @@ class Ui_MainWindow(object):
         self.load1Tab10.setMaximumSize(QtCore.QSize(151, 111))
         self.load1Tab10.setObjectName("load1Tab10")
         self.verticalLayout_16.addWidget(self.load1Tab10)
-        self.load2Tab10 = QtWidgets.QPushButton(self.segmentation)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.load2Tab10.sizePolicy().hasHeightForWidth())
-        self.load2Tab10.setSizePolicy(sizePolicy)
-        self.load2Tab10.setMinimumSize(QtCore.QSize(151, 111))
-        self.load2Tab10.setMaximumSize(QtCore.QSize(151, 111))
-        self.load2Tab10.setObjectName("load2Tab10")
-        self.verticalLayout_16.addWidget(self.load2Tab10)
         self.horizontalLayout_25.addLayout(self.verticalLayout_16)
         self.verticalLayout_17 = QtWidgets.QVBoxLayout()
         self.verticalLayout_17.setObjectName("verticalLayout_17")
@@ -977,7 +957,6 @@ class Ui_MainWindow(object):
         self.label_7.setText(_translate("MainWindow", "Time(Min):"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "Template Matching"))
         self.loadTab9.setText(_translate("MainWindow", "LOAD IMAGE"))
-        self.applyTab9.setText(_translate("MainWindow", "APPLY"))
         self.inputTab9.setText(_translate("MainWindow", "Input Image"))
         self.outputTab9.setText(_translate("MainWindow", "Output Image"))
         self.selectThresholding.setTitle(_translate("MainWindow", "Select Thresholding"))
@@ -995,7 +974,6 @@ class Ui_MainWindow(object):
         self.label_11.setText(_translate("MainWindow", "SPECTRAL"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.thresholding), _translate("MainWindow", "Thresholding"))
         self.load1Tab10.setText(_translate("MainWindow", "LOAD IMAGE 1"))
-        self.load2Tab10.setText(_translate("MainWindow", "LOAD IMAGE 2"))
         self.input1Tab10.setText(_translate("MainWindow", "Input Image 1"))
         self.output1Tab10.setText(_translate("MainWindow", "Output Image 1"))
         self.input2Tab10.setText(_translate("MainWindow", "Input Image 2"))

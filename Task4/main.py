@@ -151,7 +151,11 @@ class ApplicationWindow(QtWidgets.QMainWindow):
                 w = self.ui.input1Tab10.width()
                 h = self.ui.input1Tab10.height()
                 self.ui.input1Tab10.setPixmap(QPixmap(path))
-                self.rgb2gray(path)
+                rgbImage = cv2.imread(path,cv2.IMREAD_COLOR)
+                cv2.imwrite(".\images\grayImage.png",self.rgb2gray(rgbImage))
+                w1 = self.ui.input2Tab10.width()
+                h1 = self.ui.input2Tab10.height()
+                self.ui.input2Tab10.setPixmap(QPixmap(".\images\grayImage.png").scaled(w1,h1,QtCore.Qt.KeepAspectRatio))
                 self.Path = path 
             if (tab == 0):
 
