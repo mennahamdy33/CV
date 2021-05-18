@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1001</width>
-    <height>791</height>
+    <height>792</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1481,31 +1481,6 @@
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QPushButton" name="applyTab9">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>151</width>
-                <height>111</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>151</width>
-                <height>111</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>APPLY</string>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
           <item row="0" column="1">
@@ -1786,31 +1761,6 @@
               </property>
               <property name="text">
                <string>LOAD IMAGE 1</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="load2Tab10">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>151</width>
-                <height>111</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>151</width>
-                <height>111</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>LOAD IMAGE 2</string>
               </property>
              </widget>
             </item>
