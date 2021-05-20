@@ -84,6 +84,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         else:
             if tab == 1:
                 self.Image = cv2.imread(path)
+                self.grayImage = cv2.imread(path,0)
     
                 self.ui.input1Tab10.setPixmap(QPixmap(path))
                 rgbImage = cv2.imread(path,cv2.IMREAD_COLOR)
@@ -109,13 +110,15 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         kmeans = Kmeans.Kmeans()
        
         RGBKmeansOutput = kmeans.Kmeans_Color(self.Image)
-        grayKmeansOutput = kmeans.convertColorIntoGray(RGBKmeansOutput)
+ 
+        grayKmeansOutput = kmeans.Kmeans_Gray(self.grayImage)
        
         self.showOutput([RGBKmeansOutput,grayKmeansOutput])
 
     def showOutput(self,outputData):
-        for i in range(2):
-            path = "D:\CV\CV\Task4\images\output"+str(i)+".png"
+        size = len(outputData)
+        for i in range(size):
+            path = "./images/output"+str(i)+".png"
             cv2.imwrite(path,outputData[i])
             w = self.outputTabs[i].width()
             h = self.outputTabs[i].height()
