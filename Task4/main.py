@@ -17,6 +17,8 @@ from pylab import *
 from skimage.transform import resize
 import optimal
 import math
+import agglo_segmentation
+
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(ApplicationWindow, self).__init__()
@@ -29,6 +31,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.optimalTab9.activated.connect(self.chooseOptimalThreshold)
         self.ui.meanshiftTab10.clicked.connect(self.meanshift)
         self.ui.kmeansTab10.clicked.connect(self.Kmeans)
+        self.ui.agglomerativeTab10.clicked.connect(self.agglomerative)
+
         self.Path = ""
         self.Image = None
         self.grayImage = None
@@ -84,34 +88,31 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             # noOfBlocks = big_area/small_area
             # print(noOfBlocks)
             #fig, ax = plt.subplots((math.ceil(self.thImg.shape[0]/n)),(math.ceil(self.thImg.shape[1]/100)), figsize=(3, 3))
-            n =10
+            # n =100
+            # if len(self.thImg.shape) == 3: self.thImg = self.rgb2gray(self.thImg)
+            # plt.figure(figsize=(3, 3))
+            # gs1.update(wspace=0.0, hspace=0.0)  # set the spacing between axes.
+            #
+            # print((math.ceil(self.thImg.shape[1]/n)))
+            # print((math.ceil(self.thImg.shape[0] / n)))
             if len(self.thImg.shape) == 3: self.thImg = self.rgb2gray(self.thImg)
-            plt.figure(figsize=(3, 3))
-            gs1 = gridspec.GridSpec((math.ceil(self.thImg.shape[0]/n)), (math.ceil(self.thImg.shape[1]/n)))
-            gs1.update(wspace=0.0, hspace=0.0)  # set the spacing between axes.
-
-            print((math.ceil(self.thImg.shape[1]/n)))
-            print((math.ceil(self.thImg.shape[0] / n)))
-
             self.R = self.thImg.shape[0]
             self.C = self.thImg.shape[1]
-            i=0
+            n=2
+            newImg = np.zeros((self.R, self.C))
+            hR = self.R // n
+            hC = self.C // n
 
-            for x in range(self.R):
-                for y in range(self.C):
+            for i in range(n):
+                for j in range(n):
+                    mask = self.thImg[i * hR:hR * (i + 1), j * hC:hC * (j + 1)]
                     a = optimal.Optimal()
-                    if y%n==0 and x%n==0:
-                        print(x, y)
-                        threshold = a.optimal_thresholding(self.thImg[x:x + n, y:y + n])
+                    threshold = a.optimal_thresholding(mask)
+                    mask[mask < threshold] = 0
+                    mask[mask > threshold] = 255
+                    newImg[i * hR:hR * (i + 1), j * hC:hC * (j + 1)] = mask
+            cv2.imwrite("./images/OptimalLocalThresholding1.png", newImg)
 
-                        subplot = plt.subplot(gs1[i])
-                        subplot.axis('off')
-                        subplot.imshow(self.thImg[x:x + n, y:y + n] >= threshold )
-                        i = i+1
-            #
-            # plt.subplots_adjust( wspace=0.0,
-            #         hspace=0.0)
-            plt.savefig('./images/optimalLocalImage.png', dpi=300)
 
     def segmentation_resize(self,img):
         ratio = min(1, np.sqrt((512 * 512) / np.prod(img.shape[:2])))
@@ -147,13 +148,17 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         if path == "":
             pass
         else:
-            if (tab == 1):
+            if tab == 1:
                 w = self.ui.input1Tab10.width()
                 h = self.ui.input1Tab10.height()
                 self.ui.input1Tab10.setPixmap(QPixmap(path))
-                self.rgb2gray(path)
+                rgbImage = cv2.imread(path,cv2.IMREAD_COLOR)
+                cv2.imwrite(".\images\grayImage.png",self.rgb2gray(rgbImage))
+                w1 = self.ui.input2Tab10.width()
+                h1 = self.ui.input2Tab10.height()
+                self.ui.input2Tab10.setPixmap(QPixmap(".\images\grayImage.png").scaled(w1,h1,QtCore.Qt.KeepAspectRatio))
                 self.Path = path 
-            if (tab == 0):
+            if tab == 0:
 
                 img = cv2.imread(path)
                 self.thImg = np.float32(self.segmentation_resize(img)) *255
@@ -192,7 +197,25 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             for j in range( self.C):
                 newImg[i,j] = 255 if self.img[i,j] >= Th else 0
         cv2.imwrite("D:\CV\Task#4\Otsu-Thresholding\img\GlobalThresholding.png", newImg)
-           
+
+    def agglomerative(self):
+        # use the mask to select the "interesting" part of the image
+        # sel = np.zeros_like(image)
+        # sel[mask] = image[mask]
+
+        n_clusters = 3
+        img = cv2.imread(self.Path, cv2.IMREAD_UNCHANGED)
+
+        pixels = img.reshape((-1, 3))
+        agglo = agglo_segmentation.AgglomerativeClustering(pixels, k=n_clusters, initial_k=25, )
+        agglo.fit(pixels)
+        new_img = [[agglo.predict_center(list(pixel)) for pixel in row] for row in img]
+        new_img = np.array(new_img, np.uint8)
+        grayAggloImg = self.rgb2gray(new_img)
+        cv2.imwrite("./images/aggloMethod.png", new_img)
+        cv2.imwrite("./images/grayAggloMethod.png", grayAggloImg)
+        self.ui.output1Tab10.setPixmap(QPixmap("./images/aggloMethod.png"))
+        self.ui.output2Tab10.setPixmap(QPixmap("./images/grayAggloMethod.png"))
 
 
 def main():
