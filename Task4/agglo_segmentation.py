@@ -3,15 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import cv2
 
-img_path = "./images/Butterfly.jpg"
-img = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
-RGB_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
 # print(img.shape)
 # plt.imshow(RGB_img)
 # plt.axis('off')
 # plt.show()
-pixels = img.reshape((-1, 3))
 # print(pixels.shape)
 
 
@@ -46,9 +41,10 @@ def clusters_distance_2(cluster1, cluster2):
 
 class AgglomerativeClustering:
 
-    def __init__(self, k=2, initial_k=25):
+    def __init__(self, pixels, k=2, initial_k=25):
         self.k = k
         self.initial_k = initial_k
+        self.pixels = pixels
 
     def initial_clusters(self, points):
         """
@@ -118,22 +114,26 @@ class AgglomerativeClustering:
         return center
 
 
-n_clusters = 3
-agglo = AgglomerativeClustering(k=n_clusters, initial_k=25)
-agglo.fit(pixels)
-new_img = [[agglo.predict_center(list(pixel)) for pixel in row] for row in img]
-new_img = np.array(new_img, np.uint8)
-
-plt.figure(figsize=(15,15))
-
-plt.subplot(1, 2, 1)
-plt.imshow(img)
-plt.axis('off')
-plt.title('Original image')
-
-plt.subplot(1,2,2)
-plt.imshow(new_img)
-plt.axis('off')
-plt.title(f'Segmented image with k={n_clusters}')
-
-plt.show()
+# n_clusters = 3
+# img = cv2.imread("./images/Butterfly.jpg",0)
+# print(img.shape)
+# pixels = img.reshape(-1)
+# print(pixels.shape)
+# agglo = AgglomerativeClustering(pixels, k=n_clusters, initial_k=25)
+# agglo.fit(pixels)
+# new_img = [[agglo.predict_center(list(pixel)) for pixel in row] for row in img]
+# new_img = np.array(new_img, np.uint8)
+#
+# plt.figure(figsize=(15,15))
+#
+# plt.subplot(1, 2, 1)
+# plt.imshow(img)
+# plt.axis('off')
+# plt.title('Original image')
+#
+# plt.subplot(1,2,2)
+# plt.imshow(new_img)
+# plt.axis('off')
+# plt.title(f'Segmented image with k={n_clusters}')
+#
+# plt.show()

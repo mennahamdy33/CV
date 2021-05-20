@@ -17,6 +17,8 @@ from pylab import *
 from skimage.transform import resize
 import optimal
 import math
+import agglo_segmentation
+
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(ApplicationWindow, self).__init__()
@@ -29,6 +31,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.optimalTab9.activated.connect(self.chooseOptimalThreshold)
         self.ui.meanshiftTab10.clicked.connect(self.meanshift)
         self.ui.kmeansTab10.clicked.connect(self.Kmeans)
+        self.ui.agglomerativeTab10.clicked.connect(self.agglomerative)
+
         self.Path = ""
         self.Image = None
         self.grayImage = None
@@ -147,7 +151,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         if path == "":
             pass
         else:
-            if (tab == 1):
+            if tab == 1:
                 w = self.ui.input1Tab10.width()
                 h = self.ui.input1Tab10.height()
                 self.ui.input1Tab10.setPixmap(QPixmap(path))
@@ -157,7 +161,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
                 h1 = self.ui.input2Tab10.height()
                 self.ui.input2Tab10.setPixmap(QPixmap(".\images\grayImage.png").scaled(w1,h1,QtCore.Qt.KeepAspectRatio))
                 self.Path = path 
-            if (tab == 0):
+            if tab == 0:
 
                 img = cv2.imread(path)
                 self.thImg = np.float32(self.segmentation_resize(img)) *255
@@ -196,7 +200,25 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             for j in range( self.C):
                 newImg[i,j] = 255 if self.img[i,j] >= Th else 0
         cv2.imwrite("D:\CV\Task#4\Otsu-Thresholding\img\GlobalThresholding.png", newImg)
-           
+
+    def agglomerative(self):
+        # use the mask to select the "interesting" part of the image
+        # sel = np.zeros_like(image)
+        # sel[mask] = image[mask]
+
+        n_clusters = 3
+        img = cv2.imread(self.Path, cv2.IMREAD_UNCHANGED)
+
+        pixels = img.reshape((-1, 3))
+        agglo = agglo_segmentation.AgglomerativeClustering(pixels, k=n_clusters, initial_k=25, )
+        agglo.fit(pixels)
+        new_img = [[agglo.predict_center(list(pixel)) for pixel in row] for row in img]
+        new_img = np.array(new_img, np.uint8)
+        grayAggloImg = self.rgb2gray(new_img)
+        cv2.imwrite("./images/aggloMethod.png", new_img)
+        cv2.imwrite("./images/grayAggloMethod.png", grayAggloImg)
+        self.ui.output1Tab10.setPixmap(QPixmap("./images/aggloMethod.png"))
+        self.ui.output2Tab10.setPixmap(QPixmap("./images/grayAggloMethod.png"))
 
 
 def main():
