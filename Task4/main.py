@@ -27,6 +27,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.ui.menuExit.triggered.connect(exit)
         self.ui.kselect.hide()
+        self.ui.RegionGrowing.hide()
         self.ui.load1Tab10.clicked.connect(lambda: self.getPicrures(1))
         self.ui.loadTab9.clicked.connect(lambda: self.getPicrures(0))
         self.ui.optimalTab9.activated.connect(self.chooseOptimalThreshold)
