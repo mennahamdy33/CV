@@ -5,12 +5,14 @@ import cv2
 
 class Ostu:
     
-    def __init__(self , Image):
+    def __init__(self ):
         self.Th = None
+        self.img = None
+        # self.R,self.C = None
+       
+    def Ostu(self, Image):
         self.img = Image
         self.R,self.C = self.img.shape[:2]
-       
-    def ostu(self):
     
         blur = cv2.GaussianBlur(self.img,(5,5),0)
 
