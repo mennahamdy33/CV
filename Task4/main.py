@@ -136,7 +136,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     
             path = "./images/LocalOutPut.png"
             cv2.imwrite(path, newImg)
-            self.ui.output2Tab10.setPixmap(QPixmap(path))
+            self.ui.output2Tab8.setPixmap(QPixmap(path))
             
     def GlobalThresholding(self,Image,Th):
         newImg = Image
@@ -144,7 +144,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         newImg[newImg > Th] = 255
         path = "./images/GlobalOutPut.png"
         cv2.imwrite(path, newImg)
-        self.ui.output1Tab10.setPixmap(QPixmap(path))
+        self.ui.output1Tab8.setPixmap(QPixmap(path))
         
 
     def agglomerative(self):
