@@ -95,6 +95,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             if tab == 0:
 
                 img = cv2.imread(path)
+                
                 self.grayThImage = cv2.imread(path,0)
                 self.thImg = np.float32(self.segmentation_resize(img)) *255
             
@@ -173,7 +174,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             Th = self.Th_functions[1](self.grayThImage)
             self.GlobalThresholding(self.grayThImage,Th)
         else:
-            self.LocalThresholding(self.thImg, 1)
+            self.LocalThresholding(self.grayThImage, 1)
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
