@@ -113,7 +113,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def showOutput(self,outputData):
         for i in range(2):
-            path = "D:\CV\CV\Task4\images\output"+str(i)+".png"
+            path = "./images/output"+str(i)+".png"
             cv2.imwrite(path,outputData[i])
             w = self.outputTabs[i].width()
             h = self.outputTabs[i].height()
