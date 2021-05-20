@@ -83,6 +83,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             pass
         else:
             if tab == 1:
+                self.Image = cv2.imread(path)
     
                 self.ui.input1Tab10.setPixmap(QPixmap(path))
                 rgbImage = cv2.imread(path,cv2.IMREAD_COLOR)
@@ -113,7 +114,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def showOutput(self,outputData):
         for i in range(2):
-            path = "./images/output"+str(i)+".png"
+            path = "D:\CV\CV\Task4\images\output"+str(i)+".png"
             cv2.imwrite(path,outputData[i])
             w = self.outputTabs[i].width()
             h = self.outputTabs[i].height()

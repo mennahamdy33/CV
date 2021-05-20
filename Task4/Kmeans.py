@@ -105,11 +105,12 @@ class Kmeans:
         b_points = [ random.randint(0, 255) for i in range(6) ]
         end = np.zeros((rows,columns))
      
-        for it in range(0,50):    
+        for it in range(0,10):    
             g = defaultdict(list)
             for r in range(rows):
                 for c in range(columns):
-                    red, green, blue = Image[r][c]
+                 
+                    red, green, blue = Image[r][c][:3]
                    
                     distance_list = []
 
