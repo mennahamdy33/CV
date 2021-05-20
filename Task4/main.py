@@ -51,7 +51,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.GlobalThresholding(self.thImg,Th)
         else:
             self.LocalThresholding(self.thImg,0)
-        self.ui.outputTab9.setPixmap(QPixmap("./images/ThresholdOutput.png"))
+
         
           
     def segmentation_resize(self,img):
@@ -119,7 +119,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             h = self.outputTabs[i].height()
             self.outputTabs[i].setPixmap(QPixmap(path).scaled(w,h,QtCore.Qt.KeepAspectRatio))
     
-    def LocalThresholding(self,Image,flag):    
+    def LocalThresholding(self, Image, flag):
             R,C = Image.shape[:2]
             newImg = np.zeros((R,C))
             hR = R // self.N
@@ -127,16 +127,16 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
             for i in range(self.N):
                 for j in range(self.N):
-                    mask = self.thImg[i * hR:hR * (i + 1), j * hC:hC * (j + 1)]
-                    a = optimal.Optimal()
-                    threshold = self.Th_functions[0](mask)
+                    mask = Image[i * hR:hR * (i + 1), j * hC:hC * (j + 1)]
+
+                    threshold = self.Th_functions[flag](mask)
                     mask[mask < threshold] = 0
                     mask[mask > threshold] = 255
                     newImg[i * hR:hR * (i + 1), j * hC:hC * (j + 1)] = mask
     
             path = "./images/LocalOutPut.png"
             cv2.imwrite(path, newImg)
-            self.ui.output2Tab8.setPixmap(QPixmap(path))
+            self.ui.outputTab9.setPixmap(QPixmap(path))
             
     def GlobalThresholding(self,Image,Th):
         newImg = Image
@@ -144,7 +144,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         newImg[newImg > Th] = 255
         path = "./images/GlobalOutPut.png"
         cv2.imwrite(path, newImg)
-        self.ui.output1Tab8.setPixmap(QPixmap(path))
+        self.ui.outputTab9.setPixmap(QPixmap(path))
         
 
     def agglomerative(self):
@@ -169,11 +169,10 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def ostu(self):
         status = str(self.ui.otsuTab9.currentText())
         if (status == 'Global Thresholding'):
-            self.LocalThresholding(self.thImg,1)
-        else:
             Th = self.Th_functions[1](self.grayThImage)
             self.GlobalThresholding(self.grayThImage,Th)
-
+        else:
+            self.LocalThresholding(self.thImg, 1)
 
 def main():
     app = QtWidgets.QApplication(sys.argv)

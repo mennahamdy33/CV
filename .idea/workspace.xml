@@ -3,12 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="01e61ced-39f1-429f-ac06-d265c6613607" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Task4/ImageView.py" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/ImageView.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Task4/ImageView.ui" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/ImageView.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Task4/images/GraymeanshiftMethod.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/GraymeanshiftMethod.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Task4/images/meanshiftMethod.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/meanshiftMethod.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Task4/images/optimalHistogram.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/optimalHistogram.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Task4/images/optimalLocalImage.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/optimalLocalImage.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Task4/images/resizedImage.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/resizedImage.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Task4/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/main.py" afterDir="false" />
     </list>
