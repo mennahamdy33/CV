@@ -48,12 +48,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.N = 8 #Threshold Size
 
     def regionGrowing(self):
-        # w = self.ui.input1Tab10.width()
-        # h = self.ui.input1Tab10.height()
-        # self.ui.input1Tab10.setPixmap(QPixmap(self.Path).scaled(w, h, QtCore.Qt.KeepAspectRatio))
         self.ui.RegionGrowing.show()
         self.seeds = []
-        self.pic = regionGrowing.regionGrow(self.new_image,7)
+        self.pic = regionGrowing.regionGrow(self.new_image,8)
     def chooseSides(self):
 
         self.ui.input1Tab10.mousePressEvent = self.getPos
@@ -113,8 +110,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
                 w = self.ui.input1Tab10.width()
                 h = self.ui.input1Tab10.height()
                 self.ui.input1Tab10.setPixmap(QPixmap(path).scaled(w, h, QtCore.Qt.KeepAspectRatio))
-                image = cv2.imread(path,1)
-                self.new_image = cv2.resize(image,(w, h))
+                self.Image = cv2.imread(path,1)
+                self.new_image = cv2.resize(self.Image,(w, h))
                 self.grayImage = cv2.imread(path,0)
     
                 # self.ui.input1Tab10.setPixmap(QPixmap(path))

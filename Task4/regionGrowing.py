@@ -4,7 +4,6 @@ import random
 import sys
 
 
-# class pour une pile
 class Stack():
     def __init__(self):
         self.item = []
@@ -38,8 +37,6 @@ class regionGrow():
         self.stack = Stack()
         self.thresh = float(th)
 
-    # def readImage(self, img_path):
-    #     self.im = cv2.imread(img_path, 1)
 
     def getNeighbour(self, x0, y0):
         neighbour = []
@@ -92,9 +89,6 @@ class regionGrow():
             print("Max Iterations")
         print("Iterations : " + str(self.iterations))
         return self.SEGS
-        # cv2.imshow("", self.SEGS)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
 
     def BFS(self, x0, y0):
         regionNum = self.passedBy[x0, y0]
@@ -125,21 +119,3 @@ class regionGrow():
                     int(self.im[x, y, 1]) - int(self.im[x0, y0, 1])) ** 2 + (
                             int(self.im[x, y, 2]) - int(self.im[x0, y0, 2])) ** 2) ** 0.5
 
-#
-# def Test_Affiche(event, x, y, flags, param):
-#     global points
-#     if event == cv2.EVENT_RBUTTONDOWN:
-#         cv2.destroyAllWindows()
-#
-#     if event == cv2.EVENT_LBUTTONDOWN:
-#         seeds.append([y, x])
-
-
-# seeds = []
-# exemple = regionGrow('./images/cat.jpg', 10)
-# cv2.namedWindow('image')
-# cv2.setMouseCallback('image', Test_Affiche)
-# cv2.imshow('image', cv2.imread('./images/cat.jpg', 1))
-# cv2.waitKey(0)
-
-# exemple.ApplyRegionGrow(seeds)
