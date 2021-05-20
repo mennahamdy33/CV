@@ -14,8 +14,7 @@ class Kmeans:
          
         self.res = None
         self.grey_l = [40,80,120,160,200,240]
-        
-    
+           
     def Kmeans_Gray(self,grayImage):
         rows,columns = grayImage.shape
         self.histogram,self.bins = np.histogram(grayImage,256,[0,256])

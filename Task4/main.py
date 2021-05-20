@@ -33,6 +33,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.Image = None
         self.grayImage = None
         self.outputTabs = [self.ui.output1Tab10,self.ui.output2Tab10]
+        self.Th_functions = []
+        
 
     def chooseOptimalThreshold(self):
         if str(self.ui.optimalTab9.currentText()) == "Global Thresholding":
@@ -157,6 +159,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
                 h1 = self.ui.input2Tab10.height()
                 self.ui.input2Tab10.setPixmap(QPixmap(".\images\grayImage.png").scaled(w1,h1,QtCore.Qt.KeepAspectRatio))
                 self.Path = path 
+            
             if (tab == 0):
 
                 img = cv2.imread(path)
@@ -182,12 +185,16 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.outputTabs[i].setPixmap(QPixmap(path).scaled(w,h,QtCore.Qt.KeepAspectRatio))
     
     def LocalThresholding(self,Th):
-            n = 5 
             newImg = np.zeros((self.R,self.C))
-            for i in range(self.R):
-                for j in range(self.C):
-                    mask = np.mean(self.img[i:i+n,j:j+n])
-                    newImg[i,j] = 255 if mask >= Th else 0
+            hR = self.R//2
+            hC = self.C//2
+            for i in range(2):
+                for j in range(2):
+                    mask = self.img[i*hR:hR*(i+1),j*hC:hC*(j+1)]
+                    Th = 125
+                    mask[mask<Th] = 0
+                    mask[mask>Th] = 255     
+                    newImg[i*hR:hR*(i+1),j*hC:hC*(j+1)] = mask
             cv2.imwrite("D:\CV\Task#4\Otsu-Thresholding\img\LocalThresholding.png", newImg)
 
     def GlobalThresholding(self,Th):
