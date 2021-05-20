@@ -28,8 +28,8 @@ class Stack():
 
 class regionGrow():
 
-    def __init__(self, im_path, th):
-        self.readImage(im_path)
+    def __init__(self, im, th):
+        self.im = im
         self.h, self.w, _ = self.im.shape
         self.passedBy = np.zeros((self.h, self.w), np.double)
         self.currentRegion = 0
@@ -38,8 +38,8 @@ class regionGrow():
         self.stack = Stack()
         self.thresh = float(th)
 
-    def readImage(self, img_path):
-        self.im = cv2.imread(img_path, 1)
+    # def readImage(self, img_path):
+    #     self.im = cv2.imread(img_path, 1)
 
     def getNeighbour(self, x0, y0):
         neighbour = []
@@ -91,9 +91,10 @@ class regionGrow():
         if (self.iterations > 200000):
             print("Max Iterations")
         print("Iterations : " + str(self.iterations))
-        cv2.imshow("", self.SEGS)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        return self.SEGS
+        # cv2.imshow("", self.SEGS)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
 
     def BFS(self, x0, y0):
         regionNum = self.passedBy[x0, y0]
@@ -124,14 +125,14 @@ class regionGrow():
                     int(self.im[x, y, 1]) - int(self.im[x0, y0, 1])) ** 2 + (
                             int(self.im[x, y, 2]) - int(self.im[x0, y0, 2])) ** 2) ** 0.5
 
-
-def Test_Affiche(event, x, y, flags, param):
-    global points
-    if event == cv2.EVENT_RBUTTONDOWN:
-        cv2.destroyAllWindows()
-
-    if event == cv2.EVENT_LBUTTONDOWN:
-        seeds.append([y, x])
+#
+# def Test_Affiche(event, x, y, flags, param):
+#     global points
+#     if event == cv2.EVENT_RBUTTONDOWN:
+#         cv2.destroyAllWindows()
+#
+#     if event == cv2.EVENT_LBUTTONDOWN:
+#         seeds.append([y, x])
 
 
 # seeds = []

@@ -18,6 +18,7 @@ from skimage.transform import resize
 import optimal
 import math
 import Ostu
+import regionGrowing
 # import agglo_segmentation
 
 class ApplicationWindow(QtWidgets.QMainWindow):
@@ -35,7 +36,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.meanshiftTab10.clicked.connect(self.meanshift)
         self.ui.kmeansTab10.clicked.connect(self.Kmeans)
         self.ui.agglomerativeTab10.clicked.connect(self.agglomerative)
-
+        self.ui.regionTab10.clicked.connect(self.regionGrowing)
+        self.ui.chooseSeedsTab10.clicked.connect(self.chooseSides)
+        self.ui.applyRegionTab10.clicked.connect(self.applyRegion)
         self.Path = ""
         self.Image = None
         self.grayImage = None
@@ -43,8 +46,30 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.Th_functions = [optimal.Optimal().optimal_thresholding,
                             Ostu.Ostu().Ostu]
         self.N = 8 #Threshold Size
-        
 
+    def regionGrowing(self):
+        # w = self.ui.input1Tab10.width()
+        # h = self.ui.input1Tab10.height()
+        # self.ui.input1Tab10.setPixmap(QPixmap(self.Path).scaled(w, h, QtCore.Qt.KeepAspectRatio))
+        self.ui.RegionGrowing.show()
+        self.seeds = []
+        self.pic = regionGrowing.regionGrow(self.new_image,7)
+    def chooseSides(self):
+
+        self.ui.input1Tab10.mousePressEvent = self.getPos
+
+    def getPos(self, event):
+        self.seeds.append([event.pos().x(), event.pos().y()])
+        # print('(', event.pos().x(), ', ', event.pos().y(), ')')
+        print(self.seeds)
+
+    def applyRegion(self):
+        segmentation = self.pic.ApplyRegionGrow(self.seeds)
+        cv2.imwrite("./images/RegionGrowing.png", segmentation)
+        w = self.ui.output1Tab10.width()
+        h = self.ui.output1Tab10.height()
+        self.ui.output1Tab10.setPixmap(QPixmap("./images/RegionGrowing.png").scaled(w, h, QtCore.Qt.KeepAspectRatio))
+        self.seeds = []
     def chooseOptimalThreshold(self):
         status = str(self.ui.optimalTab9.currentText())
         if status == "Global Thresholding":
@@ -52,6 +77,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.GlobalThresholding(self.thImg,Th)
         else:
             self.LocalThresholding(self.thImg,0)
+
 
         
           
@@ -61,7 +87,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         img = resize(img, newshape, anti_aliasing=True)
         return img
 
-    def meanshift(self):    
+    def meanshift(self):
         self.mean = segmentation.meanShift(self.Path)
         imgOutput = self.mean.output()
         cv2.imwrite("./images/meanshiftMethod.png",imgOutput)
@@ -84,10 +110,14 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             pass
         else:
             if tab == 1:
-                self.Image = cv2.imread(path)
+                w = self.ui.input1Tab10.width()
+                h = self.ui.input1Tab10.height()
+                self.ui.input1Tab10.setPixmap(QPixmap(path).scaled(w, h, QtCore.Qt.KeepAspectRatio))
+                image = cv2.imread(path,1)
+                self.new_image = cv2.resize(image,(w, h))
                 self.grayImage = cv2.imread(path,0)
     
-                self.ui.input1Tab10.setPixmap(QPixmap(path))
+                # self.ui.input1Tab10.setPixmap(QPixmap(path))
                 rgbImage = cv2.imread(path,cv2.IMREAD_COLOR)
                 cv2.imwrite(".\images\grayImage.png",self.rgb2gray(rgbImage))
                 w1 = self.ui.input2Tab10.width()
