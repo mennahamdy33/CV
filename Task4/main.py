@@ -119,8 +119,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             h = self.outputTabs[i].height()
             self.outputTabs[i].setPixmap(QPixmap(path).scaled(w,h,QtCore.Qt.KeepAspectRatio))
     
-    def LocalThresholding(self,Image,flag):
-            
+    def LocalThresholding(self,Image,flag):    
             R,C = Image.shape[:2]
             newImg = np.zeros((R,C))
             hR = R // self.N
@@ -134,15 +133,19 @@ class ApplicationWindow(QtWidgets.QMainWindow):
                     mask[mask < threshold] = 0
                     mask[mask > threshold] = 255
                     newImg[i * hR:hR * (i + 1), j * hC:hC * (j + 1)] = mask
-            cv2.imwrite("D:\CV\CV\Task4\ThresholdOutput.png", newImg)
-           
+    
+            path = "./images/LocalOutPut.png"
+            cv2.imwrite(path, newImg)
+            self.ui.output2Tab10.setPixmap(QPixmap(path))
+            
     def GlobalThresholding(self,Image,Th):
-        R,C = Image.shape[:2]
         newImg = Image
         newImg[newImg < Th] = 0
         newImg[newImg > Th] = 255
-       
-        cv2.imwrite("D:\CV\Task#4\Otsu-Thresholding\img\ThresholdOutput.png", newImg)
+        path = "./images/GlobalOutPut.png"
+        cv2.imwrite(path, newImg)
+        self.ui.output1Tab10.setPixmap(QPixmap(path))
+        
 
     def agglomerative(self):
         # use the mask to select the "interesting" part of the image
