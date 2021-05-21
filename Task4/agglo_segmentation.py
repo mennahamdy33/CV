@@ -44,7 +44,7 @@ class AgglomerativeClustering:
             initial_groups[(j, j, j)] = []
         for i, p in enumerate(points):
             if i % 100000 == 0:
-                print('processing pixel:', i)
+                print('processing:', i)
             go = min(initial_groups.keys(), key=lambda c: euclidDistance(p, c))
             initial_groups[go].append(p)
         return [g for g in initial_groups.values() if len(g) > 0]
@@ -52,9 +52,6 @@ class AgglomerativeClustering:
     def fit(self, points):
         # initially, assign each point to a distinct cluster
         self.clusters_list = self.initial_clusters(points)
-        print('number of initial clusters:', len(self.clusters_list))
-        print('merging clusters ...')
-
         while len(self.clusters_list) > self.k:
             # Find the closest (most similar) pair of clusters
             cluster1, cluster2 = min(
@@ -70,30 +67,25 @@ class AgglomerativeClustering:
             # Add the merged cluster to the clusters list
             self.clusters_list.append(merged_cluster)
 
-            print('number of clusters:', len(self.clusters_list))
-
-        print('assigning cluster num to each point ...')
         self.cluster = {}
         for cl_num, cl in enumerate(self.clusters_list):
             for point in cl:
                 self.cluster[tuple(point)] = cl_num
 
-        print('Computing cluster centers ...')
         self.centers = {}
         for cl_num, cl in enumerate(self.clusters_list):
             self.centers[cl_num] = np.average(cl, axis=0)
 
-    def predict_cluster(self, point):
+    def calculate_cluster(self, point):
         """
-        Find cluster number of point
+        Get cluster number of point
         """
-        # assuming point belongs to clusters that were computed by fit functions
         return self.cluster[tuple(point)]
 
-    def predict_center(self, point):
+    def calculate_center(self, point):
         """
         Get center of the cluster for each point
         """
-        point_cluster_num = self.predict_cluster(point)
+        point_cluster_num = self.calculate_cluster(point)
         center = self.centers[point_cluster_num]
         return center
