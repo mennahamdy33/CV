@@ -6,7 +6,6 @@ import cv2
 import time
 import importlib
 import matplotlib.gridspec as gridspec
-from PIL import Image
 QPixmap = QtGui.QPixmap
 from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
@@ -181,13 +180,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         path = "./images/GlobalOutPut.png"
         cv2.imwrite(path, newImg)
         self.ui.outputTab9.setPixmap(QPixmap(path))
-        
 
     def agglomerative(self):
-        # use the mask to select the "interesting" part of the image
-        # sel = np.zeros_like(image)
-        # sel[mask] = image[mask]
-
         n_clusters = 3
         img = cv2.imread(self.Path, cv2.IMREAD_UNCHANGED)
 
