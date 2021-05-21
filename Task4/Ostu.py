@@ -41,7 +41,7 @@ class Ostu:
                 fn_min = fn
                 thresh = i
         self.Th = thresh 
-        return(thresh)
+        return thresh
 
   
 
