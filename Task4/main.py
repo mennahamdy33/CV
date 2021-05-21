@@ -214,7 +214,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         sel[mask] = image[mask]
         path = "./images/spectralOut.png"
         cv2.imwrite(path, sel)
-        self.ui.globalTab9.setPixmap(QPixmap(path))
+        self.ui.outputTab9.setPixmap(QPixmap(path))
 def main():
     app = QtWidgets.QApplication(sys.argv)
     application = ApplicationWindow()
