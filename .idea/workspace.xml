@@ -6,9 +6,13 @@
       <change beforePath="$PROJECT_DIR$/Task4/ImageView.py" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/ImageView.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Task4/Kmeans.py" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/Kmeans.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Task4/images/GlobalOutPut.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/GlobalOutPut.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Task4/images/GraymeanshiftMethod.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/GraymeanshiftMethod.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Task4/images/LocalOutPut.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/LocalOutPut.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Task4/images/RegionGrowing.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/RegionGrowing.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Task4/images/grayImage.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/grayImage.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Task4/images/meanshiftMethod.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/meanshiftMethod.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Task4/images/output0.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/output0.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Task4/images/output1.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/output1.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Task4/images/resizedImage.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/resizedImage.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Task4/images/spectralOut.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/spectralOut.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Task4/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/main.py" afterDir="false" />
