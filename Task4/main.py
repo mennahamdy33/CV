@@ -204,6 +204,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.spectral()
         else:
             self.LocalThresholding(self.grayThImage, 1)
+
     def spectral(self):
         Th = self.Th_functions[1](self.grayThImage)
         blur = self.grayThImage
@@ -215,6 +216,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         path = "./images/spectralOut.png"
         cv2.imwrite(path, sel)
         self.ui.globalTab9.setPixmap(QPixmap(path))
+
+
 def main():
     app = QtWidgets.QApplication(sys.argv)
     application = ApplicationWindow()
