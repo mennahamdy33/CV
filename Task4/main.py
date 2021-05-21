@@ -17,9 +17,9 @@ from pylab import *
 from skimage.transform import resize
 import optimal
 import math
+import agglo_segmentation
 import Ostu
 import regionGrowing
-# import agglo_segmentation
 
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -153,7 +153,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             w = self.outputTabs[i].width()
             h = self.outputTabs[i].height()
             self.outputTabs[i].setPixmap(QPixmap(path).scaled(w,h,QtCore.Qt.KeepAspectRatio))
-    
+
     def LocalThresholding(self, Image, flag):
             R,C = Image.shape[:2]
             newImg = np.zeros((R,C))
