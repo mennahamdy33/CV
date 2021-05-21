@@ -184,11 +184,10 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def agglomerative(self):
         n_clusters = 3
         img = cv2.imread(self.Path, cv2.IMREAD_UNCHANGED)
-
         pixels = img.reshape((-1, 3))
-        agglo = agglo_segmentation.AgglomerativeClustering(pixels, k=n_clusters, initial_k=25, )
+        agglo = agglo_segmentation.AgglomerativeClustering(pixels, k=n_clusters, initial_k=25)
         agglo.fit(pixels)
-        new_img = [[agglo.predict_center(list(pixel)) for pixel in row] for row in img]
+        new_img = [[agglo.calculate_center(list(pixel)) for pixel in row] for row in img]
         new_img = np.array(new_img, np.uint8)
         grayAggloImg = self.rgb2gray(new_img)
         cv2.imwrite("./images/aggloMethod.png", new_img)
