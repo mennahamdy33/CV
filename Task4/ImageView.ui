@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1001</width>
-    <height>792</height>
+    <height>926</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,6 +17,12 @@
    <layout class="QGridLayout" name="gridLayout_5">
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <family>Myanmar Text</family>
@@ -27,7 +33,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>8</number>
+       <number>7</number>
       </property>
       <widget class="QWidget" name="filter">
        <attribute name="title">
@@ -1451,39 +1457,35 @@
        <attribute name="title">
         <string>Thresholding</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_12">
+       <layout class="QGridLayout" name="gridLayout_10">
         <item row="0" column="0">
-         <layout class="QGridLayout" name="gridLayout_10">
-          <item row="0" column="0">
-           <layout class="QVBoxLayout" name="verticalLayout_10">
-            <item>
-             <widget class="QPushButton" name="loadTab9">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>151</width>
-                <height>111</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>151</width>
-                <height>111</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>LOAD IMAGE</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+         <layout class="QHBoxLayout" name="horizontalLayout_25">
+          <item>
+           <widget class="QPushButton" name="loadTab9">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>151</width>
+              <height>111</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>151</width>
+              <height>111</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>LOAD IMAGE</string>
+            </property>
+           </widget>
           </item>
-          <item row="0" column="1">
+          <item>
            <layout class="QVBoxLayout" name="verticalLayout_13">
             <item>
              <widget class="QLabel" name="inputTab9">
@@ -1504,7 +1506,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_18">
               <item>
-               <widget class="QLabel" name="outputTab9">
+               <widget class="QLabel" name="globalTab9">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
@@ -1515,17 +1517,23 @@
                  <enum>QFrame::Box</enum>
                 </property>
                 <property name="text">
-                 <string>Output Image</string>
+                 <string>Global Thresholding</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QGraphicsView" name="histogramTab9">
+               <widget class="QLabel" name="localTab9">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::Box</enum>
+                </property>
+                <property name="text">
+                 <string>Local Thresholding</string>
                 </property>
                </widget>
               </item>
@@ -1533,7 +1541,7 @@
             </item>
            </layout>
           </item>
-          <item row="0" column="2">
+          <item>
            <widget class="QGroupBox" name="selectThresholding">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -1556,49 +1564,6 @@
             <property name="title">
              <string>Select Thresholding</string>
             </property>
-            <widget class="QComboBox" name="spectralTab9">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>470</y>
-               <width>221</width>
-               <height>61</height>
-              </rect>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>221</width>
-               <height>61</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>221</width>
-               <height>61</height>
-              </size>
-             </property>
-             <item>
-              <property name="text">
-               <string>Spectral</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Global Thresholding</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Local Thresholding</string>
-              </property>
-             </item>
-            </widget>
             <widget class="QComboBox" name="otsuTab9">
              <property name="geometry">
               <rect>
@@ -1639,6 +1604,11 @@
              <item>
               <property name="text">
                <string>Local Thresholding</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Spectral</string>
               </property>
              </item>
             </widget>
@@ -1709,19 +1679,6 @@
              </property>
              <property name="text">
               <string>OTSU :</string>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_11">
-             <property name="geometry">
-              <rect>
-               <x>80</x>
-               <y>400</y>
-               <width>131</width>
-               <height>51</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>SPECTRAL</string>
              </property>
             </widget>
            </widget>
