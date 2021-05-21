@@ -39,7 +39,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.regionTab10.clicked.connect(self.regionGrowing)
         self.ui.chooseSeedsTab10.clicked.connect(self.chooseSides)
         self.ui.applyRegionTab10.clicked.connect(self.applyRegion)
-        self.ui.spectralTab9.activated.connect(self.spectral)
         self.Path = ""
         self.Image = None
         self.grayImage = None
@@ -208,21 +207,21 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         if (status == 'Global Thresholding'):
             Th = self.Th_functions[1](self.grayThImage)
             self.GlobalThresholding(self.grayThImage,Th)
+        if (status == "Spectral"):
+            self.spectral()
         else:
             self.LocalThresholding(self.grayThImage, 1)
     def spectral(self):
-        status = str(self.ui.spectralTab9.currentText())
-        if (status == 'Global Thresholding'):
-            Th = self.Th_functions[1](self.grayThImage)
-            blur = self.grayThImage
-            mask = blur >Th
-            # use the mask to select the "interesting" part of the image
-            image = cv2.imread(self.Path)
-            sel = np.zeros_like(image)
-            sel[mask] = image[mask]
-            path = "./images/spectralOut.png"
-            cv2.imwrite(path, sel)
-            self.ui.outputTab9.setPixmap(QPixmap(path))
+        Th = self.Th_functions[1](self.grayThImage)
+        blur = self.grayThImage
+        mask = blur >Th
+        # use the mask to select the "interesting" part of the image
+        image = cv2.imread(self.Path)
+        sel = np.zeros_like(image)
+        sel[mask] = image[mask]
+        path = "./images/spectralOut.png"
+        cv2.imwrite(path, sel)
+        self.ui.globalTab9.setPixmap(QPixmap(path))
 def main():
     app = QtWidgets.QApplication(sys.argv)
     application = ApplicationWindow()
