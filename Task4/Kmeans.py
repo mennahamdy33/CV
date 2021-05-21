@@ -100,12 +100,12 @@ class Kmeans:
         
     def Kmeans_Color(self,Image):
         rows,columns = Image.shape[:2]
-        r_points = [ random.randint(0, 255) for i in range(6) ]
-        g_points = [ random.randint(0, 255) for i in range(6) ]
-        b_points = [ random.randint(0, 255) for i in range(6) ]
+        r_points = [ random.randint(0, 255) for i in range(3) ]
+        g_points = [ random.randint(0, 255) for i in range(3) ]
+        b_points = [ random.randint(0, 255) for i in range(3) ]
         end = np.zeros((rows,columns,3))
-     
-        for it in range(0,10):    
+        labels = np.zeros((rows,columns,3))
+        for it in range(0,30):    
             g = defaultdict(list)
             for r in range(rows):
                 for c in range(columns):
@@ -114,18 +114,18 @@ class Kmeans:
                    
                     distance_list = []
 
-                    for k in range(0,6):
+                    for k in range(0,3):
                         distance = math.sqrt(((int(r_points[k])- red)**2)+((int(g_points[k]) - green)**2)+((int(b_points[k])-blue)**2))
                         distance_list.append(distance)
 
                     index, value = min(enumerate(distance_list), key=operator.itemgetter(1))
                     color = self.grey_l[index]
-                    end[r][c] = 0.5*color , 0.65*color , 0.45*color
-
+                    end[r][c] = r_points[index],b_points[index],g_points[index]
+                    
                     g[index].append([red,blue,green])
 
             r_points , b_points , g_points = self.find_centroids_RGB(g)
-            return(end)
+        return(end)
        
     def convertColorIntoGray(self,output):
         rows,columns = output.shape[:2]

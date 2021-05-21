@@ -49,7 +49,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def regionGrowing(self):
         self.ui.RegionGrowing.show()
         self.seeds = []
-        self.pic = regionGrowing.regionGrow(self.new_image,8)
+        self.pic = regionGrowing.regionGrow(self.new_image,7)
     def chooseSides(self):
 
         self.ui.input1Tab10.mousePressEvent = self.getPos
@@ -68,12 +68,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.seeds = []
     def chooseOptimalThreshold(self):
         status = str(self.ui.optimalTab9.currentText())
+
         if status == "Global Thresholding":
-            print(self.thImg.shape)
             Th = self.Th_functions[0](self.thImg)
             self.GlobalThresholding(self.thImg, Th)
-        else:
-            print(self.thImg.shape)
+        if status == "Local Thresholding":
+
             self.LocalThresholding(self.thImg, 0)
 
 
@@ -104,7 +104,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def getPicrures(self, tab):
         path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "")
-        print(path)
+
         if path == "":
             pass
         else:
@@ -115,8 +115,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
                 self.Image = cv2.imread(path,1)
                 self.new_image = cv2.resize(self.Image,(w, h))
                 self.grayImage = cv2.imread(path,0)
-    
-                # self.ui.input1Tab10.setPixmap(QPixmap(path))
                 rgbImage = cv2.imread(path,cv2.IMREAD_COLOR)
                 cv2.imwrite(".\images\grayImage.png",self.rgb2gray(rgbImage))
                 w1 = self.ui.input2Tab10.width()
@@ -126,13 +124,10 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             if tab == 0:
 
                 img = cv2.imread(path)
-                
                 self.grayThImage = cv2.imread(path,0)
                 self.thImg = np.float32(self.segmentation_resize(img)) *255
-            
                 cv2.imwrite("./images/resizedImage.png",self.thImg)
                 if len(self.thImg.shape) == 3: self.thImg = self.rgb2gray(self.thImg)
-
                 self.ui.inputTab9.setPixmap(QPixmap("./images/resizedImage.png"))
                 self.Path = path
 
@@ -197,13 +192,13 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def ostu(self):
         status = str(self.ui.otsuTab9.currentText())
-        if (status == 'Global Thresholding'):
+        if status == 'Global Thresholding':
             Th = self.Th_functions[1](self.grayThImage)
             self.GlobalThresholding(self.grayThImage,Th)
-        if (status == "Spectral"):
-            self.spectral()
-        else:
+        if status == "Local Thresholding":
             self.LocalThresholding(self.grayThImage, 1)
+        if status == "Spectral":
+            self.spectral()
 
     def spectral(self):
         Th = self.Th_functions[1](self.grayThImage)
@@ -216,7 +211,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         path = "./images/spectralOut.png"
         cv2.imwrite(path, sel)
         self.ui.globalTab9.setPixmap(QPixmap(path))
-
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
