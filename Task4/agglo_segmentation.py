@@ -44,6 +44,10 @@ class AgglomerativeClustering:
         self.k = k
         self.initial_k = initial_k
         self.pixels = pixels
+    # def __init__(self, pixels, k=2, initial_k=25):
+    #     self.k = k
+    #     self.initial_k = initial_k
+    #     self.pixels = pixels
 
     def initial_clusters(self, points):
         """

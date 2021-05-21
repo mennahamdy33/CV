@@ -18,6 +18,8 @@ from skimage.transform import resize
 import optimal
 import math
 import agglo_segmentation
+import Ostu
+import regionGrowing
 
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -26,104 +28,63 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.ui.menuExit.triggered.connect(exit)
         self.ui.kselect.hide()
+        self.ui.RegionGrowing.hide()
         self.ui.load1Tab10.clicked.connect(lambda: self.getPicrures(1))
         self.ui.loadTab9.clicked.connect(lambda: self.getPicrures(0))
         self.ui.optimalTab9.activated.connect(self.chooseOptimalThreshold)
+        self.ui.otsuTab9.activated.connect(self.ostu)
         self.ui.meanshiftTab10.clicked.connect(self.meanshift)
         self.ui.kmeansTab10.clicked.connect(self.Kmeans)
         self.ui.agglomerativeTab10.clicked.connect(self.agglomerative)
-
+        self.ui.regionTab10.clicked.connect(self.regionGrowing)
+        self.ui.chooseSeedsTab10.clicked.connect(self.chooseSides)
+        self.ui.applyRegionTab10.clicked.connect(self.applyRegion)
         self.Path = ""
         self.Image = None
         self.grayImage = None
         self.outputTabs = [self.ui.output1Tab10,self.ui.output2Tab10]
+        self.Th_functions = [optimal.Optimal().optimal_thresholding,
+                            Ostu.Ostu().Ostu]
+        self.N = 8 #Threshold Size
 
+    def regionGrowing(self):
+        self.ui.RegionGrowing.show()
+        self.seeds = []
+        self.pic = regionGrowing.regionGrow(self.new_image,8)
+    def chooseSides(self):
+
+        self.ui.input1Tab10.mousePressEvent = self.getPos
+
+    def getPos(self, event):
+        self.seeds.append([event.pos().x(), event.pos().y()])
+        # print('(', event.pos().x(), ', ', event.pos().y(), ')')
+        print(self.seeds)
+
+    def applyRegion(self):
+        segmentation = self.pic.ApplyRegionGrow(self.seeds)
+        cv2.imwrite("./images/RegionGrowing.png", segmentation)
+        w = self.ui.output1Tab10.width()
+        h = self.ui.output1Tab10.height()
+        self.ui.output1Tab10.setPixmap(QPixmap("./images/RegionGrowing.png").scaled(w, h, QtCore.Qt.KeepAspectRatio))
+        self.seeds = []
     def chooseOptimalThreshold(self):
-        if str(self.ui.optimalTab9.currentText()) == "Global Thresholding":
+        status = str(self.ui.optimalTab9.currentText())
+        if status == "Global Thresholding":
+            Th = self.Th_functions[0](self.thImg)
+            self.GlobalThresholding(self.thImg,Th)
+        else:
+            self.LocalThresholding(self.thImg,0)
 
-            if len(self.thImg.shape) == 3: self.thImg = self.rgb2gray(self.thImg)
-            a = optimal.Optimal()
-            threshold = a.optimal_thresholding(self.thImg)
-            plt.hist(self.thImg.flatten(), 256)
-            plt.axvline(x=threshold, color='r', linestyle='dashed', linewidth=2)
-            plt.savefig('./images/optimalHistogram.png', dpi=300, bbox_inches='tight')
-            plt.clf()
-            # self.ui..setPixmap(QPixmap("./images/optimalHistogram.png"))
-            plt.figure(figsize=(2, 2))
-            plt.axis('off')
-            plt.imshow(self.thImg >= threshold)
 
-            plt.savefig('./images/optimalImage.png', dpi=300, bbox_inches='tight')
-            plt.clf()
-            self.ui.outputTab9.setPixmap(QPixmap("./images/optimalImage.png"))
-        if str(self.ui.optimalTab9.currentText()) == "Local Thresholding":
-            # if len(self.thImg.shape) == 3: self.thImg = self.rgb2gray(self.thImg)
-            # n = 100
-            # small_area = n*n
-            # big_area = self.thImg.shape[0]*self.thImg.shape[1]
-            # noOfBlocks = big_area/small_area
-            # newImg = np.zeros((self.thImg.shape[0], self.thImg.shape[1]))
-            # # fig = plt.figure(figsize=(2, 2))
-            # fig, ax = plt.subplots(int(noOfBlocks/2),int(noOfBlocks/2), figsize=(3, 3))
-            # for r in range(0,self.thImg.shape[0] - n, n):
-            #     for c in range(0, self.thImg.shape[1] - n, n):
-            #         window = self.thImg[r:r + n, c:c + n]
-            #         a = optimal.Optimal()
-            #         threshold = a.optimal_thresholding(window)
-            #         #         plt.hist(self.thImg.flatten(), 256)
-            #         #         plt.axvline(x=threshold, color='r', linestyle='dashed', linewidth=2)
-            #         # plt.savefig('./images/optimalHistogram.png', dpi=300, bbox_inches='tight')
-            #         # plt.clf()
-            #         # self.ui..setPixmap(QPixmap("./images/optimalHistogram.png"))
-            #         subplot = ax[r, c]
-            #         subplot.axis('off')
-            #         subplot.imshow(window >= threshold)
-            #
-            #         plt.savefig('./images/optimalImage'+str(r+c)+'.png', dpi=300)
-            #         plt.clf()
-            # self.ui.outputTab9.setPixmap(QPixmap("./images/optimalImage.png"))
-
-            # small_area = n*n
-            # big_area = self.thImg.shape[0]*self.thImg.shape[1]
-            # noOfBlocks = big_area/small_area
-            # print(noOfBlocks)
-            #fig, ax = plt.subplots((math.ceil(self.thImg.shape[0]/n)),(math.ceil(self.thImg.shape[1]/100)), figsize=(3, 3))
-            n =10
-            if len(self.thImg.shape) == 3: self.thImg = self.rgb2gray(self.thImg)
-            plt.figure(figsize=(3, 3))
-            gs1 = gridspec.GridSpec((math.ceil(self.thImg.shape[0]/n)), (math.ceil(self.thImg.shape[1]/n)))
-            gs1.update(wspace=0.0, hspace=0.0)  # set the spacing between axes.
-
-            print((math.ceil(self.thImg.shape[1]/n)))
-            print((math.ceil(self.thImg.shape[0] / n)))
-
-            self.R = self.thImg.shape[0]
-            self.C = self.thImg.shape[1]
-            i=0
-
-            for x in range(self.R):
-                for y in range(self.C):
-                    a = optimal.Optimal()
-                    if y%n==0 and x%n==0:
-                        print(x, y)
-                        threshold = a.optimal_thresholding(self.thImg[x:x + n, y:y + n])
-
-                        subplot = plt.subplot(gs1[i])
-                        subplot.axis('off')
-                        subplot.imshow(self.thImg[x:x + n, y:y + n] >= threshold )
-                        i = i+1
-            #
-            # plt.subplots_adjust( wspace=0.0,
-            #         hspace=0.0)
-            plt.savefig('./images/optimalLocalImage.png', dpi=300)
-
+        
+          
     def segmentation_resize(self,img):
         ratio = min(1, np.sqrt((512 * 512) / np.prod(img.shape[:2])))
         newshape = list(map(lambda d: int(round(d * ratio)), img.shape[:2]))
         img = resize(img, newshape, anti_aliasing=True)
         return img
 
-    def meanshift(self):    
+    def meanshift(self):
         self.mean = segmentation.meanShift(self.Path)
         imgOutput = self.mean.output()
         cv2.imwrite("./images/meanshiftMethod.png",imgOutput)
@@ -136,12 +97,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         w = self.ui.output2Tab10.width()
         h = self.ui.output2Tab10.height()
         self.ui.output2Tab10.setPixmap(QPixmap("./images/GraymeanshiftMethod.png").scaled(w,h,QtCore.Qt.KeepAspectRatio))
-    #
-    # def rgb2gray(self,path):
-    #     self.Image = cv2.imread(path,1)
-    #     self.grayImage = cv2.imread(path,0)
-    #     # cv2.imwrite("D:\CV\CV\Task4\images\grayImage.png",self.grayImage)
-    #     # self.ui.input2Tab10.setPixmap(QPixmap("D:\CV\CV\Task4\images\grayImage.png"))
 
     def rgb2gray(self , rgb_image):
         return np.dot(rgb_image[...,:3], [0.299, 0.587, 0.114])
@@ -154,7 +109,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             if tab == 1:
                 w = self.ui.input1Tab10.width()
                 h = self.ui.input1Tab10.height()
-                self.ui.input1Tab10.setPixmap(QPixmap(path))
+                self.ui.input1Tab10.setPixmap(QPixmap(path).scaled(w, h, QtCore.Qt.KeepAspectRatio))
+                self.Image = cv2.imread(path,1)
+                self.new_image = cv2.resize(self.Image,(w, h))
+                self.grayImage = cv2.imread(path,0)
+    
+                # self.ui.input1Tab10.setPixmap(QPixmap(path))
                 rgbImage = cv2.imread(path,cv2.IMREAD_COLOR)
                 cv2.imwrite(".\images\grayImage.png",self.rgb2gray(rgbImage))
                 w1 = self.ui.input2Tab10.width()
@@ -164,8 +124,13 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             if tab == 0:
 
                 img = cv2.imread(path)
+                
+                self.grayThImage = cv2.imread(path,0)
                 self.thImg = np.float32(self.segmentation_resize(img)) *255
+            
                 cv2.imwrite("./images/resizedImage.png",self.thImg)
+                if len(self.thImg.shape) == 3: self.thImg = self.rgb2gray(self.thImg)
+
                 self.ui.inputTab9.setPixmap(QPixmap("./images/resizedImage.png"))
                 self.Path = path
 
@@ -173,33 +138,47 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         kmeans = Kmeans.Kmeans()
        
         RGBKmeansOutput = kmeans.Kmeans_Color(self.Image)
-        grayKmeansOutput = kmeans.convertColorIntoGray(RGBKmeansOutput)
+ 
+        grayKmeansOutput = kmeans.Kmeans_Gray(self.grayImage)
        
         self.showOutput([RGBKmeansOutput,grayKmeansOutput])
 
     def showOutput(self,outputData):
-        for i in range(2):
-            path = "D:\CV\CV\Task4\images\output"+str(i)+".png"
+        size = len(outputData)
+        for i in range(size):
+            path = "./images/output"+str(i)+".png"
             cv2.imwrite(path,outputData[i])
             w = self.outputTabs[i].width()
             h = self.outputTabs[i].height()
             self.outputTabs[i].setPixmap(QPixmap(path).scaled(w,h,QtCore.Qt.KeepAspectRatio))
-    
-    def LocalThresholding(self,Th):
-            n = 5 
-            newImg = np.zeros((self.R,self.C))
-            for i in range(self.R):
-                for j in range(self.C):
-                    mask = np.mean(self.img[i:i+n,j:j+n])
-                    newImg[i,j] = 255 if mask >= Th else 0
-            cv2.imwrite("D:\CV\Task#4\Otsu-Thresholding\img\LocalThresholding.png", newImg)
 
-    def GlobalThresholding(self,Th):
-        newImg = np.zeros(( self.R, self.C))
-        for i in range( self.R):
-            for j in range( self.C):
-                newImg[i,j] = 255 if self.img[i,j] >= Th else 0
-        cv2.imwrite("D:\CV\Task#4\Otsu-Thresholding\img\GlobalThresholding.png", newImg)
+    def LocalThresholding(self, Image, flag):
+            R,C = Image.shape[:2]
+            newImg = np.zeros((R,C))
+            hR = R // self.N
+            hC = C // self.N
+
+            for i in range(self.N):
+                for j in range(self.N):
+                    mask = Image[i * hR:hR * (i + 1), j * hC:hC * (j + 1)]
+
+                    threshold = self.Th_functions[flag](mask)
+                    mask[mask < threshold] = 0
+                    mask[mask > threshold] = 255
+                    newImg[i * hR:hR * (i + 1), j * hC:hC * (j + 1)] = mask
+    
+            path = "./images/LocalOutPut.png"
+            cv2.imwrite(path, newImg)
+            self.ui.outputTab9.setPixmap(QPixmap(path))
+            
+    def GlobalThresholding(self,Image,Th):
+        newImg = Image
+        newImg[newImg < Th] = 0
+        newImg[newImg > Th] = 255
+        path = "./images/GlobalOutPut.png"
+        cv2.imwrite(path, newImg)
+        self.ui.outputTab9.setPixmap(QPixmap(path))
+        
 
     def agglomerative(self):
         # use the mask to select the "interesting" part of the image
@@ -220,6 +199,13 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.output1Tab10.setPixmap(QPixmap("./images/aggloMethod.png"))
         self.ui.output2Tab10.setPixmap(QPixmap("./images/grayAggloMethod.png"))
 
+    def ostu(self):
+        status = str(self.ui.otsuTab9.currentText())
+        if (status == 'Global Thresholding'):
+            Th = self.Th_functions[1](self.grayThImage)
+            self.GlobalThresholding(self.grayThImage,Th)
+        else:
+            self.LocalThresholding(self.grayThImage, 1)
 
 def main():
     app = QtWidgets.QApplication(sys.argv)

@@ -13,9 +13,8 @@ class Kmeans:
     def __init__(self):
          
         self.res = None
-        self.grey_l = [40,80,120,160,200,240]
-        
-    
+        self.grey_l = [10,80,100,150,230,255]
+           
     def Kmeans_Gray(self,grayImage):
         rows,columns = grayImage.shape
         self.histogram,self.bins = np.histogram(grayImage,256,[0,256])
@@ -33,16 +32,16 @@ class Kmeans:
             for j in range(columns):
                 if flag == 1:
                     if (grayImage[i][j] in self.res[1]):
-                        end[i][j] = int(0)
+                        end[i][j] = 0
 
                     else:
-                        end[i][j] = int(1)
+                        end[i][j] = 255
                 else:
                     if (grayImage[i][j] in self.res[1]):
-                        end[i][j] = int(1)
+                        end[i][j] = 255
 
                     else:
-                        end[i][j] = int(0)
+                        end[i][j] = 0
         return(end)
         
     def find_centroids_grayImage(self,histogram):
@@ -104,13 +103,14 @@ class Kmeans:
         r_points = [ random.randint(0, 255) for i in range(6) ]
         g_points = [ random.randint(0, 255) for i in range(6) ]
         b_points = [ random.randint(0, 255) for i in range(6) ]
-        end = np.zeros((rows,columns))
+        end = np.zeros((rows,columns,3))
      
-        for it in range(0,50):    
+        for it in range(0,10):    
             g = defaultdict(list)
             for r in range(rows):
                 for c in range(columns):
-                    red, green, blue = Image[r][c]
+                 
+                    red, green, blue = Image[r][c][:3]
                    
                     distance_list = []
 
@@ -119,8 +119,8 @@ class Kmeans:
                         distance_list.append(distance)
 
                     index, value = min(enumerate(distance_list), key=operator.itemgetter(1))
-                
-                    end[r][c] = self.grey_l[index]
+                    color = self.grey_l[index]
+                    end[r][c] = 0.5*color , 0.65*color , 0.45*color
 
                     g[index].append([red,blue,green])
 
@@ -128,7 +128,7 @@ class Kmeans:
             return(end)
        
     def convertColorIntoGray(self,output):
-        rows,columns = output.shape
+        rows,columns = output.shape[:2]
         result = np.zeros((rows,columns))
         ref_val = output[0][0]
         for i in range(rows):

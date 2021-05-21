@@ -2,18 +2,36 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="01e61ced-39f1-429f-ac06-d265c6613607" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Task4/optimal.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Task1/images/grayPicture.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task1/images/grayPicture.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Task4/images/RegionGrowing.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/RegionGrowing.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Task4/images/output0.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/output0.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Task4/images/output1.png" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/images/output1.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Task4/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Task4/optimal.py" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/optimal.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Task4/regionGrowing.py" beforeDir="false" afterPath="$PROJECT_DIR$/Task4/regionGrowing.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="ProjectId" id="1qWD6428w6bFfIozSlOBIWsVF41" />
   <component name="ProjectViewState">
@@ -89,9 +107,31 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="regionGrowing" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="CV" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\go\PycharmProjects\pythonProject\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Task4" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Task4/regionGrowing.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.regionGrowing" />
         <item itemvalue="Python.main (1)" />
         <item itemvalue="Python.optimal" />
       </list>
@@ -118,5 +158,6 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
