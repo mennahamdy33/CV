@@ -70,10 +70,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def chooseOptimalThreshold(self):
         status = str(self.ui.optimalTab9.currentText())
         if status == "Global Thresholding":
+            print(self.thImg.shape)
             Th = self.Th_functions[0](self.thImg)
-            self.GlobalThresholding(self.thImg,Th)
+            self.GlobalThresholding(self.thImg, Th)
         else:
-            self.LocalThresholding(self.thImg,0)
+            print(self.thImg.shape)
+            self.LocalThresholding(self.thImg, 0)
 
 
         
