@@ -1564,49 +1564,6 @@
             <property name="title">
              <string>Select Thresholding</string>
             </property>
-            <widget class="QComboBox" name="spectralTab9">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>470</y>
-               <width>221</width>
-               <height>61</height>
-              </rect>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>221</width>
-               <height>61</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>221</width>
-               <height>61</height>
-              </size>
-             </property>
-             <item>
-              <property name="text">
-               <string>Spectral</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Global Thresholding</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Local Thresholding</string>
-              </property>
-             </item>
-            </widget>
             <widget class="QComboBox" name="otsuTab9">
              <property name="geometry">
               <rect>
@@ -1647,6 +1604,11 @@
              <item>
               <property name="text">
                <string>Local Thresholding</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Spectral</string>
               </property>
              </item>
             </widget>
@@ -1717,19 +1679,6 @@
              </property>
              <property name="text">
               <string>OTSU :</string>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_11">
-             <property name="geometry">
-              <rect>
-               <x>80</x>
-               <y>400</y>
-               <width>131</width>
-               <height>51</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>SPECTRAL</string>
              </property>
             </widget>
            </widget>
