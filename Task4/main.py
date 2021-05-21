@@ -51,6 +51,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.RegionGrowing.show()
         self.seeds = []
         self.pic = regionGrowing.regionGrow(self.new_image,8)
+  
     def chooseSides(self):
 
         self.ui.input1Tab10.mousePressEvent = self.getPos
@@ -67,6 +68,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         h = self.ui.output1Tab10.height()
         self.ui.output1Tab10.setPixmap(QPixmap("./images/RegionGrowing.png").scaled(w, h, QtCore.Qt.KeepAspectRatio))
         self.seeds = []
+  
     def chooseOptimalThreshold(self):
         status = str(self.ui.optimalTab9.currentText())
         if status == "Global Thresholding":
@@ -76,10 +78,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         else:
             print(self.thImg.shape)
             self.LocalThresholding(self.thImg, 0)
-
-
-        
-          
+     
     def segmentation_resize(self,img):
         ratio = min(1, np.sqrt((512 * 512) / np.prod(img.shape[:2])))
         newshape = list(map(lambda d: int(round(d * ratio)), img.shape[:2]))
@@ -149,7 +148,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def showOutput(self,outputData):
         size = len(outputData)
         for i in range(size):
-            path = "./images/output"+str(i)+".png"
+            path = "D:\CV\CV\Task4\images\output"+str(i)+".png"
             cv2.imwrite(path,outputData[i])
             w = self.outputTabs[i].width()
             h = self.outputTabs[i].height()
@@ -207,10 +206,13 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         if (status == 'Global Thresholding'):
             Th = self.Th_functions[1](self.grayThImage)
             self.GlobalThresholding(self.grayThImage,Th)
-        if (status == "Spectral"):
+      
+        elif(status == "Spectral"):
             self.spectral()
+      
         else:
             self.LocalThresholding(self.grayThImage, 1)
+   
     def spectral(self):
         Th = self.Th_functions[1](self.grayThImage)
         blur = self.grayThImage
@@ -222,6 +224,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         path = "./images/spectralOut.png"
         cv2.imwrite(path, sel)
         self.ui.globalTab9.setPixmap(QPixmap(path))
+
 def main():
     app = QtWidgets.QApplication(sys.argv)
     application = ApplicationWindow()
