@@ -95,7 +95,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         # self.ui.rocCurve.setXRange(-self.samplerate/2, self.samplerate/2)
         # self.ui.rocCurve.showGrid(True)
         # graphF.setYRange(0, max(data))
-        self.ui.rocCurve.plot(k_value,errorrate_list)
+        self.ui.rocCurve.plot(count_list,errorrate_list)
         # self.Bands(data.size)
         
 
