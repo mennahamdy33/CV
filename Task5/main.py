@@ -32,6 +32,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.value =0 
         self.r = 0
         self.c = 0
+        self.V = 0
         self.ui.loadTab1.clicked.connect(lambda: self.getPicrures(1))
         self.ui.faceDetection.clicked.connect(self.FaceDetection)
         self.ui.loadTraing.clicked.connect(self.reading_faces_and_displaying)
@@ -40,9 +41,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.slider.valueChanged.connect(self.reading_test_images)
         self.ui.match.clicked.connect(self.function)
         self.ui.checkError.clicked.connect(self.ROC)
-        self.testList = []
-        self.substract_mean_from_original = None
-        self.train_list = None
+        self.test_list = []
+        self.substract_mean_from_original = []
+        self.train_list = []
 
     def slider(self):
         self.value = self.ui.slider.value()
@@ -142,10 +143,10 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         face_array=self.reading_faces_and_displaying()
         mean,flatten_Array=self.performing_pca(face_array) # eigen_values,eigen_vectors
         substract_mean_from_original = np.subtract(flatten_Array, mean)
-        U, s, V = np.linalg.svd(substract_mean_from_original, full_matrices=False)
+        U, s, self.V = np.linalg.svd(substract_mean_from_original, full_matrices=False)
         self.k = 15
         self.ui.selectedEigenfaces.setText(str(self.k))
-        return (self.k,face_array,mean,substract_mean_from_original,V)
+        return (self.k,face_array,mean,substract_mean_from_original,self.V)
 
     def class_face(self,k,test_from_mean,test_flat_images,V,substract_mean_from_original,face_array):
         eigen_weights = np.dot(V[:k, :],substract_mean_from_original.T)
@@ -183,7 +184,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         for images in glob.glob('./Eigenfaces/Test/*.jpg'):  # assuming jpg
             _,a1 = images.split('\\')
             a1,_= a1.split('_', maxsplit=1)  
-            self.testList.append(a1)      
+            self.test_list.append(a1)      
             test_ = Image.open(images)
             test_facess = np.asarray(test_, dtype=float)
             test_faces = test_facess /255
