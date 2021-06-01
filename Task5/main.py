@@ -30,6 +30,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.value =0 
+        self.r = 0
+        self.c = 0
         self.ui.loadTab1.clicked.connect(lambda: self.getPicrures(1))
         self.ui.faceDetection.clicked.connect(self.FaceDetection)
         self.ui.loadTraing.clicked.connect(self.reading_faces_and_displaying)
@@ -43,11 +45,13 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def reading_faces_and_displaying(self):
         face_array = []
-        for face_images in glob.glob('./Eigenfaces/Train/*.jpg'): # assuming jpg
+        for face_images in glob.glob('./DataSet/Train/*.jpg'): # assuming jpg
             face_image=Image.open(face_images)
             face_image = np.asarray(face_image,dtype=float)/255.0
+            
             face_array.append(face_image)
         face_array=np.asarray(face_array)
+        n ,self.r,self.c=face_array.shape
         self.ui.noImages.setText(str(len(face_array)))
         self.ui.noPersons.setText(str(len(face_array)))
         return face_array
@@ -59,7 +63,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             flat_Array = face_array[x].flatten()
             flatten_Array.append(flat_Array)
         flatten_Array = np.asarray(flatten_Array)
-        print(flatten_Array.shape)
         mean = mean.flatten()
         # flatten_Array=flatten_Array.T
         #print(flatten_Array.shape)
@@ -113,29 +116,29 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.value = self.ui.slider.value()
         
         test_images=[]
-        for images in glob.glob('./Eigenfaces/Test/*.jpg'):  # assuming jpg
+        for images in glob.glob('./DataSet/Test/*.jpg'):  # assuming jpg
             test_ = Image.open(images)
             test_facess = np.asarray(test_, dtype=float)
             test_faces = test_facess /255
             #test_faces = test_faces.convert('L')  #int
             #test_faces = np.asarray(test_faces, dtype=float) / 255.0  # Normalize the image to be between 0 to 1
-            test=(425,425,3)
+            test=(self.r,self.c,3)
+            test2 = (self.r,self.c)
             if test_faces.shape == test:
                 test_faces=test_faces[:,:,0]
                 test_images.append(test_faces)
+            elif test_faces.shape == test2  :
+                 test_images.append(test_faces)
             else:
-                test_images.append(test_faces)
+                pass
+                # test_images.append(test_faces)
 
         self.ui.slider.setMinimum(0)
         self.ui.slider.setMaximum(len(test_images)-1)
-        print(self.value)
         self.ui.tesImageText.setText("Test Image {}/{}".format(self.value+1,len(test_images)) )
         cv2.imwrite("./Images/test.jpg",(test_images[self.value]*255))
         self.ui.testImage.setPixmap(QPixmap("./Images/test.jpg"))
-        #print(test_images[25].shape)
-        #print(test_images[25].shape[0])
-        #if test_images[25].shape[0]:
-        #    print("a")
+        
         flat_test_Array=self.returning_vector(test_images)
         test_images=np.asarray(test_images)
         return flat_test_Array,test_images
@@ -145,7 +148,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         test_flat_images,test_images=self.reading_test_images()
         test_from_mean=np.subtract(test_flat_images,mean)
 
-        print("FACES FOR K=2")
         self.class_face(k,test_from_mean,test_flat_images,V,substract_mean_from_original,face_array)
 
     def FaceDetection(self):
