@@ -45,7 +45,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def reading_faces_and_displaying(self):
         face_array = []
-        for face_images in glob.glob('./DataSet/Train/*.jpg'): # assuming jpg
+        for face_images in glob.glob('./Eigenfaces/Train/*.jpg'): # assuming jpg
             face_image=Image.open(face_images)
             face_image = np.asarray(face_image,dtype=float)/255.0
             
@@ -116,7 +116,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.value = self.ui.slider.value()
         
         test_images=[]
-        for images in glob.glob('./DataSet/Test/*.jpg'):  # assuming jpg
+        for images in glob.glob('./Eigenfaces/Test/*.jpg'):  # assuming jpg
             test_ = Image.open(images)
             test_facess = np.asarray(test_, dtype=float)
             test_faces = test_facess /255
