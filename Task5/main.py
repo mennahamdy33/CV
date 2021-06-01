@@ -39,10 +39,54 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.loadTest.clicked.connect(self.reading_test_images)
         self.ui.slider.valueChanged.connect(self.reading_test_images)
         self.ui.match.clicked.connect(self.function)
+        self.ui.checkError.clicked.connect(self.plotROC)
+        self.testList = []
+        self.substract_mean_from_original = None
+        self.train_list = None
 
     def slider(self):
         self.value = self.ui.slider.value()
 
+    def error_for_k(self,k,test_from_mean,V,substract_mean_from_original,train_list,test_list):
+        count = 0
+        eigen_weights = np.dot(V[:k, :],substract_mean_from_original.T)
+        threshold = 6000
+        for x in range(test_from_mean.shape[0]):
+            test_weight = np.dot(V[:k, :],test_from_mean[x:x + 1,:].T)
+            distances_euclidian = np.sum((eigen_weights - test_weight) ** 2, axis=0)
+            image_closest = np.argmin(np.sqrt(distances_euclidian))
+            x=test_list[x]
+            z=int(x[1:])
+            if (distances_euclidian[image_closest] <= threshold):
+                y=train_list[image_closest]
+            else:
+                y=0000
+
+            if (x == y) or (z < 89 and y == 0000):
+                count = count
+            else:
+                count = count + 1
+    
+        error_rate = count/len(test_list)*100
+        return error_rate,count
+
+    def ROC(self):
+        errorrate_list=[]
+        k_value=[]
+        count_list=[]
+        k = self.k
+        for k in range(15):
+            error_rate,count = self.error_for_k(k,self.test_from_mean,
+                            self.V,self.substract_mean_from_original,
+                            self.train_list,self.test_list)
+            errorrate_list.append(error_rate)
+            count_list.append(count)
+            k_value.append(k)
+        
+        print(k_value)
+        return(k_value)
+
+  
 
     def read_pgm(self,pgmf):
         header = pgmf.readline()
@@ -64,6 +108,10 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def reading_faces_and_displaying(self):
         face_array = []
         for face_images in glob.glob('./Eigenfaces/Train/*.jpg'): # assuming jpg
+            a1 = face_images
+            _,a1 = a1.split('\\')
+            a1,_=a1.split('_', maxsplit=1)
+            self.train_list.append(a1)
             face_image=Image.open(face_images)
             face_image = np.asarray(face_image,dtype=float)/255.0
             
@@ -82,15 +130,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             flatten_Array.append(flat_Array)
         flatten_Array = np.asarray(flatten_Array)
         mean = mean.flatten()
-        # flatten_Array=flatten_Array.T
-        #print(flatten_Array.shape)
-        #face_array = face_array.flatten()
-        # mean=mean.T
-        #substract_mean_from_original = np.subtract(flatten_Array, mean)
-        # transpose_substract_mean_from_original=substract_mean_from_original.T
-        # eigen_faces=displaying_eigen_faces(face_array,mean)
-        #covariance_matrix = np.cov(substract_mean_from_original)
-        #eigen_values, eigen_vectors = np.linalg.eig(covariance_matrix)
+    
         return mean,flatten_Array,  
 
     def Eigen(self):
@@ -98,9 +138,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         mean,flatten_Array=self.performing_pca(face_array) # eigen_values,eigen_vectors
         substract_mean_from_original = np.subtract(flatten_Array, mean)
         U, s, V = np.linalg.svd(substract_mean_from_original, full_matrices=False)
-        k = 15
-        self.ui.selectedEigenfaces.setText(str(k))
-        return k ,face_array,mean,substract_mean_from_original,V
+        self.k = 15
+        self.ui.selectedEigenfaces.setText(str(self.k))
+        return (self.k,face_array,mean,substract_mean_from_original,V)
 
     def class_face(self,k,test_from_mean,test_flat_images,V,substract_mean_from_original,face_array):
         eigen_weights = np.dot(V[:k, :],substract_mean_from_original.T)
@@ -122,6 +162,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.ui.bestMatch.setPixmap(QPixmap("./Images/test1.jpg"))
         else :
             self.ui.bestMatch.setText("NO MATCH")
+   
     def returning_vector(self,test_images):
         flat_test_Array = []
         for x in range(len(test_images)):
@@ -135,11 +176,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         
         test_images=[]
         for images in glob.glob('./Eigenfaces/Test/*.jpg'):  # assuming jpg
+            _,a1 = images.split('\\')
+            a1,_= a1.split('_', maxsplit=1)  
+            self.testList.append(a1)      
             test_ = Image.open(images)
             test_facess = np.asarray(test_, dtype=float)
             test_faces = test_facess /255
-            #test_faces = test_faces.convert('L')  #int
-            #test_faces = np.asarray(test_faces, dtype=float) / 255.0  # Normalize the image to be between 0 to 1
             test=(self.r,self.c,3)
             test2 = (self.r,self.c)
             if test_faces.shape == test:
@@ -162,11 +204,11 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         return flat_test_Array,test_images
 
     def function(self):
-        k,face_array,mean,substract_mean_from_original,V = self.Eigen()
+        k,face_array,mean,self.substract_mean_from_original,V = self.Eigen()
         test_flat_images,test_images=self.reading_test_images()
-        test_from_mean=np.subtract(test_flat_images,mean)
+        self.test_from_mean = np.subtract(test_flat_images,mean)
 
-        self.class_face(k,test_from_mean,test_flat_images,V,substract_mean_from_original,face_array)
+        self.class_face(k,self.test_from_mean,test_flat_images,V,self.substract_mean_from_original,face_array)
 
     def FaceDetection(self):
         image = cv2.imread(self.Path)
