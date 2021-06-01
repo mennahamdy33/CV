@@ -99,13 +99,15 @@ class Kmeans:
         return[red_cent_list,blue_cent_list,green_cent_list] 
         
     def Kmeans_Color(self,Image):
+        N = 3
         rows,columns = Image.shape[:2]
-        r_points = [ random.randint(0, 255) for i in range(3) ]
-        g_points = [ random.randint(0, 255) for i in range(3) ]
-        b_points = [ random.randint(0, 255) for i in range(3) ]
+        r_points = [ random.randint(0, 255) for i in range(N) ]
+        g_points = [ random.randint(0, 255) for i in range(N) ]
+        b_points = [ random.randint(0, 255) for i in range(N) ]
+      
         end = np.zeros((rows,columns,3))
         labels = np.zeros((rows,columns,3))
-        for it in range(0,30):    
+        for it in range(0,100):    
             g = defaultdict(list)
             for r in range(rows):
                 for c in range(columns):

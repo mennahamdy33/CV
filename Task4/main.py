@@ -66,6 +66,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         h = self.ui.output1Tab10.height()
         self.ui.output1Tab10.setPixmap(QPixmap("./images/RegionGrowing.png").scaled(w, h, QtCore.Qt.KeepAspectRatio))
         self.seeds = []
+  
     def chooseOptimalThreshold(self):
         status = str(self.ui.optimalTab9.currentText())
 
@@ -75,10 +76,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         if status == "Local Thresholding":
 
             self.LocalThresholding(self.thImg, 0)
-
-
-        
-          
+     
     def segmentation_resize(self,img):
         ratio = min(1, np.sqrt((512 * 512) / np.prod(img.shape[:2])))
         newshape = list(map(lambda d: int(round(d * ratio)), img.shape[:2]))
@@ -134,7 +132,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def Kmeans(self):
         kmeans = Kmeans.Kmeans()
        
-        RGBKmeansOutput = kmeans.Kmeans_Color(self.Image)
+        RGBKmeansOutput = kmeans.draw_kmeans(self.Image)
  
         grayKmeansOutput = kmeans.Kmeans_Gray(self.grayImage)
        
@@ -143,7 +141,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def showOutput(self,outputData):
         size = len(outputData)
         for i in range(size):
-            path = "./images/output"+str(i)+".png"
+            path = "D:\CV\CV\Task4\images\output"+str(i)+".png"
             cv2.imwrite(path,outputData[i])
             w = self.outputTabs[i].width()
             h = self.outputTabs[i].height()
@@ -210,7 +208,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         sel[mask] = image[mask]
         path = "./images/spectralOut.png"
         cv2.imwrite(path, sel)
-        self.ui.globalTab9.setPixmap(QPixmap(path))
+        self.ui.outputTab9.setPixmap(QPixmap(path))
+        # self.ui.globalTab9.setPixmap(QPixmap(path))
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
