@@ -59,6 +59,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             flat_Array = face_array[x].flatten()
             flatten_Array.append(flat_Array)
         flatten_Array = np.asarray(flatten_Array)
+        print(flatten_Array.shape)
         mean = mean.flatten()
         # flatten_Array=flatten_Array.T
         #print(flatten_Array.shape)
@@ -76,18 +77,14 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         mean,flatten_Array=self.performing_pca(face_array) # eigen_values,eigen_vectors
         substract_mean_from_original = np.subtract(flatten_Array, mean)
         U, s, V = np.linalg.svd(substract_mean_from_original, full_matrices=False)
-        self.ui.selectedEigenfaces.setText(str(len(V)))
-        print("marwa khody balek",len(V))
-        Eigen_faces=[]
-        for x in range(V.shape[0]):
-            fig=np.reshape(V[x],(425,425))
-            Eigen_faces.append(fig)
-        return Eigen_faces,face_array,mean,substract_mean_from_original,V
+        k = 15
+        self.ui.selectedEigenfaces.setText(str(k))
+        return k ,face_array,mean,substract_mean_from_original,V
 
     def class_face(self,k,test_from_mean,test_flat_images,V,substract_mean_from_original,face_array):
         eigen_weights = np.dot(V[:k, :],substract_mean_from_original.T)
-        threshold = 6000
-
+        threshold = 2000
+        self.ui.thresholdText.setText(str(threshold))
         # for i in range(test_from_mean.shape[0]):
         test_weight = np.dot(V[:k, :],test_from_mean[self.value:self.value + 1,:].T)
         distances_euclidian = np.sum((eigen_weights - test_weight) ** 2, axis=0)
@@ -95,7 +92,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         # to_plot=np.reshape(test_flat_images[self.value,:], (425,425))
         # cv2.imshow('to_plot', to_plot)
         # cv2.waitKey(0)
+        self.ui.parameters.setText(str(round(distances_euclidian[image_closest],3)))
         if (distances_euclidian[image_closest] <= threshold):
+            self.ui.parameters.setText(str(round(distances_euclidian[image_closest],3)))
             # cv2.imshow("face_array[image_closest,:,:]", face_array[image_closest,:,:])
             # cv2.waitKey(0)
             cv2.imwrite("./Images/test1.jpg",(face_array[image_closest,:,:]*255))
@@ -142,11 +141,10 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         return flat_test_Array,test_images
 
     def function(self):
-        Eigen_faces,face_array,mean,substract_mean_from_original,V = self.Eigen()
+        k,face_array,mean,substract_mean_from_original,V = self.Eigen()
         test_flat_images,test_images=self.reading_test_images()
         test_from_mean=np.subtract(test_flat_images,mean)
 
-        k=15
         print("FACES FOR K=2")
         self.class_face(k,test_from_mean,test_flat_images,V,substract_mean_from_original,face_array)
 
