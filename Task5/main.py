@@ -21,7 +21,7 @@ from PIL import Image #importing PIL to read all kind of images
 from PIL import ImageTk
 import glob
 import cv2
-
+import os
 import math
 
 class ApplicationWindow(QtWidgets.QMainWindow):
@@ -40,6 +40,24 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def slider(self):
         self.value = self.ui.slider.value()
+
+
+    def read_pgm(self,pgmf):
+        header = pgmf.readline()
+        assert header[:2] == b'P5'
+        (width, height) = [int(i) for i in header.split()[1:3]]
+        depth = int(header.split()[3])
+        assert depth <= 65535
+
+        raster = []
+        for y in range(height):
+            row = []
+            for y in range(width):
+                low_bits = ord(pgmf.read(1))
+                row.append(low_bits+255*ord(pgmf.read(1)))
+            raster.append(row)
+        return raster
+
 
     def reading_faces_and_displaying(self):
         face_array = []
