@@ -6,7 +6,6 @@ import cv2
 import time
 import importlib
 import matplotlib.gridspec as gridspec
-from PIL import Image
 QPixmap = QtGui.QPixmap
 from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
@@ -139,7 +138,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def Kmeans(self):
         kmeans = Kmeans.Kmeans()
        
-        RGBKmeansOutput = kmeans.Kmeans_Color(self.Image)
+        RGBKmeansOutput = kmeans.draw_kmeans(self.Image)
  
         grayKmeansOutput = kmeans.Kmeans_Gray(self.grayImage)
        
@@ -180,20 +179,14 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         path = "./images/GlobalOutPut.png"
         cv2.imwrite(path, newImg)
         self.ui.outputTab9.setPixmap(QPixmap(path))
-        
 
     def agglomerative(self):
-        # use the mask to select the "interesting" part of the image
-        # sel = np.zeros_like(image)
-        # sel[mask] = image[mask]
-
         n_clusters = 3
         img = cv2.imread(self.Path, cv2.IMREAD_UNCHANGED)
-
         pixels = img.reshape((-1, 3))
-        agglo = agglo_segmentation.AgglomerativeClustering(pixels, k=n_clusters, initial_k=25, )
+        agglo = agglo_segmentation.AgglomerativeClustering(pixels, k=n_clusters, initial_k=25)
         agglo.fit(pixels)
-        new_img = [[agglo.predict_center(list(pixel)) for pixel in row] for row in img]
+        new_img = [[agglo.calculate_center(list(pixel)) for pixel in row] for row in img]
         new_img = np.array(new_img, np.uint8)
         grayAggloImg = self.rgb2gray(new_img)
         cv2.imwrite("./images/aggloMethod.png", new_img)
@@ -223,8 +216,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         sel[mask] = image[mask]
         path = "./images/spectralOut.png"
         cv2.imwrite(path, sel)
+<<<<<<< HEAD
         self.ui.globalTab9.setPixmap(QPixmap(path))
 
+=======
+        self.ui.outputTab9.setPixmap(QPixmap(path))
+>>>>>>> 3f60eab1088d16a2442fad42c4940237fa7fc474
 def main():
     app = QtWidgets.QApplication(sys.argv)
     application = ApplicationWindow()

@@ -1506,7 +1506,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_18">
               <item>
-               <widget class="QLabel" name="globalTab9">
+               <widget class="QLabel" name="outputTab9">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
@@ -1518,22 +1518,6 @@
                 </property>
                 <property name="text">
                  <string>Global Thresholding</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="localTab9">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::Box</enum>
-                </property>
-                <property name="text">
-                 <string>Local Thresholding</string>
                 </property>
                </widget>
               </item>
