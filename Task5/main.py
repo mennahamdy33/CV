@@ -50,25 +50,32 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def error_for_k(self,k,test_from_mean,V,substract_mean_from_original,train_list,test_list):
         count = 0
         eigen_weights = np.dot(V[:k, :],substract_mean_from_original.T)
-        threshold = 6000
+        counterForY = 0
+        threshold = 2000
         for x in range(test_from_mean.shape[0]):
             test_weight = np.dot(V[:k, :],test_from_mean[x:x + 1,:].T)
+            
             distances_euclidian = np.sum((eigen_weights - test_weight) ** 2, axis=0)
+            
             image_closest = np.argmin(np.sqrt(distances_euclidian))
-            x=test_list[x]
-            z=int(x[1:])
+            x = test_list[x]
+            z = int(x[1:])
+           
             if (distances_euclidian[image_closest] <= threshold):
-                y=train_list[image_closest]
+                y = train_list[image_closest]
+                counterForY += 1
             else:
-                y=0000
+                y = 0000
 
             if (x == y) or (z < 89 and y == 0000):
                 count = count
             else:
                 count = count + 1
     
-        error_rate = count/len(test_list)*100
-        return error_rate,count
+        FP = count/(counterForY)
+        TP = 1 - FP
+
+        return FP,TP
 
     def ROC(self):
         errorrate_list=[]
@@ -83,7 +90,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             count_list.append(count)
             k_value.append(k)
         
-        print(k_value)
+       
         # self.ui.rocCurve.setXRange(-self.samplerate/2, self.samplerate/2)
         # self.ui.rocCurve.showGrid(True)
         # graphF.setYRange(0, max(data))
