@@ -39,7 +39,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.loadTest.clicked.connect(self.reading_test_images)
         self.ui.slider.valueChanged.connect(self.reading_test_images)
         self.ui.match.clicked.connect(self.function)
-        self.ui.checkError.clicked.connect(self.plotROC)
+        self.ui.checkError.clicked.connect(self.ROC)
         self.testList = []
         self.substract_mean_from_original = None
         self.train_list = None
@@ -84,7 +84,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             k_value.append(k)
         
         print(k_value)
-        return(k_value)
+        # self.ui.rocCurve.setXRange(-self.samplerate/2, self.samplerate/2)
+        # self.ui.rocCurve.showGrid(True)
+        # graphF.setYRange(0, max(data))
+        self.ui.rocCurve.plot(k_value,errorrate_list)
+        # self.Bands(data.size)
+        
 
   
 
