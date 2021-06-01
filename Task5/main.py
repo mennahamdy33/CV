@@ -30,6 +30,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.value =0 
+        self.r = 0
+        self.c = 0
         self.ui.loadTab1.clicked.connect(lambda: self.getPicrures(1))
         self.ui.faceDetection.clicked.connect(self.FaceDetection)
         self.ui.loadTraing.clicked.connect(self.reading_faces_and_displaying)
@@ -64,8 +66,10 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         for face_images in glob.glob('./Eigenfaces/Train/*.jpg'): # assuming jpg
             face_image=Image.open(face_images)
             face_image = np.asarray(face_image,dtype=float)/255.0
+            
             face_array.append(face_image)
         face_array=np.asarray(face_array)
+        n ,self.r,self.c=face_array.shape
         self.ui.noImages.setText(str(len(face_array)))
         self.ui.noPersons.setText(str(len(face_array)))
         return face_array
@@ -94,18 +98,14 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         mean,flatten_Array=self.performing_pca(face_array) # eigen_values,eigen_vectors
         substract_mean_from_original = np.subtract(flatten_Array, mean)
         U, s, V = np.linalg.svd(substract_mean_from_original, full_matrices=False)
-        self.ui.selectedEigenfaces.setText(str(len(V)))
-        print("marwa khody balek",len(V))
-        Eigen_faces=[]
-        for x in range(V.shape[0]):
-            fig=np.reshape(V[x],(425,425))
-            Eigen_faces.append(fig)
-        return Eigen_faces,face_array,mean,substract_mean_from_original,V
+        k = 15
+        self.ui.selectedEigenfaces.setText(str(k))
+        return k ,face_array,mean,substract_mean_from_original,V
 
     def class_face(self,k,test_from_mean,test_flat_images,V,substract_mean_from_original,face_array):
         eigen_weights = np.dot(V[:k, :],substract_mean_from_original.T)
-        threshold = 6000
-
+        threshold = 2000
+        self.ui.thresholdText.setText(str(threshold))
         # for i in range(test_from_mean.shape[0]):
         test_weight = np.dot(V[:k, :],test_from_mean[self.value:self.value + 1,:].T)
         distances_euclidian = np.sum((eigen_weights - test_weight) ** 2, axis=0)
@@ -113,7 +113,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         # to_plot=np.reshape(test_flat_images[self.value,:], (425,425))
         # cv2.imshow('to_plot', to_plot)
         # cv2.waitKey(0)
+        self.ui.parameters.setText(str(round(distances_euclidian[image_closest],3)))
         if (distances_euclidian[image_closest] <= threshold):
+            self.ui.parameters.setText(str(round(distances_euclidian[image_closest],3)))
             # cv2.imshow("face_array[image_closest,:,:]", face_array[image_closest,:,:])
             # cv2.waitKey(0)
             cv2.imwrite("./Images/test1.jpg",(face_array[image_closest,:,:]*255))
@@ -138,34 +140,32 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             test_faces = test_facess /255
             #test_faces = test_faces.convert('L')  #int
             #test_faces = np.asarray(test_faces, dtype=float) / 255.0  # Normalize the image to be between 0 to 1
-            test=(425,425,3)
+            test=(self.r,self.c,3)
+            test2 = (self.r,self.c)
             if test_faces.shape == test:
                 test_faces=test_faces[:,:,0]
                 test_images.append(test_faces)
+            elif test_faces.shape == test2  :
+                 test_images.append(test_faces)
             else:
-                test_images.append(test_faces)
+                pass
+                # test_images.append(test_faces)
 
         self.ui.slider.setMinimum(0)
         self.ui.slider.setMaximum(len(test_images)-1)
-        print(self.value)
         self.ui.tesImageText.setText("Test Image {}/{}".format(self.value+1,len(test_images)) )
         cv2.imwrite("./Images/test.jpg",(test_images[self.value]*255))
         self.ui.testImage.setPixmap(QPixmap("./Images/test.jpg"))
-        #print(test_images[25].shape)
-        #print(test_images[25].shape[0])
-        #if test_images[25].shape[0]:
-        #    print("a")
+        
         flat_test_Array=self.returning_vector(test_images)
         test_images=np.asarray(test_images)
         return flat_test_Array,test_images
 
     def function(self):
-        Eigen_faces,face_array,mean,substract_mean_from_original,V = self.Eigen()
+        k,face_array,mean,substract_mean_from_original,V = self.Eigen()
         test_flat_images,test_images=self.reading_test_images()
         test_from_mean=np.subtract(test_flat_images,mean)
 
-        k=15
-        print("FACES FOR K=2")
         self.class_face(k,test_from_mean,test_flat_images,V,substract_mean_from_original,face_array)
 
     def FaceDetection(self):
