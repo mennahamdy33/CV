@@ -314,7 +314,7 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -353,4 +353,4 @@ class Ui_MainWindow(object):
         self.label_7.setText(_translate("MainWindow", "ERROR:"))
         self.errorText.setText(_translate("MainWindow", "0"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.report), _translate("MainWindow", "Performance And ROC"))
-from plotwidget import PlotWidget
+from pyqtgraph import PlotWidget
