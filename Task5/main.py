@@ -23,7 +23,8 @@ import glob
 import cv2
 import os
 import math
-
+from icecream import ic
+from sklearn import metrics
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(ApplicationWindow, self).__init__()
@@ -49,53 +50,85 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.value = self.ui.slider.value()
 
     def error_for_k(self,k,test_from_mean,V,substract_mean_from_original,train_list,test_list):
-        count = 0
+        FP = 0
+        TP = 0
+        TN = 0
+        N = 0
+        countN = 0
+        FN = 0
+        yt=[]
+        xt = []
         eigen_weights = np.dot(V[:k, :],substract_mean_from_original.T)
         counterForY = 0
         threshold = 2000
-        for x in range(test_from_mean.shape[0]):
-            test_weight = np.dot(V[:k, :],test_from_mean[x:x + 1,:].T)
-            
+        for i in range(test_from_mean.shape[0]):
+            test_weight = np.dot(V[:k, :],test_from_mean[i:i + 1,:].T)
             distances_euclidian = np.sum((eigen_weights - test_weight) ** 2, axis=0)
-            
+
             image_closest = np.argmin(np.sqrt(distances_euclidian))
-            x = test_list[x]
+            x = test_list[i]
             z = int(x[1:])
-           
             if (distances_euclidian[image_closest] <= threshold):
                 y = train_list[image_closest]
+                xt.append(x)
+                yt.append(y)
+                ic(y)
                 counterForY += 1
+                ic("p")
             else:
+                N = train_list[image_closest]
+                countN += 1
                 y = 0000
-
+                ic("n")
             if (x == y) or (z < 89 and y == 0000):
-                count = count
-            else:
-                count = count + 1
-    
-        FP = count/(counterForY)
-        TP = 1 - FP
 
-        return FP,TP
+                TP += 1
+                ic("tp")
+            else:
+                FP = FP + 1
+                ic("fp")
+            if (x != N) :
+                ic("tn")
+                TN += 1
+            else:
+                ic("fn")
+                FN += 1
+        FPR = FP/(FP+TN)
+        TPR = TP/(TP+FN)
+        ic(FPR)
+        ic(TPR)
+        return xt,yt
+
+
 
     def ROC(self):
-        errorrate_list=[]
-        k_value=[]
-        count_list=[]
         k = self.k
-        for k in range(15):
-            error_rate,count = self.error_for_k(k,self.test_from_mean,
-                            self.V,self.substract_mean_from_original,
-                            self.train_list,self.test_list)
-            errorrate_list.append(error_rate)
-            count_list.append(count)
-            k_value.append(k)
-        
-       
+
+        error_rate,count = self.error_for_k(k,self.test_from_mean,
+                        self.V,self.substract_mean_from_original,
+                        self.train_list,self.test_list)
+
+
+        fpr, tpr, thresholds = metrics.roc_curve(error_rate, count, pos_label=2)
+        # errorrate_list=[]
+        # k_value=[]
+        # count_list=[]
+        # k = self.k
+        # threshold = 2500
+        #  # for k in range(15):
+        # while threshold>2000:
+        #     error_rate,count = self.error_for_k(k,threshold,self.test_from_mean,
+        #                     self.V,self.substract_mean_from_original,
+        #                     self.train_list,self.test_list)
+        #     errorrate_list.append(error_rate)
+        #     count_list.append(count)
+        #     k_value.append(k)
+        #     threshold-= 10
+
         # self.ui.rocCurve.setXRange(-self.samplerate/2, self.samplerate/2)
         # self.ui.rocCurve.showGrid(True)
         # graphF.setYRange(0, max(data))
-        self.ui.rocCurve.plot(count_list,errorrate_list)
+        self.ui.rocCurve.plot(fpr,tpr)
         # self.Bands(data.size)
         
 
@@ -123,7 +156,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         for face_images in glob.glob('./Eigenfaces/Train/*.jpg'): # assuming jpg
             a1 = face_images
             _,a1 = a1.split('\\')
+
             a1,_=a1.split('_', maxsplit=1)
+            ic(a1)
             self.train_list.append(a1)
             face_image=Image.open(face_images)
             face_image = np.asarray(face_image,dtype=float)/255.0
@@ -156,6 +191,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         return (self.k,face_array,mean,substract_mean_from_original,self.V)
 
     def class_face(self,k,test_from_mean,test_flat_images,V,substract_mean_from_original,face_array):
+        ic(substract_mean_from_original)
+        ic(test_from_mean)
+
         eigen_weights = np.dot(V[:k, :],substract_mean_from_original.T)
         threshold = 2000
         self.ui.thresholdText.setText(str(threshold))
