@@ -68,17 +68,22 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             image_closest = np.argmin(np.sqrt(distances_euclidian))
             x = test_list[i]
             z = int(x[1:])
+            if train_list[image_closest] == x:
+                xt.append(1)
+                ic(x)
+                ic(train_list[image_closest])
+            if train_list[image_closest] != x:
+                    xt.append(0)
+                    ic(x)
+                    ic(train_list[image_closest])
             if (distances_euclidian[image_closest] <= threshold):
                 y = train_list[image_closest]
                 ic(y)
-                xt.append(1)
                 yt.append(1)
                 ic(y)
                 counterForY += 1
                 ic("p")
             else:
-
-                xt.append(0)
                 yt.append(0)
                 N = train_list[image_closest]
                 countN += 1
@@ -112,8 +117,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         error_rate,count = self.error_for_k(k,self.test_from_mean,
                         self.V,self.substract_mean_from_original,
                         self.train_list,self.test_list)
-        ic(error_rate)
-        ic(count)
+
         for x in range(len(error_rate)):
             y = self.test_list[x]
             ic(y)
@@ -161,7 +165,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def reading_faces_and_displaying(self):
         face_array = []
-        for face_images in glob.glob('./dataSet/Train/*.jpg'): # assuming jpg
+        for face_images in glob.glob('./Eigenfaces/Train/*.jpg'): # assuming jpg
             a1 = face_images
             _,a1 = a1.split('\\')
 
@@ -234,7 +238,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.value = self.ui.slider.value()
         
         test_images=[]
-        for images in glob.glob('./dataSet/Test/*.jpg'):  # assuming jpg
+        for images in glob.glob('./Eigenfaces/Test/*.jpg'):  # assuming jpg
             _,a1 = images.split('\\')
             a1,_= a1.split('_', maxsplit=1)  
             self.test_list.append(a1)      
