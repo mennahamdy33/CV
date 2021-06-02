@@ -24,7 +24,7 @@ import cv2
 import os
 import math
 from icecream import ic
-from sklearn import metrics
+import sklearn.metrics as metrics
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(ApplicationWindow, self).__init__()
@@ -70,12 +70,16 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             z = int(x[1:])
             if (distances_euclidian[image_closest] <= threshold):
                 y = train_list[image_closest]
-                xt.append(x)
-                yt.append(y)
+                ic(y)
+                xt.append(1)
+                yt.append(1)
                 ic(y)
                 counterForY += 1
                 ic("p")
             else:
+
+                xt.append(0)
+                yt.append(0)
                 N = train_list[image_closest]
                 countN += 1
                 y = 0000
@@ -95,8 +99,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
                 FN += 1
         FPR = FP/(FP+TN)
         TPR = TP/(TP+FN)
-        ic(FPR)
-        ic(TPR)
+        ic(xt)
+        ic(yt)
+
         return xt,yt
 
 
@@ -107,9 +112,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         error_rate,count = self.error_for_k(k,self.test_from_mean,
                         self.V,self.substract_mean_from_original,
                         self.train_list,self.test_list)
-
-
-        fpr, tpr, thresholds = metrics.roc_curve(error_rate, count, pos_label=2)
+        ic(error_rate)
+        ic(count)
+        for x in range(len(error_rate)):
+            y = self.test_list[x]
+            ic(y)
+            fpr, tpr, thresholds = metrics.roc_curve(error_rate, count)
         # errorrate_list=[]
         # k_value=[]
         # count_list=[]
@@ -128,7 +136,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         # self.ui.rocCurve.setXRange(-self.samplerate/2, self.samplerate/2)
         # self.ui.rocCurve.showGrid(True)
         # graphF.setYRange(0, max(data))
-        self.ui.rocCurve.plot(fpr,tpr)
+            self.ui.rocCurve.plot(fpr,tpr)
         # self.Bands(data.size)
         
 
@@ -153,7 +161,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def reading_faces_and_displaying(self):
         face_array = []
-        for face_images in glob.glob('./Eigenfaces/Train/*.jpg'): # assuming jpg
+        for face_images in glob.glob('./dataSet/Train/*.jpg'): # assuming jpg
             a1 = face_images
             _,a1 = a1.split('\\')
 
@@ -226,7 +234,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.value = self.ui.slider.value()
         
         test_images=[]
-        for images in glob.glob('./Eigenfaces/Test/*.jpg'):  # assuming jpg
+        for images in glob.glob('./dataSet/Test/*.jpg'):  # assuming jpg
             _,a1 = images.split('\\')
             a1,_= a1.split('_', maxsplit=1)  
             self.test_list.append(a1)      

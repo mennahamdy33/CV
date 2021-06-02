@@ -47,4 +47,4 @@ def batch_image(in_dir, out_dir):
  
 
 if __name__=='__main__':
-    batch_image('G:\SBME\CV\Tasks\CV\Task5\CroppedYale', 'G:\SBME\CV\Tasks\CV\Task5\DataSet')
+    batch_image(r'G:\2nd term\CV\CV2\CV\Task5\CroppedYale', r'G:\2nd term\CV\CV2\CV\Task5\dataSet')
