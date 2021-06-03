@@ -50,99 +50,72 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.value = self.ui.slider.value()
 
     def error_for_k(self,k,test_from_mean,V,substract_mean_from_original,train_list,test_list):
-        FP = 0
-        TP = 0
-        TN = 0
-        N = 0
-        countN = 0
-        FN = 0
-        yt=[]
-        xt = []
+        TPcount = 0
+        TNcount = 0
+        PP=[]
+        TP = []
         eigen_weights = np.dot(V[:k, :],substract_mean_from_original.T)
-        counterForY = 0
-        threshold = 2000
+        threshold = 45
         for i in range(test_from_mean.shape[0]):
+
+            P=''
+            N=''
             test_weight = np.dot(V[:k, :],test_from_mean[i:i + 1,:].T)
             distances_euclidian = np.sum((eigen_weights - test_weight) ** 2, axis=0)
-
             image_closest = np.argmin(np.sqrt(distances_euclidian))
             x = test_list[i]
-            z = int(x[1:])
-            if train_list[image_closest] == x:
-                xt.append(1)
-                ic(x)
-                ic(train_list[image_closest])
-            if train_list[image_closest] != x:
-                    xt.append(0)
-                    ic(x)
-                    ic(train_list[image_closest])
+
             if (distances_euclidian[image_closest] <= threshold):
-                y = train_list[image_closest]
-                ic(y)
-                yt.append(1)
-                ic(y)
-                counterForY += 1
-                ic("p")
+                P = train_list[image_closest]
+                PP.append(1)
+
             else:
-                yt.append(0)
+                PP.append(0)
                 N = train_list[image_closest]
-                countN += 1
-                y = 0000
-                ic("n")
-            if (x == y) or (z < 89 and y == 0000):
 
-                TP += 1
-                ic("tp")
-            else:
-                FP = FP + 1
-                ic("fp")
-            if (x != N) :
-                ic("tn")
-                TN += 1
-            else:
-                ic("fn")
-                FN += 1
-        FPR = FP/(FP+TN)
-        TPR = TP/(TP+FN)
-        ic(xt)
-        ic(yt)
 
-        return xt,yt
+            if (x == P) :
+                TP.append(1)
+                TPcount += 1
+            else:
+                TP.append(0)
+
+
+            if (x != N) and (N != '') :
+                TNcount += 1
+
+        accuracy = (TPcount + TNcount) / (test_from_mean.shape[0]+1)
+        ic(TPcount)
+        ic(TNcount)
+        return TP,PP,accuracy
 
 
 
     def ROC(self):
         k = self.k
 
-        error_rate,count = self.error_for_k(k,self.test_from_mean,
+        TP,PP,accuracy = self.error_for_k(k,self.test_from_mean,
                         self.V,self.substract_mean_from_original,
                         self.train_list,self.test_list)
+        self.ui.errorText.setText(str(accuracy))
+        self.ui.rocCurve.setBackground('w')
 
-        for x in range(len(error_rate)):
-            y = self.test_list[x]
-            ic(y)
-            fpr, tpr, thresholds = metrics.roc_curve(error_rate, count)
-        # errorrate_list=[]
-        # k_value=[]
-        # count_list=[]
-        # k = self.k
-        # threshold = 2500
-        #  # for k in range(15):
-        # while threshold>2000:
-        #     error_rate,count = self.error_for_k(k,threshold,self.test_from_mean,
-        #                     self.V,self.substract_mean_from_original,
-        #                     self.train_list,self.test_list)
-        #     errorrate_list.append(error_rate)
-        #     count_list.append(count)
-        #     k_value.append(k)
-        #     threshold-= 10
+        styles = { 'font-size': '20px'}
+        self.ui.rocCurve.setLabel('left', 'True Positive Rate', **styles)
+        self.ui.rocCurve.setLabel('bottom', 'False Positive Rate', **styles)
 
-        # self.ui.rocCurve.setXRange(-self.samplerate/2, self.samplerate/2)
-        # self.ui.rocCurve.showGrid(True)
-        # graphF.setYRange(0, max(data))
-            self.ui.rocCurve.plot(fpr,tpr)
-        # self.Bands(data.size)
-        
+        self.ui.rocCurve.setXRange(0, 1, padding=0.5)
+        self.ui.rocCurve.setYRange(0, 1, padding=0.1)
+        pen1 = pg.mkPen(color='b',width=2, style=QtCore.Qt.DashLine)
+        pen2 = pg.mkPen(color='r', width=5)
+
+        self.ui.rocCurve.addLegend()
+        for x in range(len(TP)):
+
+            fpr, tpr, thresholds = metrics.roc_curve(TP, PP)
+
+            self.ui.rocCurve.plot(fpr,tpr,pen = pen2, name="ROC Curve for class"+str(x+1))
+        self.ui.rocCurve.plot([0,1],[0,1],pen = pen1 )
 
   
 
@@ -165,12 +138,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def reading_faces_and_displaying(self):
         face_array = []
-        for face_images in glob.glob('./Eigenfaces/Train/*.jpg'): # assuming jpg
+        for face_images in glob.glob('./dataSet/Train/*.jpg'): # assuming jpg
             a1 = face_images
             _,a1 = a1.split('\\')
 
             a1,_=a1.split('_', maxsplit=1)
-            ic(a1)
+
             self.train_list.append(a1)
             face_image=Image.open(face_images)
             face_image = np.asarray(face_image,dtype=float)/255.0
@@ -207,7 +180,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         ic(test_from_mean)
 
         eigen_weights = np.dot(V[:k, :],substract_mean_from_original.T)
-        threshold = 2000
+        threshold = 45
         self.ui.thresholdText.setText(str(threshold))
         # for i in range(test_from_mean.shape[0]):
         test_weight = np.dot(V[:k, :],test_from_mean[self.value:self.value + 1,:].T)
@@ -238,7 +211,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.value = self.ui.slider.value()
         
         test_images=[]
-        for images in glob.glob('./Eigenfaces/Test/*.jpg'):  # assuming jpg
+        for images in glob.glob('./dataSet/Test/*.jpg'):  # assuming jpg
             _,a1 = images.split('\\')
             a1,_= a1.split('_', maxsplit=1)  
             self.test_list.append(a1)      
