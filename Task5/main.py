@@ -45,6 +45,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.test_list = []
         self.substract_mean_from_original = []
         self.train_list = []
+        # shofy enty 3ayza el value deh fen
+        self.thresholding= self.ui.lineEdit.text()
+
 
     def slider(self):
         self.value = self.ui.slider.value()
@@ -89,8 +92,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         ic(TNcount)
         return TP,PP,accuracy
 
-
-
     def ROC(self):
         k = self.k
 
@@ -117,8 +118,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.ui.rocCurve.plot(fpr,tpr,pen = pen2, name="ROC Curve for class"+str(x+1))
         self.ui.rocCurve.plot([0,1],[0,1],pen = pen1 )
 
-  
-
     def read_pgm(self,pgmf):
         header = pgmf.readline()
         assert header[:2] == b'P5'
@@ -134,7 +133,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
                 row.append(low_bits+255*ord(pgmf.read(1)))
             raster.append(row)
         return raster
-
 
     def reading_faces_and_displaying(self):
         face_array = []

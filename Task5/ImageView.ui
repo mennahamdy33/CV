@@ -321,9 +321,9 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
            <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_5">
+              <layout class="QVBoxLayout" name="verticalLayout">
                <item>
                 <widget class="QPushButton" name="loadTest">
                  <property name="text">
@@ -332,90 +332,68 @@
                 </widget>
                </item>
                <item>
-                <layout class="QVBoxLayout" name="verticalLayout">
-                 <item>
-                  <widget class="QLabel" name="label_6">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Match Threshold:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="thresholdText">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>101</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>101</height>
-                    </size>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::Box</enum>
-                   </property>
-                   <property name="text">
-                    <string>0</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_11">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Matching Parameters</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="parameters">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>101</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>101</height>
-                    </size>
-                   </property>
-                   <property name="frameShape">
-                    <enum>QFrame::Box</enum>
-                   </property>
-                   <property name="text">
-                    <string>0</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                <widget class="QLabel" name="label_6">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Match Threshold:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_11">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Matching Parameters</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="parameters">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>101</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>101</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::Box</enum>
+                 </property>
+                 <property name="text">
+                  <string>0</string>
+                 </property>
+                </widget>
                </item>
                <item>
                 <widget class="QPushButton" name="match">
@@ -505,7 +483,7 @@
                     </size>
                    </property>
                    <property name="text">
-                    <string>Test Image 1/20</string>
+                    <string>Test Image</string>
                    </property>
                   </widget>
                  </item>
