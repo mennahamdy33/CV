@@ -114,7 +114,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         for x in range(len(TP)):
 
             fpr, tpr, thresholds = metrics.roc_curve(TP, PP)
-
+            ic(thresholds)
             self.ui.rocCurve.plot(fpr,tpr,pen = pen2, name="ROC Curve for class"+str(x+1))
         self.ui.rocCurve.plot([0,1],[0,1],pen = pen1 )
 
@@ -150,7 +150,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         face_array=np.asarray(face_array)
         n ,self.r,self.c=face_array.shape
         self.ui.noImages.setText(str(len(face_array)))
-        self.ui.noPersons.setText(str(len(face_array)))
         return face_array
 
     def performing_pca(self,face_array):
@@ -179,7 +178,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
         eigen_weights = np.dot(V[:k, :],substract_mean_from_original.T)
         threshold = 45
-        self.ui.thresholdText.setText(str(threshold))
+        #self.ui.thresholdText.setText(str(threshold))
         # for i in range(test_from_mean.shape[0]):
         test_weight = np.dot(V[:k, :],test_from_mean[self.value:self.value + 1,:].T)
         distances_euclidian = np.sum((eigen_weights - test_weight) ** 2, axis=0)
