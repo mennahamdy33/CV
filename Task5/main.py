@@ -46,7 +46,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.substract_mean_from_original = []
         self.train_list = []
         # shofy enty 3ayza el value deh fen
-        self.thresholding= self.ui.lineEdit.text()
+        self.threshold= ''
 
 
     def slider(self):
@@ -58,7 +58,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         PP=[]
         TP = []
         eigen_weights = np.dot(V[:k, :],substract_mean_from_original.T)
-        threshold = 45
         for i in range(test_from_mean.shape[0]):
 
             P=''
@@ -68,7 +67,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             image_closest = np.argmin(np.sqrt(distances_euclidian))
             x = test_list[i]
 
-            if (distances_euclidian[image_closest] <= threshold):
+            if (distances_euclidian[image_closest] <= int(self.threshold , base =10)):
                 P = train_list[image_closest]
                 PP.append(1)
 
@@ -150,7 +149,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         face_array=np.asarray(face_array)
         n ,self.r,self.c=face_array.shape
         self.ui.noImages.setText(str(len(face_array)))
-        self.ui.noPersons.setText(str(len(face_array)))
+        self.ui.dbName.setText(str("AT&T"))
+
         return face_array
 
     def performing_pca(self,face_array):
@@ -178,8 +178,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         ic(test_from_mean)
 
         eigen_weights = np.dot(V[:k, :],substract_mean_from_original.T)
-        threshold = 45
-        self.ui.thresholdText.setText(str(threshold))
         # for i in range(test_from_mean.shape[0]):
         test_weight = np.dot(V[:k, :],test_from_mean[self.value:self.value + 1,:].T)
         distances_euclidian = np.sum((eigen_weights - test_weight) ** 2, axis=0)
@@ -188,12 +186,14 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         # cv2.imshow('to_plot', to_plot)
         # cv2.waitKey(0)
         self.ui.parameters.setText(str(round(distances_euclidian[image_closest],3)))
-        if (distances_euclidian[image_closest] <= threshold):
+        if (distances_euclidian[image_closest] <= int(self.threshold, base = 10)):
             self.ui.parameters.setText(str(round(distances_euclidian[image_closest],3)))
             # cv2.imshow("face_array[image_closest,:,:]", face_array[image_closest,:,:])
             # cv2.waitKey(0)
             cv2.imwrite("./Images/test1.jpg",(face_array[image_closest,:,:]*255))
-            self.ui.bestMatch.setPixmap(QPixmap("./Images/test1.jpg"))
+            w = self.ui.bestMatch.width()
+            h = self.ui.bestMatch.height()
+            self.ui.bestMatch.setPixmap(QPixmap("./Images/test1.jpg").scaled(w, h, QtCore.Qt.KeepAspectRatio))
         else :
             self.ui.bestMatch.setText("NO MATCH")
    
@@ -231,13 +231,16 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.slider.setMaximum(len(test_images)-1)
         self.ui.tesImageText.setText("Test Image {}/{}".format(self.value+1,len(test_images)) )
         cv2.imwrite("./Images/test.jpg",(test_images[self.value]*255))
-        self.ui.testImage.setPixmap(QPixmap("./Images/test.jpg"))
+        w = self.ui.testImage.width()
+        h = self.ui.testImage.height()
+        self.ui.testImage.setPixmap(QPixmap("./Images/test.jpg").scaled(w, h, QtCore.Qt.KeepAspectRatio))
         
         flat_test_Array=self.returning_vector(test_images)
         test_images=np.asarray(test_images)
         return flat_test_Array,test_images
 
     def function(self):
+        self.threshold= self.ui.lineEdit.text()
         k,face_array,mean,self.substract_mean_from_original,V = self.Eigen()
         test_flat_images,test_images=self.reading_test_images()
         self.test_from_mean = np.subtract(test_flat_images,mean)
